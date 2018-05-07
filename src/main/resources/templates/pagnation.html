@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="pagnation(pageData)">
+		<div id="pagnation" style="position:relative;"
+			th:if="${pageData.pages} gt 0">
+			<div style="font-size:20px;padding:10px;position:absolute;right:0;top:10;">
+				<span style="color:#3333aa;margin-left:10px;margin-right:10px">
+					<input type="hidden" name="pages" th:value="${pageData.pages}" /> <input
+						type="hidden" name="curpage" th:value="${pageData.pageNum}" /> <input
+						type="hidden" name="pageSize" th:value="${pageData.pageSize}" /> <input
+						type="hidden" name="total" th:value="${pageData.total}" /> 
+					
+					<span
+						th:utext="|Total: ${pageData.total}|" style="margin-right: 5px">0</span>
+					<span id="prow">0</span>/<span id="pmaxrow"
+						th:text="${pageData.size()}">10</span> <select id="psize"
+						onchange="changePSize(this)">
+						<option th:each="collect,iterStat : ${#numbers.sequence(10,50,10)}"
+							th:value="${iterStat.current}"
+							th:selected="${iterStat.current} == ${pageData.pageSize}"
+							th:text="${iterStat.current}">1</option>
+					</select>
+					
+					<span th:text="|Pages: ${pageData.pageNum}|" style="margin-left: 5px">0</span>/<span 
+						th:text="${pageData.pages}">5</span>
+						
+				</span>
+				<span style="margin-left:10px; margin-right:10px" th:if="${pageData.pages} gt 1">
+				|
+					<a id="btF" href="javascript:void(0)" onclick="toFirstPage()"><em class="fa fa-step-backward"></em></a>
+					<a id="btP" href="javascript:void(0)" onclick="toPrevPage()"><em class="fa fa-chevron-left"></em></a>
+					<th:block th:if="${pageData.pages} le 5">
+						<a
+							th:each="collect,iterStat : ${#numbers.sequence(1,{pageData.pages},1)}"
+							th:class="${iterStat.current} ==${pageData.pageNum}?'current':''"
+							th:onclick="|clickPage(${iterStat.current})|"
+							th:text="${iterStat.current}">1</a>&nbsp; &nbsp; 
+					</th:block>
+					<th:block th:if="${pageData.pages} gt 5">
+						<a th:each="collect,iterStat : ${#numbers.sequence(1,4,1)}"
+							th:class="${iterStat.current} ==${pageData.pageNum}?'current':''"
+							th:onclick="|clickPage(${iterStat.current})|"
+							th:text="${iterStat.current}">1</a>&nbsp; 
+							<span>...</span> 
+							<a
+							th:each="collect,iterStat : ${#numbers.sequence({pageData.pages},{pageData.pages},1)}"
+							th:class="${iterStat.current} ==${pageData.pageNum}?'current':''"
+							th:onclick="|clickPage(${iterStat.current})|"
+							th:text="${iterStat.current}">1</a>&nbsp; 
+					</th:block>
+					<a id="btN" href="javascript:void(0)" onclick="toNextPage()"><em class="fa fa-chevron-right"></em></a>
+					<a id="btL" href="javascript:void(0)" onclick="toLastPage()"><em class="fa fa-step-forward"></em></a>
+				|
+				</span>
+				<span id="page_jump" style="margin-left:10px">
+					<input type="text" id="custom_page" style="width: 50px;border-color: #64b0e6; font-size:15px"
+						onkeydown="jumpByKey()" onfocus="focusInput(this,'跳转到')" onblur="blurInput(this,'跳转到')"/> 
+					<a id="btGo" title="跳转" href="javascript:void(0)" onclick="gotoPage()"><em class="fa fa-play"></em></a>
+				</span>
+			</div>
+			<div class="obj-hide img-page" align="center">
+				<!-- <a id="btP2" href="javascript:void(0)" onclick="toPrevPage()"><img th:src="@{/images/pre.png}" /></a>
+				<a id="btN2" href="javascript:void(0)" onclick="toNextPage()"><img th:src="@{/images/next.png}" /></a> -->
+				<a id="btP2" href="javascript:void(0)" onclick="toPrevPage()" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a id="btN2" href="javascript:void(0)" onclick="toNextPage()" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></a>
+			</div>
+		</div>
+		<script type="text/javascript" th:inline="text">
+			callbackBtns();
+			blurInput($("#custom_page")[0],'跳转到');
+		/*<![CDATA[*/
+			function clickPage(page) {
+				$("#searchform input[name='page']").val(page);
+				$("#searchform").submit();
+			}
+			function jumpByKey() {
+				if (window.event.keyCode == 13) {
+					gotoPage();
+				}
+			}
+			function gotoPage() {
+				var cpage = parseInt($("#custom_page").val());
+				if (cpage < 1) {
+					layer.alert('请输入合法页码!',{shadeClose: true});
+				} else if (cpage > getLastPageNo()) {
+					layer.alert('不能大于最大页码!',{shadeClose: true});
+				} else {
+					$("#searchform input[name='page']").val(cpage);
+					$("#searchform").submit();
+				}
+			}
+			function changePSize(obj) {
+				$("#searchform input[name='size']").val(obj.value);
+				toFirstPage();
+			}
+			function toPrevPage() {
+				var page = parseInt($("#searchform input[name='page']").val());
+				if (page > 1) {
+					$("#searchform input[name='page']").val(page - 1);
+					$("#searchform").submit();
+				} else {
+					layer.alert('已经是第一页!',{shadeClose: true});
+				}
+			}
+			function toNextPage() {
+				var page = parseInt($("#searchform input[name='page']").val());
+				if (page >= parseInt($("#pagnation input[name='pages']").val())) {
+					layer.alert('已经是最后一页!',{shadeClose: true});
+				} else {
+					$("#searchform input[name='page']").val(page + 1);
+					$("#searchform").submit();
+				}
+			}
+			function toFirstPage() {
+				$("#searchform input[name='page']").val(1);
+				$("#searchform").submit();
+			}
+			function toLastPage() {
+				$("#searchform input[name='page']").val(getLastPageNo());
+				$("#searchform").submit();
+			}
+			
+			function callbackBtns(){
+				$("#pagnation a").show();
+				$("#page_jump").show();
+				var currPage = $("#searchform input[name='page']").val();
+				if(currPage == 1){
+					hideLeftBts();
+				}
+				
+				if(currPage == getLastPageNo()){
+					hideRightBts()
+				}
+				
+				if(getLastPageNo() <= 5){
+					$("#page_jump").hide();
+				}
+			}
+			
+			function getLastPageNo(){
+				return $("#pagnation input[name='pages']").val();
+			}
+			function hideLeftBts(){
+				$("#btF").hide();
+				$("#btP").hide();
+				$("#btP2").hide();
+			}
+
+			function hideRightBts(){
+				$("#btL").hide();
+				$("#btN").hide();
+				$("#btN2").hide();
+			}
+			/*]]>*/
+		</script>
+	</div>
+</body>
+</html>

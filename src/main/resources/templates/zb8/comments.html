@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>直播吧热评</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
+<style>
+	#searchform
+	{
+		border:1px solid #96c2f1;background:#eff7ff;
+	}
+	#searchform input{
+		background-color: rgba(165, 218, 169, 0.87);
+	}
+	
+	#searchform select{
+		background-color: rgba(165, 218, 169, 0.87);
+	}
+	#searchform table {
+		background-color : rgba(75, 117, 212, 0.29);
+		width:100%;
+		border: solid 1px Black;
+		border-collapse: collapse;
+    	border-color: grey;
+	}
+	
+	#searchform table td{
+		border: solid 1px Black;
+		border-collapse: collapse;
+    	border-color: rgba(112, 162, 155, 0.48);
+	}
+	
+	.first-cmt {
+		background-color: rgba(220, 151, 151, 0.65);
+	}
+</style>
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+</script>
+
+</head>
+<body class="body-bg-lightgreen">
+	<div th:replace="header :: header('今日热评.')"></div>
+	
+	<div class="content">
+		
+		<div>
+			<form id="searchform" method="GET" th:action="@{/spyapi/zb8/comments}">
+				<input type="hidden" name="page" th:value="${pageData.pageNum}" />
+				<input type="hidden" name="size" th:value="${pageData.pageSize}" />
+				<input type="hidden" name="day" th:value="${day}" />
+				<input type="hidden" name="orderNews" th:value="${orderNews}" />
+			</form>
+		</div>
+		
+		<div class="datadiv">
+			<h3>搜索结果</h3>
+			<table class="datatable">
+				<thead>
+					<tr>
+						<th class="obj-hide">id</th>
+						<th style="width:25%">内容</th>
+						<th style="width:3%">点赞</th>
+						<th style="width:3%">点踩</th>
+						<th style="width:12%">新闻标题</th>
+						<th style="width:8%">创建时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="log,iterStat : ${pageData}">
+						<tr height="100px" th:class="${log.zb8News?.describe}?first-cmt:(${iterStat.even}?row-bg-even:row-bg-odd)" th:onclick="|showline(this,${iterStat.count});exChangeBgColor(this)|" >
+							<td th:text="${log.id}" class="obj-hide">id</td>
+							<td th:text="${log.content}">content</td>
+							<td th:text="${log.up}">0</td>
+							<td th:text="${log.down}">0</td>
+							<td style="font-size:16px"><a target="_blank" th:text="${log.zb8News?.title}" th:href="|https://m.zhibo8.cc/news/web${log.zb8News?.url}|">content</a></td>
+							<td th:text="${log.createtime}">0</td>
+						</tr>
+					</th:block>
+					<th:block th:if="${pageData.size()} eq 0">
+						<tr><td align="center" colspan="6">没有搜素到数据!</td></tr>
+					</th:block>
+				</tbody>
+			</table>
+			
+		</div>
+		<div th:include="pagnation :: pagnation(${pageData})"></div>
+	</div>
+	
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

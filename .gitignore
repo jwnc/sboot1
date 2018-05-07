@@ -1,0 +1,47 @@
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+target/
+tts/
+.svn/
+*.properties
+software/
+transaction-logs/
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+*.exe
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+*.bak
+*.class
+*.tmp
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+/*.txt

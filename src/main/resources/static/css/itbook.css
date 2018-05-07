@@ -1,0 +1,190 @@
+table th {
+	text-align: center;
+	background-color: rgba(228, 228, 228, 0.28);
+}
+
+form table td {
+	padding: 8px;
+	font-size: 25px
+}
+
+.datadiv table{
+	width: 100%;
+}
+.datadiv table th{
+	font-size: 20px;
+}
+
+.datatable {
+	border-collapse: collapse;
+	border: solid 1px Black;
+	margin-bottom: 20px
+}
+
+.datatable td {
+	border: solid 1px Black;
+	padding: 5px;
+	font-size: 20px;
+}
+
+.datatable th {
+	border: solid 1px Black;
+	padding: 5px;
+}
+
+a.current {
+	background-color: #2e6ab1;
+	border: 1px solid navy;
+	color: #fff;
+	font-weight: bold;
+}
+
+#pagnation a {
+	margin-left: 5px;
+}
+#pagnation{
+	padding-bottom: 30px;
+}
+.img-page{
+	padding-top: 60px;
+}
+
+.img-page a{
+	color: rgba(23, 1, 1, 0.66);
+	background-color: rgb(191, 210, 243);
+	font-size: 3em;
+	padding: 20px 30px;
+	line-height: 1.3333333;
+    border-radius: 12px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.row-bg-highlight {
+	background-color: rgba(245, 240, 98, 0.6);
+}
+
+.row-bg-even {
+	background-color: rgba(234, 221, 221, 0.65);
+}
+
+.row-bg-odd {
+	background-color: rgba(241, 236, 137, 0.37);
+}
+
+.body-bg-lightgreen {
+	background-color: rgba(43, 96, 46, 0.45);
+}
+
+.word-highlight {
+	color: rgb(255,45,45);	
+}
+
+.obj-hide {
+	display: none;
+}
+
+.obj-show {
+	display: block;
+}
+
+body {
+	margin: 0 auto;
+	position: absolute;
+	width: 100%;
+	min-height: 100%;
+}
+
+#header {
+	height: 69px;
+	margin: 0 auto;
+	padding: 0;
+	background-color: rgba(48, 138, 138, 0.87);
+}
+
+#header a {
+	color: #fff;
+	margin-right: 10px;
+	font-size: 3em;
+}
+
+#header span {
+	color: #fff;
+	margin-left: 10px;
+	font-size: 2em;
+}
+
+#header .tit {
+	float: left;
+	margin: 0 0 0 5px;
+}
+
+#header .btngroup {
+	float: right;
+	margin: 0 0 0 5px;
+}
+
+.content {
+	margin-top: 20px;
+	padding-bottom: 54px;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#footer-fixed {
+	position: relative;
+	margin-top: -150px;
+	/* footer高度的负值 */
+	height: 150px;
+	clear: both;
+	background: red;
+}
+
+#footer {
+	clear: both;
+	height: 24px;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	bottom: 30px;
+	width: 100%;
+}
+
+#footer2 {
+	color: #fff;
+	background-color: #312e2e;
+	height: 30px;
+	line-height: 30px !important;
+	margin: 0;
+	padding: 0;
+	clear: both;
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+}
+
+#footer {
+	width: 100%;
+	background-color: #312e2e;
+	color: #fff;
+	height: 30px;
+	line-height: 30px !important;
+	margin: 0 auto;
+	padding: 0;
+	bottom: 0px;
+	text-align: center;
+	font-size:20px;
+}
+
+.footer a:hover {
+	text-decoration: underline;
+	color: #fff;
+	border: none;
+}
+
+.footer a:link, .footer a:active, .footer a:visited {
+	text-decoration: underline;
+	color: #25aacd;
+	border: none;
+}

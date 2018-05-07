@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="header(title)">
+		<div id="header">
+			<div class="tit">
+				<a th:href="@{/}"><em class="fa fa-home" title="主页"></em></a>
+				<span th:text="|> ${title}|"></span>
+			</div>
+			<div class="btngroup">	
+				<a th:href="@{/kpi/booklog_kpi}" title="统计图表">
+					<em class="fa fa-line-chart"></em>
+				</a>
+				<a th:href="@{/word/starQlist}" title="Stack Overflow问题精选">
+					<em class="fa fa-stack-overflow"></em>
+				</a>
+				<a onclick="gistpull()" href="javascript:void(0)" title="Gist 文件同步下载">
+					<em class="fa fa-github"></em>
+				</a>
+			</div>
+		</div>
+		<script type="text/javascript" th:inline="text">
+			function gistpull(){
+				 var index = layer.load(2, {
+			           shade: [0.5,'#000'] //0.1透明度的白色背景
+			     });
+				 $.post('[[@{/gist/pull}]]',function(data){
+					 layer.close(index);
+					 layer.alert(data,
+			                   {
+			       				time:2000 
+			       			}
+			       		);
+				});
+			}
+		</script>
+	</div>
+</body>
+</html>

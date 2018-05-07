@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="copy">
+		<div id="footer">
+	        <span th:inline="text">[[${@environment.getProperty('com.wnc.title')}]]</span> &nbsp;&nbsp;&nbsp; &copy; 2017 ITBOOK LOG Management
+		</div>
+	</div>
+	
+	<div th:fragment="copy2">
+		<div id="footer-fixed">
+         	   <span th:inline="text">[[${@environment.getProperty('com.wnc.title')}]]</span> &copy; 2017 ITBOOK LOG Management
+        </div>
+	</div>
+	<div th:fragment="copyinfo(name,year)">
+		<p th:text='|&copy; ${year} The Good Thymes Virtual Grocery -- ${name}|'></p>
+	</div>
+</body>
+</html>

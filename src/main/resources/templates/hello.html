@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Hello Thymeleaf!</title>
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<script type="text/javascript" th:inline="text">
+	/*<![CDATA[*/
+	$(function() {
+		console.log('name:[[${name}]], score:[[${digit}]]');
+	});
+	if(eval(1+'<'+2)){
+		alert(111);
+	}
+	if(1<2){
+		alert('1<2');
+	}
+	var a = "This is Thmeleaf";
+	console.log(a);
+	/*]]>*/
+</script>
+
+</head>
+<body>
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>内联使用</b>
+		</legend>
+		<label for="notice">Message body:</label>
+		<textarea id="notice" name="notice" th:inline="text" cols="55">
+			Dear [[${name}]], Your Math score is [[${digit}]].
+		</textarea>
+	</fieldset>
+
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>数学运算</b>
+		</legend>
+		${(digit+5-5*2/2) % 11}<span th:text="| = ${(digit+5-5*2/2) % 11}|"></span>
+	</fieldset>
+	<fieldset style="margin: 5px">
+		<!--比较运算符  gt ge lt le eq neq not -->
+		<legend>
+			<b>比较运算符</b>
+		</legend>
+		<div>
+			th:if="${digit} neq 120"<span th:if="${digit} neq 120"
+				th:text="'=非满分'"></span>
+		</div>
+		<div>
+			th:if="${digit} eq 120"<span th:if="${digit} eq 120" th:text="'=满分'"></span>
+		</div>
+		<div>
+			th:if="${digit} ge 120"<span th:if="${digit} ge 105" th:text="'=优秀'"></span>
+		</div>
+		<div>
+			th:if="${digit} lt 105 and ${digit} ge 90"<span
+				th:if="${digit} lt 105 and ${digit} ge 90" th:text="'=良好'"></span>
+		</div>
+		<div>
+			th:if="${digit} lt 90"<span th:if="${digit} lt 90" th:text="'=一般'"></span>
+		</div>
+	</fieldset>
+
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>条件运算符</b>
+		</legend>
+		<input type="checkbox"
+			th:text="'条件运算:'+(${name1}?:'name1 not found!')"
+			th:value="${digit} gt 100 ? '100'"></input> <span
+			th:text="${namedsfs} ?: _">name1 not found!</span>
+	</fieldset>
+
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>switch分支</b>
+		</legend>
+		<div th:switch="${name}">
+			<span th:case="Wnc" th:text="'王能才\''"></span> <span th:case="'Cnw'"
+				th:text="'才能王\''"></span> <span th:case="*">Unknown</span>
+		</div>
+	</fieldset>
+
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>日期相关org.thymeleaf.util.DateUtils</b>
+		</legend>
+		<div th:text="'today:'+${today}"></div>
+		<div th:text="'Calendar to String:'+${{today}}"></div>
+		<div
+			th:text="'today format1: '+${#dates.format(today,'yyyy-MM-dd HH:mm:ss')}"></div>
+		<div
+			th:text="'today format2: '+${#dates.format(today,'yyyy-MMMM-dd')}"></div>
+		<div th:text="'Day:'+${#dates.day(today)}"></div>
+		<div th:text="'Month:'+${#dates.month(today)}"></div>
+		<div th:text="'Year:'+${#dates.year(today)}"></div>
+		<div th:text="'MonthName:'+${#dates.monthName(today)}"></div>
+		<div th:text="'MonthNameShort:'+${#dates.monthNameShort(today)}"></div>
+		<div th:text="'DayOfWeek:'+${#dates.dayOfWeek(today)}"></div>
+		<div th:text="'DayOfWeekName:'+${#dates.dayOfWeekName(today)}"></div>
+		<div
+			th:text="'DayOfWeekNameShort:'+${#dates.dayOfWeekNameShort(today)}"></div>
+		<div th:text="'Hour:'+${#dates.hour(today)}"></div>
+		<div th:text="'Minute:'+${#dates.minute(today)}"></div>
+		<div th:text="'Second:'+${#dates.second(today)}"></div>
+		<div th:text="'Millisecond:'+${#dates.millisecond(today)}"></div>
+	</fieldset>
+
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>字符串相关org.thymeleaf.util.StringUtils</b>
+		</legend>
+		<div th:text="${#strings.length(name)}"></div>
+		<div th:text="${#strings.equals(name,'WNC')}"></div>
+		<div th:text="${#strings.equalsIgnoreCase(name,'WNC')}"></div>
+		<div th:text="${#strings.isEmpty(name)}"></div>
+		<div th:text="${#strings.concat(name,'008')}"></div>
+		<div th:text="${name.split(',')}"></div>
+		<th:block th:each="u : ${'香蕉,苹果,橘子'.split(',')}">
+			<div th:text="${u}"></div>
+		</th:block>
+		
+		<div th:text="${#strings.unCapitalize(name)}"></div>
+		<div th:text="${#strings.capitalizeWords('hello world.')}"></div>
+		<div th:text="${#strings.abbreviate('hello world.',6)}"></div>
+		
+		<div th:utext="${#strings.escapeXml('&lt;10>')}"></div>
+		<div th:utext="'生成指定长度随机串:'+${#strings.randomAlphanumeric(8)}"></div>
+	</fieldset>
+	
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>集合相关org.thymeleaf.util.ArrayUtils</b>
+		</legend>
+		<div th:text="${#arrays.length(dataList)}"></div>
+		<div th:text="${#strings.capitalizeWords(dataList)}"></div>
+		<div th:text="${#strings.abbreviate(dataList,7)}"></div>
+		<div th:text="${#lists.isEmpty(dataList)}"></div>
+		<div th:text="${#lists.contains(dataList,'Monday')}"></div>
+		<div th:text="${#lists.sort(dataList)}"></div>
+		<div th:text="${#lists.size(dataList)}"></div>
+		<div th:text="${#lists.toList('1,2,3'.split(','))}"></div>
+		<div th:text="${#lists.toList({1,6,30}).size()}"></div>
+	</fieldset>
+	
+	<fieldset style="margin: 5px">
+		<legend>
+			<b>其他</b>
+		</legend>
+		<div th:text="${#ids.seq('someId')}"></div>
+		<div>
+			<span th:each="u : ${#numbers.sequence(1,4,1)}" th:text=" ${#ids.seq('someId')} "></span>
+		</div>
+	</fieldset>
+	
+	
+	<div th:include="footer :: copy"></div>
+	<div th:include="footer :: copyinfo(${name}, ${#dates.year(today)})"></div>
+</body>
+</html>

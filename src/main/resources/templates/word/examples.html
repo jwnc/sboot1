@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>ITbook Word Examples</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
+<style>
+.summary {
+	margin-bottom: 10px;
+	font-size: 20px;
+}
+
+.summary-end {
+	font-size: 35px;
+}
+
+.desc {
+	padding:5px;
+}
+.b1,.b2,.b3,.b4,.b1b,.b2b,.b3b,.b4b,.b{display:block;overflow:hidden;}
+.b1,.b2,.b3,.b1b,.b2b,.b3b{height:1px;}
+.b2,.b3,.b4,.b2b,.b3b,.b4b,.b{border-left:1px solid #999;border-right:1px solid #999;}
+.b1,.b1b{margin:0 5px;background:#999;}
+.b2,.b2b{margin:0 3px;border-width:2px;}
+.b3,.b3b{margin:0 2px;}
+.b4,.b4b{height:2px;margin:0 1px;}
+
+.example-title {
+	margin-top: 40px;
+	text-align: center;
+}
+.example-title a{
+	font-size: 35px;
+}
+
+</style>
+
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+	$(function() {
+		if(isMobile()){
+			adjustMobile();
+			$(".summary").css('font-size','35px');
+		}
+	});
+	// 根据qid, 取出当前状态, 然后改到相反的status状态
+	function changeStarStatus(obj,qid) {
+		var status = 1 - $(obj).prev("input[name='star']").val();
+		$.post([[@{/question/changeStarStatus}]], {
+			qid : qid,
+			status : status
+		}, function(data) {
+			if(data.code == 0){
+     			$(obj).prev("input[name='star']").val(status);
+				if(status == 0){
+					$(obj).find("em").removeClass("fa-star").addClass("fa-star-o");
+					$(obj).prop('title','点击收藏');
+				}
+				else {
+					$(obj).find("em").removeClass("fa-star-o").addClass("fa-star");
+					$(obj).prop('title','点击取消收藏');
+				}
+			}
+			else{
+				layer.alert('发生网络异常!');
+			}
+		});
+	}
+	
+	function getMore(){
+		var index = layer.load(2, {
+            shade: [0.5,'#000'] //0.1透明度的白色背景
+     	});
+		$.post([[@{/word/moreexamples}]],
+				{word:[[${wordSearch.word}]], orginalWord:[[${wordSearch.orginalWord}]], dict_id:[[${wordSearch.dictId}]]}, 
+				function(data){
+					if(data.code == 0){
+						//window.location.href=[[@{/word/examples(word=${wordSearch.word},dict_id=${wordSearch.dictId})}]];
+						window.location.reload();
+					}
+					else{
+						layer.close(index);
+						layer.alert('发生网络异常!');
+					}
+		}).error(function() { layer.close(index); alert("error"); });
+		//.complete(function() { console.log("complete"); })
+		//.success(function() { alert("second success"); });
+		// 请求生成后立即分配处理程序，请记住该请求针对 jqxhr 对象.
+	    // 在这里执行其他任务.
+	    // 为上面的请求设置另一个完成函数.
+	    //jqxhr.complete(function(){ alert("second complete"); });
+	}
+/*]]>*/
+</script>
+</head>
+<body class="body-bg-lightgreen">
+	<div th:replace="header :: header('相关技术问题')"></div>
+	<div class="content">
+		<fieldset class="example-title">
+			<legend>
+				<a th:href="${wordSearch.searchUrl}"
+					th:text="|[${wordSearch.word}] Search Questions:${wordSearch.resultCount}|">示例列表</a>
+			</legend>
+		</fieldset>
+		<div class="summary-list">
+			<div class="summary" th:each="example : ${examples}">
+				<b class="b1"></b>
+				<b class="b2" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b3" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b4" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<div class="b desc" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd">
+					<div>
+						<input type="hidden" name="star" th:value="${example.star}"/>
+						
+						<a th:if="${example.star==1}" href="javascript:void(0)"
+							th:onclick="|changeStarStatus(this,${example.qid})|"
+							th:title="点击取消收藏"
+							style="font-size: 2em"><em class="fa fa-star star-color"></em></a> <a
+							th:if="${example.star==0}" href="javascript:void(0)"
+							th:onclick="|changeStarStatus(this,${example.qid})|"
+							th:title="点击收藏"
+							style="font-size: 2em"><em class="fa fa-star-o star-color"></em></a> <span
+							class="vote-count-post"> <strong
+							th:text="|${example.votes} votes|">0</strong>
+						</span> <span class="answer-count-post"> <strong
+							th:text="|${example.answers} answers|">0</strong>
+						</span>
+					</div>
+					<div>
+						<div>
+							<a th:href="${example.href}" th:utext="${example.q}">Example
+								Question Title</a>
+						</div>
+						<div th:utext="${example.excerpt}"></div>
+					</div>
+				</div>
+				<b class="b4b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b3b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b2b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b1b"></b>
+			</div>
+			<div class="summary-end">
+				<span th:text="'Total ' + ${wordSearch.displayListSize}"></span> <a
+				href="javascript:void(0)" onclick="getMore()"> Load More</a>
+			</div>
+		</div>
+	</div>
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

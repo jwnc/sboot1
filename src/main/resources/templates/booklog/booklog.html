@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>ITbook Read Record</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
+<style>
+	#searchform
+	{
+		border:1px solid #96c2f1;background:#eff7ff;
+	}
+	#searchform input{
+		background-color: rgba(165, 218, 169, 0.87);
+	}
+	
+	#searchform select{
+		background-color: rgba(165, 218, 169, 0.87);
+	}
+	#searchform table {
+		background-color : rgba(75, 117, 212, 0.29);
+		width:100%;
+		border: solid 1px Black;
+		border-collapse: collapse;
+    	border-color: grey;
+	}
+	
+	#searchform table td{
+		border: solid 1px Black;
+		border-collapse: collapse;
+    	border-color: rgba(112, 162, 155, 0.48);
+	}
+</style>
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+
+	function searchClear(obj) {
+		$("#searchform input[type='text']").val('');
+		$("#searchform input[type='date']").val('');
+		$("#searchform option[value=' ']").prop('selected', true)
+		$("#searchform input[name='type'][value='1']").prop('checked', true);
+		$(obj).blur();
+	}
+	
+	function moreOper(obj){
+		var tds = $(obj).parent().parent().find("td");
+		var id = $(tds[1]).text();
+		var word = $(tds[3]).text();
+		var time = $(tds[5]).text();
+		var topic = $(tds[6]).text();
+		
+		layer.open({
+			  shadeClose:true,
+			  content:time + ' '+ word
+			  ,btn: ['删除', '爱词霸', '实例']
+			  ,yes: function(index, layero){
+				  deleteLog(id);
+			  }
+			  ,btn2: function(index, layero){
+			    //按钮【按钮二】的回调
+			    toCiba(word);
+			    //return false 开启该代码可禁止点击该按钮关闭
+			  }
+			  ,btn3: function(index, layero){
+			    //按钮【按钮三】的回调
+			     var href = $(obj).parent().parent().find("a").prop('href');
+			    //window.location.href = href;
+			    window.open(href);
+			    //return false 开启该代码可禁止点击该按钮关闭
+			  }
+			  ,cancel: function(){ 
+			    //右上角关闭回调
+			    
+			    //return false 开启该代码可禁止点击该按钮关闭
+			  }
+			});
+	}
+	
+	
+	function deleteLog(logid){
+		console.log('删除:'+logid);
+		layer.confirm('是否确定删除？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+        	$.post([[@{/booklog/deletelog}]],{id:logid}, function(data){
+        		layer.alert(data,
+                    {
+        			//选项列表, 显示2秒钟, end函数在层小时的时候自动回调
+        				time:2000, 
+        				end:function(){
+        					window.location.reload();//刷新当前页面                   	
+                    	}
+        			},
+        			//yes按钮回调函数
+        			function(index){
+        				window.location.reload();//刷新当前页面   
+                    }
+        		);
+			});
+        }, function(){
+            
+        });
+	}
+	function toCiba(word){
+		 layer.open({
+	            type: 2,
+	            title: '网络翻译',
+	            shadeClose: true,
+	            shade: 0.8,
+	            area: ['95%', '70%'],
+	            content: 'http://www.iciba.com/'+word //iframe的url
+	        }); 
+	}
+	function searchFun(){
+		$("#searchform input[name='page']").val(1);
+		$("#searchform").submit();
+	}
+	
+	function searchAdvance(){
+		var index = layer.open({
+            type: 1,
+            title: '高级搜索条件',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['300px', '180px'],
+            content: $("#advanceSearchDiv"),
+            success : function(layero, index) {
+				$("#advanceSearchDiv input[name='weightStart']").val([[${condition.weightStart}]]);
+				$("#advanceSearchDiv input[name='weightEnd']").val([[${condition.weightEnd}]]);
+			}
+        }); 
+		//设置弹窗样式
+		layer.style(index, {
+			'background-color': '#a5c3e2',			
+		});
+	}
+</script>
+
+</head>
+<body class="body-bg-lightgreen">
+	<div th:replace="header :: header('做一个高产的阅读者.')"></div>
+	
+	<div class="content">
+		
+		<div>
+			<form id="searchform" method="POST" th:action="@{/booklog}">
+				<table>
+					<tr>
+						<td width="20%">设备:</td>
+						<td width="30%"><select name="device">
+								<option th:selected="${condition.device}==${val}"
+									th:text="|${val}&nbsp;&nbsp;|" th:value="${val}"
+									th:each="val : ${' ,PE-TL10,GIST,WNC-PC,IMX6SL'.split(',')}" />
+						</select></td>
+						<td width="20%">文字:</td>
+						<td width="30%"><input type="text" name="word"
+							th:value="${condition.word}" style="width:220px" onkeydown="javascript:if(window.event.keyCode == 13){document.getElementById('searchform').submit()}"/></td>
+					</tr>
+	
+					<tr>
+						<td>开始日期:</td>
+						<td><input type="date" name="dayStart"
+							th:value="${condition.dayStart}" /></td>
+						<td>结束日期:</td>
+						<td><input type="date" name="dayEnd"
+							th:value="${condition.dayEnd}" /></td>
+					</tr>
+	
+					<tr>
+						<td>类型:</td>
+						<td colspan="2"><input type="radio"
+							th:checked="${condition.type}==${stat.count}" name="type"
+							th:text="|${val}&nbsp;&nbsp;|" th:value="${stat.count}"
+							th:each="val,stat : ${'已知 ,未知,句子, 所有'.split(',')} " /></td>
+						
+						<td>
+							<a href="javascript:void(0)" onclick="searchClear(this)" style="font-size: 2em;margin-right: 20px"><em class="fa fa-times-circle"></em></a>
+							<a href="javascript:void(0)" onclick="searchFun()" style="font-size: 2em;margin-right: 20px"><em class="fa fa-search"></em></a>
+							<a href="javascript:void(0)" onclick="searchAdvance()"> 高级:<em class="fa fa-hourglass-half"></em></a>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="page" th:value="${pageData.pageNum}" />
+				<input type="hidden" name="size" th:value="${pageData.pageSize}" />
+				<div class="obj-hide" id="advanceSearchDiv" style="font-size:20px" >
+					<div style="margin-left:40px;margin-top:15px;">
+						词频: &nbsp;&nbsp;<input type="number" name="weightStart" style="width:60px" th:value="${condition.weightStart}"/> &nbsp;到&nbsp; <input type="number" name="weightEnd" style="width:60px" th:value="${condition.weightEnd}"/> 
+					</div>
+					<div style="margin-left:40px;margin-top:10px">
+						收藏: &nbsp;&nbsp;<input type="radio" name="star" value="1" th:checked="${condition.star}==1"/>Y&nbsp;&nbsp;&nbsp;<input type="radio" name="star" value="0" th:checked="${condition.star}!=1"/>N
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<a href="javascript:void(0)" onclick="searchFun()" style="font-size:2.5em"><em class="fa fa-check"></em></a>
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div class="datadiv">
+			<h3>搜索结果</h3>
+			<table class="datatable">
+				<thead>
+					<tr>
+						<th class="obj-hide"></th>
+						<th class="obj-hide">id</th>
+						<th style="width:6%">设备</th>
+						<th>内容</th>
+						<th>释义</th>
+						<!-- <th>时间</th> -->
+						<th style="width:6%">词频</th>
+						<th style="width:6%">菜单</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="log,iterStat : ${pageData}">
+						<tr height="100px" th:class="${iterStat.even}?row-bg-even:row-bg-odd" th:onclick="|showline(this,${iterStat.count});exChangeBgColor(this)|" >
+							<td th:text="${iterStat.count}" style="display: none">1</td>
+							<td th:text="${log.id}" style="display: none">id</td>
+							<!-- <td th:switch="${log.device}">
+								<span th:case="WNC-PC" th:text="PC"></span>
+								<span th:case="GIST" th:text="公司"></span> 
+								<span th:case="IMX6SL" th:text="平板"></span> 
+								<span th:case="PE-TL10" th:text="手机"></span> 
+								<span th:case="*">Unknown</span>
+							</td> -->
+							<td th:text="${log.deviceCnName}">deviceCnName</td>
+							<td><a target="_blank" th:text="${log.content}" th:href="@{/word/examples(word=${log.content},dict_id=${log.topic})}">content</a></td>
+							<td th:text="${log.mean}">mean</td>
+							<td th:text="${log.time}" class="obj-hide">time</td>
+							<td th:text="${log.topic}" class="obj-hide">dict_id</td>
+							<td th:text="${log.weight}">weight</td>
+							<td style="text-align:center">
+								<a href="javascript:void(0)" th:onclick="|moreOper(this)|" style="font-size: 1em"><em class="fa fa-map-o"></em></a>
+							</td>
+						</tr>
+					</th:block>
+					<th:block th:if="${pageData.size()} eq 0">
+						<tr><td align="center" colspan="6">没有搜素到数据!</td></tr>
+					</th:block>
+				</tbody>
+			</table>
+			
+		</div>
+		<div th:include="pagnation :: pagnation(${pageData})"></div>
+	</div>
+	
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

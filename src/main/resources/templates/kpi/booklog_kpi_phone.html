@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>ITbook Read Record</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.min.css}"></link>
+<link rel="stylesheet" th:href="@{/css/simple-line-icons.css}"></link>
+
+<script src="https://a.alipayobjects.com/jquery/jquery/1.11.1/jquery.js"></script>
+<script
+	src="https://a.alipayobjects.com/g/datavis/g2-mobile-all/2.1.22/index.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		show();
+	});
+	function show() {
+		$('#c1').html('');
+		$('#c2').html('');
+		column();
+		line();
+	}
+
+	function column() {
+		$.post('../api/booklogkpi/column', {
+			dayStart : $('#day1').val(),
+			dayEnd : $('#day2').val()
+		}, function(data) {
+			GM.Global.pixelRatio = 2;
+		      var chart = new GM.Chart({
+		        id: 'c1'
+		      });
+		      chart.source(data.data, {
+		        tem: {
+		          tickCount: 5
+		        }
+		      });
+		      //配置刻度文字大小，供PC端显示用(移动端可以使用默认值20px)
+		      chart.axis('DEVICE', {
+		        label:{
+		          fontSize: 14 
+		        },
+		        grid: null
+		      });
+		      chart.axis('COUNT', {
+		        label:{
+		          fontSize: 14 
+		        }
+		      });
+		      chart.interval().position('DEVICE*COUNT').color('DEVICE', ['#1f77b4', '#cc0000', '#2ca02c','#ff7f0e']);
+		      chart.render();
+		});
+	}
+	function line() {
+		$.post('../api/booklogkpi/line_phoneWeek', function(data) {
+			GM.Global.pixelRatio = 2;
+			var Util = GM.Util;
+			var chart = new GM.Chart({
+				id : 'c2'
+			});
+			chart.source(data.data, {
+		        tem: {
+		          tickCount: 5
+		        }
+		      });
+		      //配置刻度文字大小，供PC端显示用(移动端可以使用默认值20px)
+		      chart.axis('DAY', {
+		        label:{
+		          fontSize: 14 
+		        },
+		        grid: null
+		      });
+		      chart.axis('CNT', {
+		        label:{
+		          fontSize: 14 
+		        }
+		      });
+		      //chart.intervalDodge().position('DAY*CNT').color('NAME');  //柱形对比图
+		      chart.intervalStack().position('DAY*CNT').color('NAME', ['#1f77b4', '#cc0000', '#2ca02c','#ff7f0e']);
+		      chart.render();
+		});
+	}
+</script>
+
+</head>
+<body class="container">
+	<div class="btngroup">
+		<a href="../booklog_phone"><em class="icon-home"></em></a>
+	</div>
+	<div style="margin-bottom: 10px">
+		<table>
+			<tr>
+				<td>start:</td>
+				<td><input type="date" id="day1" /></td>
+				<td>end:</td>
+				<td><input type="date" id="day2" /></td>
+				<td><input type='button' value="Show" onclick="show()" /></td>
+			</tr>
+		</table>
+	</div>
+	<h2>日志统计</h2>
+	<canvas id="c1" style="width: 800px; height: 450px;"></canvas>
+	<canvas id="c2" style="width: 960px; height: 450px;"></canvas>
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

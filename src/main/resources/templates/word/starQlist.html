@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>ITbook Word Examples</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<style>
+.summary {
+	margin-bottom: 10px;
+	font-size: 20px;
+	padding: 5px;
+}
+
+.desc {
+	padding:5px;
+}
+.b1,.b2,.b3,.b4,.b1b,.b2b,.b3b,.b4b,.b{display:block;overflow:hidden;}
+.b1,.b2,.b3,.b1b,.b2b,.b3b{height:1px;}
+.b2,.b3,.b4,.b2b,.b3b,.b4b,.b{border-left:1px solid #999;border-right:1px solid #999;}
+.b1,.b1b{margin:0 5px;background:#999;}
+.b2,.b2b{margin:0 3px;border-width:2px;}
+.b3,.b3b{margin:0 2px;}
+.b4,.b4b{height:2px;margin:0 1px;}
+</style>
+
+<script th:inline="javascript">
+	// 根据qid, 取出当前状态, 然后改到相反的status状态
+	function changeStarStatus(obj,qid) {
+		var status = 1 - $(obj).prev("input[name='star']").val();
+		$.post([[@{/question/changeStarStatus}]], {
+			qid : qid,
+			status : status
+		}, function(data) {
+			if(data.code == 0){
+     			$(obj).prev("input[name='star']").val(status);
+				if(status == 0){
+					$(obj).find("em").removeClass("fa-star").addClass("fa-star-o");
+				}
+				else {
+					$(obj).find("em").removeClass("fa-star-o").addClass("fa-star");
+				}
+			}
+		});
+	}
+</script>
+</head>
+<body class="body-bg-lightgreen">
+	<div th:replace="header :: header('Stack OF问题精选.')"></div>
+	<div class="content">
+		<div class="obj-hide">
+			<form id="searchform" method="POST" th:action="@{/word/starQlist}">
+				<input type="hidden" name="page" th:value="${pageData.pageNum}" />
+				<input type="hidden" name="size" th:value="${pageData.pageSize}" />
+			</form>
+		</div>
+		<div class="summary-list">
+			<div class="summary" th:each="example : ${pageData}">
+				<b class="b1"></b>
+				<b class="b2" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b3" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b4" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<div class="b desc" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd">
+					<div>
+						<input type="hidden" name="star" th:value="${example.star}"/>
+						
+						<a th:if="${example.star==1}" href="javascript:void(0)"
+							th:onclick="|changeStarStatus(this,${example.qid})|"
+							th:title="点击取消收藏"
+							style="font-size: 2em"><em class="fa fa-star star-color"></em></a> <a
+							th:if="${example.star==0}" href="javascript:void(0)"
+							th:onclick="|changeStarStatus(this,${example.qid})|"
+							th:title="点击收藏"
+							style="font-size: 2em"><em class="fa fa-star-o star-color"></em></a> <span
+							class="vote-count-post"> <strong
+							th:text="|${example.votes} votes|">0</strong>
+						</span> <span class="answer-count-post"> <strong
+							th:text="|${example.answers} answers|">0</strong>
+						</span>
+					</div>
+					<div>
+						<div>
+							<a th:href="${example.href}" th:utext="${example.q}">Example
+								Question Title</a>
+						</div>
+						<div th:utext="${example.excerpt}"></div>
+					</div>
+				</div>
+				<b class="b4b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b3b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b2b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b1b"></b>
+			</div>
+		</div>
+		
+		<div th:include="pagnation :: pagnation(${pageData})"></div>
+	</div>
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

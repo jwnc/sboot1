@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>ITbook Read Record</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
+<style>
+	table td {
+		padding-left: 10px;
+	}
+	table input{
+		background-color: rgba(165, 218, 169, 0.87);
+	}
+</style>
+<script src="https://a.alipayobjects.com/jquery/jquery/1.11.1/jquery.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script
+	src="https://gw.alipayobjects.com/as/g/datavis/g2/2.3.13/index.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		show();
+	});
+	function show(){
+		$('#c1').html('');
+		$('#c2').html('');
+		column();
+		line();
+	}
+	
+	function column(){
+		$.post('../api/booklogkpi/column', {dayStart:$('#day1').val(), dayEnd:$('#day2').val()}, function(data) {
+			var chart = new G2.Chart({
+				id : 'c1', // 指定图表容器 ID
+				width : 600, // 指定图表宽度
+				height : 300
+			// 指定图表高度
+			});
+			// Step 2: 载入数据源,定义列信息
+			chart.source(data.data, {
+				DEVICE : {
+					alias : '设备种类' // 列定义，定义该属性显示的别名
+				},
+				COUNT : {
+					alias : '记录量'
+				}
+			});
+			// Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
+			chart.interval().position('DEVICE*COUNT').color('DEVICE', ['#1f77b4', '#ee0000', '#2ca02c','#ff7f0e'])
+			// Step 4: 渲染图表
+			chart.render();
+		});
+	}
+	function line() {
+		$.post('../api/booklogkpi/line',{dayStart:$('#day1').val(), dayEnd:$('#day2').val()},function(data){
+	        var Frame = G2.Frame;
+	        var frame = new Frame(data.data);
+	        frame = Frame.combinColumns(frame, ['办公PC', '手机','个人PC','平板'], 'value', 'device', 'date'); 
+	        var chart = new G2.Chart({
+	          id: 'c2',
+	          forceFit: true,
+	          height: 450,
+	          plotCfg: {
+	            margin: [20, 20, 100, 80]
+	          }
+	        });
+	        chart.source(frame, {
+	          date: {
+	            type: 'time',
+	            mask: 'yyyy.mm.dd',
+	            tickCount: 12
+	          },
+	          value: {
+	            alias: '记录量'
+	          }
+	        });
+	        chart.legend({
+	          position: 'bottom'
+	        });
+	        chart.axis('date', {
+	          line: null,
+	          tickLine: {
+	            stroke: '#000',
+	            value: 3 // 刻度线长度
+	          },
+	          title: null
+	        });
+	        chart.axis('value', {
+	          tickLine: {
+	            stroke: '#000',
+	            value: 5 // 刻度线长度
+	          },
+	          labels: {
+	            label: {
+	              fill: '#000'
+	            }
+	          },
+	          line: {
+	            stroke: '#000'
+	          },
+	          grid: null
+	        });
+	        chart.line().position('date*value').color('device', ['#1f77b4', '#ff7f0e', '#2ca02c','#ee0000']).shape('spline').size(2);
+	        chart.render();
+	      });
+	}
+</script>
+
+</head>
+<body class="body-bg-lightgreen">
+	<div th:replace="header :: header('日志统计.')"></div>
+	<div class="content">
+		<div
+			style="margin: 0 0 0 5px;font-size: 25px">
+			<table style="width:100%">
+				<tr>
+					<td>开始时间:</td>
+					<td><input type="date" id="day1" th:value="${dayStart}"/></td>
+					<td>结束时间:</td>
+					<td><input type="date" id="day2"  th:value="${dayEnd}"/></td>
+					<td><button onclick="show()" class="btn btn-info">Show</button></td>
+				</tr>
+			</table>
+		</div>
+		<div style="margin-top: 30px;">
+			<div id="c1"></div>
+			<div id="c2"></div>
+		</div>
+	</div>
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

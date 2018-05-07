@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>userList</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<style>
+a.current {
+	background-color: #2e6ab1;
+	border: 1px solid navy;
+	color: #fff;
+	font-weight: bold;
+}
+.row-highlight{
+	background-color: #ee6a00;
+}
+.row-even{
+	background-color: #dddddd;
+}
+</style>
+<script type="text/javascript">
+	$(function() {
+		console.log('jquery init..');
+	});
+
+	function changePSize(obj) {
+		$("#hid_psize").val(obj.value);
+	}
+
+	function clickPage(obj) {
+		window.location.href = "/list/" + $(obj).text() + "?size="
+				+ $("#hid_psize").val();
+	}
+	function gotoPage() {
+		var cpage = $("#custom_page").val();
+		if (cpage != '') {
+			var url = "/list/" + cpage + "?size=" + $("#hid_psize").val();
+			window.location.href = url;
+		}
+	}
+	
+	function showline(obj,rowno){
+		$(obj).addClass('row-highlight').siblings().removeClass('row-highlight');
+		//var index = $(obj).find("td[name='rowindex']").text();
+		$("#prow").text(rowno);
+	}
+</script>
+
+</head>
+<body class="container">
+	<br />
+	<h1>用户列表</h1>
+	<br />
+	<br />
+	<div class="with:80%">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>User Name</th>
+					<th>Password</th>
+					<th>UserSex</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<th:block th:each="user,iterStat : ${pageData}">
+					<tr th:onclick="'showline(this,'+${iterStat.count}+')'" th:class="${iterStat.even}?'row-even'">
+						<th scope="row" th:text="${user.id}">1</th>
+						<td name="rowindex" style="display:none" th:text="${iterStat.count}">1</td>
+						<td th:text="${user.userName}">neo</td>
+						<td th:text="${user.passWord}">Otto</td>
+						<td th:text="${user.userSex}">6</td>
+						<td><a th:href="@{/toEdit(id=${user.id})}">edit</a></td>
+						<td><a th:href="@{/delete(id=${user.id})}">delete</a></td>
+					</tr>
+				</th:block>
+			</tbody>
+		</table>
+	</div>
+
+	<div id="pagnation" style="float: right">
+		<span th:utext="|Total: ${pageData.total}|" style="margin-right:10px">0</span>
+		<span id="prow">0</span>/<span id="pmaxrow" th:text="${pageData.size()}">10</span>
+		<input type="hidden" id="hid_psize" th:value="${pageData.pageSize}" />
+		<input type="hidden" id="hid_pcurr" th:value="${pageData.pageNum}" />
+		<select id="psize" onchange="changePSize(this)">
+			<option th:each="collect,iterStat : ${#numbers.sequence(5,20,5)}"
+				th:value="${iterStat.current}"
+				th:selected="${iterStat.current} == ${pageData.pageSize}"
+				th:text="${iterStat.current}">1</option>
+		</select> 
+		<a
+			th:each="collect,iterStat : ${#numbers.sequence(1,{pageData.pages},1)}"
+				th:class="${iterStat.current} ==${pageData.pageNum}?'current':''"
+ 				onclick="clickPage(this)"
+			th:text="${iterStat.current}">1</a>&nbsp; &nbsp; <input type="text"
+			id="custom_page" style="width: 30px" /> <input type="button"
+			onclick="gotoPage()" value="跳转" />
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-2 control-label">
+			<a href="/toAdd" th:href="@{/toAdd}" class="btn btn-info">add</a>
+		</div>
+	</div>
+
+</body>
+</html>

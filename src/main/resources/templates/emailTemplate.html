@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Title</title>
+<style>
+table {
+	align: center;
+	text-align: center;
+	border-collapse: collapse;
+	border: solid 1px Black;
+	margin-bottom: 20px
+}
+
+table td {
+	border: solid 1px Black;
+	padding: 2px;
+	font-size: 20px;
+}
+
+.row-odd {
+	background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+	<h2 th:text="${summary}">阅读统计:</h2>
+	<table>
+		<thead>
+			<tr>
+				<td>设备</td>
+				<td th:each="map : ${dataList}" th:text="${map.get('day')}" th:class="${mapStat.odd}?'row-odd'"></td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="u : ${'手机,平板,个人PC,办公PC'.split(',')}">
+				<td th:text="${u}">手机</td>
+				<td th:each="map : ${dataList}" th:text="${map.get(u)}" th:class="${mapStat.odd}?'row-odd'"></td>
+			</tr>
+		</tbody>
+	</table>
+	<br />
+	<a th:if="${dataList.size()==7}" th:href="@{http://122.112.219.62:8080/sboot1/kpi/booklog_kpi(dayEnd=${dataList.get(6).get('date')})}">更多信息, 点击此处查看.</a>
+	<a th:href="@{http://122.112.219.62:8080/sboot1/kpi/booklog_kpi}">更多信息, 点击此处查看.</a>
+</body>
+</html>
