@@ -54,7 +54,7 @@ public class HotCmtTask {
 		}
 		flag17 = true;
 		try {
-			while (!lastDay.equals("2018-05-04")) {
+			while (!lastDay.equals("2015-02-11")) {
 				lastDay = BasicDateUtil.getDateBeforeDayDateString(lastDay.replaceAll("-", ""), 1);
 				lastDay = lastDay.substring(0, 4) + "-" + lastDay.substring(4, 6) + "-" + lastDay.substring(6);
 				try {

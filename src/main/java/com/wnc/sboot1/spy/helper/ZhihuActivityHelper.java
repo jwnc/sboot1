@@ -59,7 +59,9 @@ public class ZhihuActivityHelper {
 				entity = activity.getEntity();
 
 				if (entity instanceof Answer) {
-					answerRepository.save((Answer) entity);
+					Answer answer = (Answer) entity;
+					answerRepository.save(answer);
+					questionRepository.save(answer.getQuestion());
 				} else if (entity instanceof Article) {
 					articleRepository.save((Article) entity);
 				} else if (entity instanceof Collection) {

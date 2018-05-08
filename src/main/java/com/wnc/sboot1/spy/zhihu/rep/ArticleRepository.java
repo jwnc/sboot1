@@ -7,8 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.wnc.sboot1.spy.zhihu.active.target.Article;
 
 public interface ArticleRepository
-        extends PagingAndSortingRepository<Article, Integer>,
-        JpaSpecificationExecutor<Article>
-{
+		extends PagingAndSortingRepository<Article, String>, JpaSpecificationExecutor<Article> {
 
 }

@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.wnc.sboot1.cluster.service.ProxyHashService;
-import com.wnc.sboot1.cluster.service.ProxyListService;
 import com.wnc.sboot1.cluster.util.ProxyUtil;
 
 @Component
@@ -40,11 +39,11 @@ public class ProxyTask {
 			try {
 				proxyHashService.checkAll();
 			} catch (Exception e) {
-				logger.error("代理导入异常.", e );
+				logger.error("代理导入异常.", e);
 				e.printStackTrace();
 			} finally {
-				proxyHashService.saveFatestProxies();
 				ProxyUtil.taskFlag1 = false;
+				proxyHashService.saveFatestProxies();
 			}
 		}
 	}
@@ -56,7 +55,7 @@ public class ProxyTask {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	@Scheduled(cron = "${cronJob.remove_proxy}")
 	private void removeDisabled() {
 		sleep();
@@ -69,9 +68,9 @@ public class ProxyTask {
 		try {
 			proxyHashService.removeDisableProxy();
 		} catch (Exception e) {
-			logger.error("失效代理删除异常.",e );
+			logger.error("失效代理删除异常.", e);
 			e.printStackTrace();
-		}finally {
+		} finally {
 			ProxyUtil.taskFlag2 = false;
 		}
 	}

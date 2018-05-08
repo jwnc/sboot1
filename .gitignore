@@ -5,6 +5,8 @@ target/
 tts/
 .svn/
 *.properties
+*.rar
+*.zip
 software/
 transaction-logs/
 

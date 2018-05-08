@@ -7,8 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.wnc.sboot1.spy.zhihu.active.target.RoundTable;
 
 public interface RoundTableRepository
-        extends PagingAndSortingRepository<RoundTable, Integer>,
-        JpaSpecificationExecutor<RoundTable>
-{
+		extends PagingAndSortingRepository<RoundTable, String>, JpaSpecificationExecutor<RoundTable> {
 
 }

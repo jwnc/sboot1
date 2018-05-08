@@ -6,9 +6,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.wnc.sboot1.spy.zhihu.active.target.Topic;
 
-public interface TopicRepository
-        extends PagingAndSortingRepository<Topic, Integer>,
-        JpaSpecificationExecutor<Topic>
-{
+public interface TopicRepository extends PagingAndSortingRepository<Topic, String>, JpaSpecificationExecutor<Topic> {
 
 }

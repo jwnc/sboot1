@@ -28,7 +28,7 @@ public class ProxyHashService {
 	private static final int INVALID_PROXY_REPLYTIME = -1;
 	private static final int DEFAULT_PROXY_REPLYTIME = 10000;// 默认10秒,
 																// 尽量让后面计算出的优秀代理排前面
-	private static final int ENOUGH_COUNT = 600;// 只有在不足的情况下, 才执行导入网络资源
+	private static final int ENOUGH_COUNT = 1000;// 只有在不足的情况下, 才执行导入网络资源
 	private final String redisHashKey = "proxyHtable";
 	private Logger logger = Logger.getLogger(ProxyHashService.class);
 
@@ -37,7 +37,7 @@ public class ProxyHashService {
 	private HashOperations opsForHash;
 	ListOperations<String, String> opsForList;
 
-	private ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(15);
+	private ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(30);
 	private volatile int checkCount = 0;
 
 	// 构造函数使用@Autowired
@@ -59,7 +59,11 @@ public class ProxyHashService {
 		List<String> get61Proxies = ProxyUtil.get61Proxies();
 		int sum = 0;
 		for (String proxyStr : get61Proxies) {
-			sum += addProxy(proxyStr, DEFAULT_PROXY_REPLYTIME) ? 1 : 0;
+			try {
+				sum += addProxy(proxyStr, DEFAULT_PROXY_REPLYTIME) ? 1 : 0;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return sum;
 	}
@@ -202,12 +206,13 @@ public class ProxyHashService {
 		Long size = opsForList.size(ProxyListService.redisListKey);
 
 		List<String> fatestProxies = getFatestProxies(ProxyListService.POOL_SIZE);
+		// 先塞进去
 		opsForList.rightPushAll(ProxyListService.redisListKey, fatestProxies);
 
 		logger.info("加入缓存代理池内数目:" + fatestProxies.size());
 
 		logger.info("清空缓存代理池内数目:" + size);
-		// 先全部清空
+		// 再全部清空
 		for (int i = 0; i < size; i++) {
 			opsForList.leftPop(ProxyListService.redisListKey);
 		}

@@ -7,8 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.wnc.sboot1.spy.zhihu.active.target.Collection;
 
 public interface CollectionRepository
-        extends PagingAndSortingRepository<Collection, Integer>,
-        JpaSpecificationExecutor<Collection>
-{
+		extends PagingAndSortingRepository<Collection, String>, JpaSpecificationExecutor<Collection> {
 
 }

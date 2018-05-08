@@ -4,21 +4,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProxyListService {
-	public static final int POOL_SIZE = 400;
+	public static final int POOL_SIZE = 800;
 	private final int BUFFER_SIZE = 100;
 	public static final String redisListKey = "proxyList";
 
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
+
 	/**
 	 * 获取缓存,每次取BUFFER_SIZE=100条
 	 * 
@@ -40,5 +39,4 @@ public class ProxyListService {
 		return list;
 	}
 
-	
 }

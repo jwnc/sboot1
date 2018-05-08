@@ -7,8 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.wnc.sboot1.spy.zhihu.active.target.ZColumn;
 
 public interface ColumnRepository
-        extends PagingAndSortingRepository<ZColumn, Integer>,
-        JpaSpecificationExecutor<ZColumn>
-{
+		extends PagingAndSortingRepository<ZColumn, String>, JpaSpecificationExecutor<ZColumn> {
 
 }
