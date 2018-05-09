@@ -35,7 +35,8 @@
 <script type="text/javascript" th:inline="javascript">
 	function changeDate(){
 		var d = $("#dateStr").val();
-		window.location.href = "/spyapi/zhihu/aggre?dateStr="+d;
+		//window.location.href = "/spyapi/zhihu/aggre?dateStr="+d;
+		window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+d;
 	}
 </script>
 
@@ -44,7 +45,7 @@
 	<div th:replace="header :: header('大V干了什么.')"></div>
 	<div class="content">
 		<div>
-			<td><input id="dateStr" type="date" name="dateStr" onchange="changeDate()"/></td>
+			<td><input id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate()"/></td>
 		</div>
 		<div class="summary-list">
 			<div class="summary" th:each="example : ${data}">

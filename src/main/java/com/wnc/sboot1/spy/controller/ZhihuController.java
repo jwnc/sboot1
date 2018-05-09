@@ -26,6 +26,7 @@ public class ZhihuController {
 		}
 		try {
 			List aggreData = zhihuActivityService.getAggreData(dateStr);
+			model.addAttribute("dateStr", dateStr);
 			model.addAttribute("data", aggreData);
 		} catch (Exception e) {
 			e.printStackTrace();

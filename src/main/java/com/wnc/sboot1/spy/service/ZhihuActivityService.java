@@ -100,10 +100,15 @@ public class ZhihuActivityService {
 			find(targetDesc);
 			try {
 				targetDescRepository.save(targetDesc);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e + "\n" + targetDesc);
+			}
+			try {
 				targetAggreInfoRepository.save(targetAggreInfo);
 			} catch (Exception e) {
 				e.printStackTrace();
-				logger.error(e);
+				logger.error(e + "\n" + targetAggreInfo);
 			}
 		}
 	}
