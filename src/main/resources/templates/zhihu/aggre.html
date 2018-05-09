@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>知乎每日热点跟踪</title>
+<link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
+<link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
+<script th:src="@{/js/jquery-1.11.1.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<style>
+.summary {
+	margin-bottom: 10px;
+	font-size: 20px;
+	padding: 5px;
+}
+
+.desc {
+	padding:5px;
+}
+.cnt{
+	color:red;
+	margin-right:5px;
+}
+.b1,.b2,.b3,.b4,.b1b,.b2b,.b3b,.b4b,.b{display:block;overflow:hidden;}
+.b1,.b2,.b3,.b1b,.b2b,.b3b{height:1px;}
+.b2,.b3,.b4,.b2b,.b3b,.b4b,.b{border-left:1px solid #999;border-right:1px solid #999;}
+.b1,.b1b{margin:0 5px;background:#999;}
+.b2,.b2b{margin:0 3px;border-width:2px;}
+.b3,.b3b{margin:0 2px;}
+.b4,.b4b{height:2px;margin:0 1px;}
+</style>
+
+<script type="text/javascript" th:inline="javascript">
+	function changeDate(){
+		var d = $("#dateStr").val();
+		window.location.href = "/spyapi/zhihu/aggre?dateStr="+d;
+	}
+</script>
+
+</head>
+<body class="body-bg-lightgreen">
+	<div th:replace="header :: header('大V干了什么.')"></div>
+	<div class="content">
+		<div>
+			<td><input id="dateStr" type="date" name="dateStr" onchange="changeDate()"/></td>
+		</div>
+		<div class="summary-list">
+			<div class="summary" th:each="example : ${data}">
+				<b class="b1"></b>
+				<b class="b2" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b3" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b4" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<div class="b desc" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd">
+					<div>
+						<div>
+							<span th:text="${example.cnt}" class="cnt"></span>
+							<a target="blank" th:href="${example.url}" th:utext="${example.title}" tid="${example.title}">Target Title</a>
+						</div>
+						<div th:utext="${example.description}"></div>
+					</div>
+				</div>
+				<b class="b4b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b3b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b2b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
+				<b class="b1b"></b>
+			</div>
+		</div>
+		
+	</div>
+	<div th:replace="footer :: copy"></div>
+</body>
+</html>

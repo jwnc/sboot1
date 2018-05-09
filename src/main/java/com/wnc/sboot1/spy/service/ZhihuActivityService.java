@@ -1,6 +1,7 @@
 
 package com.wnc.sboot1.spy.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -20,6 +21,7 @@ import com.wnc.sboot1.spy.zhihu.TT2;
 import com.wnc.sboot1.spy.zhihu.active.aggre.TargetAggreInfo;
 import com.wnc.sboot1.spy.zhihu.active.aggre.TargetAggreKey;
 import com.wnc.sboot1.spy.zhihu.active.aggre.TargetDesc;
+import com.wnc.sboot1.spy.zhihu.active.aggre.TargetDescVo;
 import com.wnc.sboot1.spy.zhihu.active.target.Answer;
 import com.wnc.sboot1.spy.zhihu.active.target.Article;
 import com.wnc.sboot1.spy.zhihu.active.target.Question;
@@ -104,6 +106,26 @@ public class ZhihuActivityService {
 				logger.error(e);
 			}
 		}
+	}
+
+	public List getAggreData(String dateStr) {
+		String sql = "select ti.cnt,td.description,td.tid,td.title,td.type,td.url from target_aggre_info ti, target_desc td where ti.tid = td.tid and date_str = '"
+				+ dateStr + "' order by cnt desc";
+		Query createNativeQuery = entityManager.createNativeQuery(sql);
+		List<Object[]> aggreData = createNativeQuery.getResultList();
+		List<TargetDescVo> list = new ArrayList<TargetDescVo>();
+		TargetDescVo vo;
+		for (Object[] arr : aggreData) {
+			vo = new TargetDescVo();
+			vo.setCnt(BasicNumberUtil.getNumber(String.valueOf(arr[0])));
+			vo.setDescription(String.valueOf(arr[1]));
+			vo.setTid(String.valueOf(arr[2]));
+			vo.setTitle(String.valueOf(arr[3]));
+			vo.setType(String.valueOf(arr[4]));
+			vo.setUrl(String.valueOf(arr[5]));
+			list.add(vo);
+		}
+		return list;
 	}
 
 	private void find(TargetDesc targetAggreInfo) {
