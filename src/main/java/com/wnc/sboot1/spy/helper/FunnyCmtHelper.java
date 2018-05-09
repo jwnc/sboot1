@@ -1,11 +1,13 @@
 
 package com.wnc.sboot1.spy.helper;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,7 @@ import com.wnc.sboot1.spy.zuqiu.Zb8News;
 
 @Component
 public class FunnyCmtHelper {
+	private static Logger logger = Logger.getLogger(FunnyCmtHelper.class);
 	@Autowired
 	private Zb8NewsRepository zb8NewsRepository;
 	@Autowired
@@ -40,6 +43,7 @@ public class FunnyCmtHelper {
 			singleNews(entry);
 		}
 		saveCompleteLog();
+		logger.info("热评任务成功完成!");
 	}
 
 	public void forkToday() throws Exception {
@@ -47,7 +51,11 @@ public class FunnyCmtHelper {
 	}
 
 	public void forkYesterday() throws Exception {
-		forkByDay(SpiderUtils.getYesterDayStr());
+		if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 10) {
+			forkToday();
+		} else {
+			forkByDay(SpiderUtils.getYesterDayStr());
+		}
 	}
 
 	// @Transactional( propagation = Propagation.REQUIRES_NEW )

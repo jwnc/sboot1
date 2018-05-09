@@ -61,7 +61,10 @@ public class ZhihuActivityHelper {
 				if (entity instanceof Answer) {
 					Answer answer = (Answer) entity;
 					answerRepository.save(answer);
-					questionRepository.save(answer.getQuestion());
+					// 注意info和title的处理, 直接save的话会为null
+					Question question = answer.getQuestion();
+					question.setInfo(question.getTitle());
+					questionRepository.save(question);
 				} else if (entity instanceof Article) {
 					articleRepository.save((Article) entity);
 				} else if (entity instanceof Collection) {
