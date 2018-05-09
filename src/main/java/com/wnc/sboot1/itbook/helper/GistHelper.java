@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1.itbook.helper;
 
 import java.io.File;
@@ -55,9 +56,11 @@ public class GistHelper
                     {
                         if ( gistDownloader( gistName, gistUrl ) )
                         {
-                            BookLogRetrieving.log( "GIST", PatternUtil
-                                    .getLastPattern( gistName, "\\d+\\.txt" ),
-                                    cvtToBjTime );
+                            BookLogRetrieving
+                                    .log( "GIST",
+                                            PatternUtil.getLastPattern(
+                                                    gistName, "\\d+\\.txt" ),
+                                            cvtToBjTime );
                             ITBookLogService.parseLogsToDb(
                                     getDestPath( gistName ), "GIST" );
                         }
@@ -79,7 +82,7 @@ public class GistHelper
     {
         String url = "https://api.github.com/users/wtjavaer88/gists";
         String str = Jsoup.connect( url )
-        // .proxy( "openproxy.huawei.com", 8080 )
+                // .proxy( "openproxy.huawei.com", 8080 )
                 .ignoreContentType( true ).timeout( 5000 ).execute().body();
         return str;
     }
@@ -120,8 +123,8 @@ public class GistHelper
                     BasicFileUtil.CopyFile( destPath + ".bak", destPath );
                 }
             }
-            logger.error( " download gist【" + gistUrl + "】  error:"
-                    + e.toString() );
+            logger.error(
+                    " download gist【" + gistUrl + "】  error:" + e.toString() );
         }
         return false;
     }

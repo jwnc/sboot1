@@ -19,7 +19,8 @@ public class GlobalExceptionHandler
 
     // Controller 拦截异常处理
     @ExceptionHandler( value = Exception.class )
-    public ModelAndView defaultErrorHandler( HttpServletRequest req, Exception e )
+    public ModelAndView defaultErrorHandler( HttpServletRequest req,
+            Exception e )
     {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.getModel().put( "errmsg", e.getMessage() );
@@ -30,7 +31,8 @@ public class GlobalExceptionHandler
     // RestController 拦截异常处理
     @ExceptionHandler( value = CheckException.class )
     @ResponseBody
-    public ResultBean<?> checkErrorHandler( HttpServletRequest req, Exception e )
+    public ResultBean<?> checkErrorHandler( HttpServletRequest req,
+            Exception e )
     {
         return new ResultBean<>( e );
     }

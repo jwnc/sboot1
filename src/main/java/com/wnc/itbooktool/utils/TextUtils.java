@@ -1,3 +1,4 @@
+
 package com.wnc.itbooktool.utils;
 
 import com.wnc.string.PatternUtil;
@@ -7,8 +8,9 @@ public class TextUtils
 {
     public static boolean isSequence( String clipBoardContent )
     {
-        int size = PatternUtil.getAllPatternGroup( clipBoardContent,
-                "([a-zA-Z\\-_']+)" ).size();
+        int size = PatternUtil
+                .getAllPatternGroup( clipBoardContent, "([a-zA-Z\\-_']+)" )
+                .size();
         return !clipBoardContent.startsWith( "http" )
                 && !TextFormatUtil.containsChinese( clipBoardContent )
                 && size > 1 && size < 50;

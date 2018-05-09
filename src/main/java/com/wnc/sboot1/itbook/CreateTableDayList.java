@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1.itbook;
 
 import com.wnc.basic.BasicDateUtil;
@@ -15,9 +16,8 @@ public class CreateTableDayList
             {
                 day = dealDay( day, 1 );
                 System.out.println( day );
-                DbExecMgr
-                        .execOnlyOneUpdate( "INSERT INTO DAYLIST(DAY) VALUES('"
-                                + day + "')" );
+                DbExecMgr.execOnlyOneUpdate(
+                        "INSERT INTO DAYLIST(DAY) VALUES('" + day + "')" );
                 day = day.replace( "-", "" );
             }
         } catch ( Exception e )

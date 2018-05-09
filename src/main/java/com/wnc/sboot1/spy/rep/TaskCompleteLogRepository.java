@@ -5,5 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.wnc.sboot1.spy.zuqiu.TaskCompleteLog;
 
-public interface TaskCompleteLogRepository extends CrudRepository<TaskCompleteLog, Integer> {
+public interface TaskCompleteLogRepository
+        extends CrudRepository<TaskCompleteLog, Integer>
+{
 }

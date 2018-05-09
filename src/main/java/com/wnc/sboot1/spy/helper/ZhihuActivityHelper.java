@@ -28,70 +28,87 @@ import com.wnc.sboot1.spy.zhihu.rep.TaskErrLogRepository;
 import com.wnc.sboot1.spy.zhihu.rep.TopicRepository;
 
 @Component
-public class ZhihuActivityHelper {
-	private static Logger logger = Logger.getLogger(ZhihuActivityHelper.class);
-	@Autowired
-	AnswerRepository answerRepository;
-	@Autowired
-	ArticleRepository articleRepository;
-	@Autowired
-	QuestionRepository questionRepository;
-	@Autowired
-	CollectionRepository collectionRepository;
-	@Autowired
-	ColumnRepository columnRepository;
-	@Autowired
-	RoundTableRepository roundTableRepository;
-	@Autowired
-	TopicRepository topicRepository;
+public class ZhihuActivityHelper
+{
+    private static Logger logger = Logger
+            .getLogger( ZhihuActivityHelper.class );
+    @Autowired
+    AnswerRepository answerRepository;
+    @Autowired
+    ArticleRepository articleRepository;
+    @Autowired
+    QuestionRepository questionRepository;
+    @Autowired
+    CollectionRepository collectionRepository;
+    @Autowired
+    ColumnRepository columnRepository;
+    @Autowired
+    RoundTableRepository roundTableRepository;
+    @Autowired
+    TopicRepository topicRepository;
 
-	@Autowired
-	ActivityRepository actRepository;
-	@Autowired
-	TaskErrLogRepository taskErrLogRepository;
+    @Autowired
+    ActivityRepository actRepository;
+    @Autowired
+    TaskErrLogRepository taskErrLogRepository;
 
-	public void save(List<Activity> activityList) {
-		Target entity = new Target();
-		for (Activity activity : activityList) {
-			try {
-				activity.convertTargetAndId();
-				actRepository.save(activity);
-				entity = activity.getEntity();
+    public void save( List<Activity> activityList )
+    {
+        Target entity = new Target();
+        for ( Activity activity : activityList )
+        {
+            try
+            {
+                activity.convertTargetAndId();
+                actRepository.save( activity );
+                entity = activity.getEntity();
 
-				if (entity instanceof Answer) {
-					Answer answer = (Answer) entity;
-					answerRepository.save(answer);
-					// 注意info和title的处理, 直接save的话会为null
-					Question question = answer.getQuestion();
-					question.setInfo(question.getTitle());
-					questionRepository.save(question);
-				} else if (entity instanceof Article) {
-					articleRepository.save((Article) entity);
-				} else if (entity instanceof Collection) {
-					collectionRepository.save((Collection) entity);
-				} else if (entity instanceof ZColumn) {
-					columnRepository.save((ZColumn) entity);
-				} else if (entity instanceof Question) {
-					questionRepository.save((Question) entity);
-				} else if (entity instanceof RoundTable) {
-					roundTableRepository.save((RoundTable) entity);
-				} else if (entity instanceof Topic) {
-					topicRepository.save((Topic) entity);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error(activity.getAction().getAction_text() + " " + entity.getUrl() + e.toString());
-			}
-		}
-	}
+                if ( entity instanceof Answer )
+                {
+                    Answer answer = (Answer)entity;
+                    answerRepository.save( answer );
+                    // 注意info和title的处理, 直接save的话会为null
+                    Question question = answer.getQuestion();
+                    question.setInfo( question.getTitle() );
+                    questionRepository.save( question );
+                } else if ( entity instanceof Article )
+                {
+                    articleRepository.save( (Article)entity );
+                } else if ( entity instanceof Collection )
+                {
+                    collectionRepository.save( (Collection)entity );
+                } else if ( entity instanceof ZColumn )
+                {
+                    columnRepository.save( (ZColumn)entity );
+                } else if ( entity instanceof Question )
+                {
+                    questionRepository.save( (Question)entity );
+                } else if ( entity instanceof RoundTable )
+                {
+                    roundTableRepository.save( (RoundTable)entity );
+                } else if ( entity instanceof Topic )
+                {
+                    topicRepository.save( (Topic)entity );
+                }
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+                logger.error( activity.getAction().getAction_text() + " "
+                        + entity.getUrl() + e.toString() );
+            }
+        }
+    }
 
-	public void errLog(TaskErrLog taskErrLog) {
-		try {
-			taskErrLogRepository.save(taskErrLog);
-		} catch (Exception e) {
-			logger.error(taskErrLog.getUrl() + " " + e.toString());
-			e.printStackTrace();
-		}
-	}
+    public void errLog( TaskErrLog taskErrLog )
+    {
+        try
+        {
+            taskErrLogRepository.save( taskErrLog );
+        } catch ( Exception e )
+        {
+            logger.error( taskErrLog.getUrl() + " " + e.toString() );
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -32,16 +32,16 @@ public class WordSearchService
         if ( selectSqlMap.size() > 0 )
         {
             wordSearch = new WordSearchDTO();
-            wordSearch.setDisplayListSize( DbConverter.cvtInt( selectSqlMap,
-                    "DISPLAY_LIST_SIZE" ) );
+            wordSearch.setDisplayListSize(
+                    DbConverter.cvtInt( selectSqlMap, "DISPLAY_LIST_SIZE" ) );
             wordSearch
                     .setDictId( DbConverter.cvtInt( selectSqlMap, "DICT_ID" ) );
-            wordSearch.setResultCount( DbConverter.cvtInt( selectSqlMap,
-                    "RESULT_COUNT" ) );
-            wordSearch.setSearchUrl( DbConverter.cvtStr( selectSqlMap,
-                    "SEARCH_URL" ) );
-            wordSearch.setPage( DbConverter
-                    .cvtInt( selectSqlMap, "SEARCH_PAGE" ) );
+            wordSearch.setResultCount(
+                    DbConverter.cvtInt( selectSqlMap, "RESULT_COUNT" ) );
+            wordSearch.setSearchUrl(
+                    DbConverter.cvtStr( selectSqlMap, "SEARCH_URL" ) );
+            wordSearch.setPage(
+                    DbConverter.cvtInt( selectSqlMap, "SEARCH_PAGE" ) );
             wordSearch.setWord( word );
         }
 
@@ -51,8 +51,8 @@ public class WordSearchService
     public static List<WordExample> searchList( String word )
     {
         List<WordExample> list = null;
-        if ( DbExecMgr.isExistData( "SELECT * FROM WORD_QUESTIONS WHERE WORD='"
-                + word + "'" ) )
+        if ( DbExecMgr.isExistData(
+                "SELECT * FROM WORD_QUESTIONS WHERE WORD='" + word + "'" ) )
         {
             list = new ArrayList<WordExample>();
 
@@ -66,10 +66,10 @@ public class WordSearchService
             {
                 wordExample = new WordExample();
                 fieldMap = (Map)selectAllSqlMap.get( i );
-                wordExample.setAnswers( DbConverter
-                        .cvtInt( fieldMap, "ANSWERS" ) );
-                wordExample.setExcerpt( DbConverter
-                        .cvtStr( fieldMap, "EXCERPT" ) );
+                wordExample.setAnswers(
+                        DbConverter.cvtInt( fieldMap, "ANSWERS" ) );
+                wordExample.setExcerpt(
+                        DbConverter.cvtStr( fieldMap, "EXCERPT" ) );
                 wordExample.setHref( DbConverter.cvtStr( fieldMap, "URL" ) );
                 wordExample.setQ( DbConverter.cvtStr( fieldMap, "TITLE" ) );
                 wordExample.setVotes( DbConverter.cvtInt( fieldMap, "VOTES" ) );
@@ -92,8 +92,8 @@ public class WordSearchService
         if ( selectSqlMap.size() > 0 )
         {
             wordExample = new WordExample();
-            wordExample.setExcerpt( DbConverter
-                    .cvtStr( selectSqlMap, "EXCERPT" ) );
+            wordExample.setExcerpt(
+                    DbConverter.cvtStr( selectSqlMap, "EXCERPT" ) );
             wordExample.setQ( DbConverter.cvtStr( selectSqlMap, "TITLE" ) );
         }
 
@@ -112,8 +112,8 @@ public class WordSearchService
             {
                 try
                 {
-                    WordSearchService
-                            .logSearch( wordSearchTmp, wordExamplesTmp );
+                    WordSearchService.logSearch( wordSearchTmp,
+                            wordExamplesTmp );
                 } catch ( Exception e )
                 {
                     logger.error( e );
@@ -139,16 +139,10 @@ public class WordSearchService
                             + wordSearch.getWord() + "'" ) )
             {
                 String sql = "INSERT INTO WORD_SEARCH(WORD,DICT_ID,SEARCH_URL,RESULT_COUNT,DISPLAY_LIST_SIZE,CREATE_TIME) VALUES('"
-                        + wordSearch.getWord()
-                        + "',"
-                        + wordSearch.getDictId()
-                        + ",'"
-                        + wordSearch.getSearchUrl()
-                        + "',"
-                        + wordSearch.getResultCount()
-                        + ","
-                        + wordSearch.getDisplayListSize()
-                        + ",'"
+                        + wordSearch.getWord() + "'," + wordSearch.getDictId()
+                        + ",'" + wordSearch.getSearchUrl() + "',"
+                        + wordSearch.getResultCount() + ","
+                        + wordSearch.getDisplayListSize() + ",'"
                         + BasicDateUtil.getCurrentDateTimeString() + "')";
                 logger.info( sql );
                 DbExecMgr.execOnlyOneUpdate( sql );
@@ -165,16 +159,15 @@ public class WordSearchService
 
             for ( WordExample wordExample : wordExamples )
             {
-                if ( !DbExecMgr
-                        .isExistData( "SELECT * FROM WORD_QUESTIONS WHERE WORD = '"
-                                + wordSearch.getWord()
-                                + "' AND QUESTION_ID="
+                if ( !DbExecMgr.isExistData(
+                        "SELECT * FROM WORD_QUESTIONS WHERE WORD = '"
+                                + wordSearch.getWord() + "' AND QUESTION_ID="
                                 + wordExample.getQid() ) )
                 {
                     DbFieldSqlUtil util = new DbFieldSqlUtil( "WORD_QUESTIONS",
                             "" );
-                    util.addInsertField( new DbField( "WORD", wordExample
-                            .getWord() ) );
+                    util.addInsertField(
+                            new DbField( "WORD", wordExample.getWord() ) );
                     util.addInsertField( new DbField( "QUESTION_ID",
                             wordExample.getQid() + "" ) );
                     logger.info( util.getInsertSql() );
@@ -183,37 +176,37 @@ public class WordSearchService
                 if ( !existQuestion( wordExample.getQid() ) )
                 {
                     DbFieldSqlUtil util = new DbFieldSqlUtil( "QUESTION", "" );
-                    util.addInsertField( new DbField( "ID", wordExample
-                            .getQid() + "" ) );
-                    util.addInsertField( new DbField( "TITLE",
-                            StringEscapeUtils.escapeSql( wordExample.getQ() ) ) );
+                    util.addInsertField(
+                            new DbField( "ID", wordExample.getQid() + "" ) );
+                    util.addInsertField( new DbField( "TITLE", StringEscapeUtils
+                            .escapeSql( wordExample.getQ() ) ) );
                     util.addInsertField( new DbField( "URL", StringEscapeUtils
                             .escapeSql( wordExample.getHref() ) ) );
-                    util.addInsertField( new DbField( "EXCERPT",
-                            StringEscapeUtils.escapeSql( wordExample
-                                    .getExcerpt() ) ) );
-                    util.addInsertField( new DbField( "VOTES", wordExample
-                            .getVotes() + "" ) );
-                    util.addInsertField( new DbField( "ANSWERS", wordExample
-                            .getAnswers() + "" ) );
+                    util.addInsertField(
+                            new DbField( "EXCERPT", StringEscapeUtils
+                                    .escapeSql( wordExample.getExcerpt() ) ) );
+                    util.addInsertField( new DbField( "VOTES",
+                            wordExample.getVotes() + "" ) );
+                    util.addInsertField( new DbField( "ANSWERS",
+                            wordExample.getAnswers() + "" ) );
                     logger.info( util.getInsertSql() );
                     DbExecMgr.execOnlyOneUpdate( util.getInsertSql() );
                 } else
                 {
                     DbFieldSqlUtil util = new DbFieldSqlUtil( "QUESTION", "" );
-                    util.addUpdateField( new DbField( "TITLE",
-                            StringEscapeUtils.escapeSql( wordExample.getQ() ) ) );
+                    util.addUpdateField( new DbField( "TITLE", StringEscapeUtils
+                            .escapeSql( wordExample.getQ() ) ) );
                     util.addUpdateField( new DbField( "URL", StringEscapeUtils
                             .escapeSql( wordExample.getHref() ) ) );
-                    util.addUpdateField( new DbField( "EXCERPT",
-                            StringEscapeUtils.escapeSql( wordExample
-                                    .getExcerpt() ) ) );
-                    util.addUpdateField( new DbField( "VOTES", wordExample
-                            .getVotes() + "" ) );
-                    util.addUpdateField( new DbField( "ANSWERS", wordExample
-                            .getAnswers() + "" ) );
-                    util.addWhereField( new DbField( "ID", wordExample.getQid()
-                            + "" ) );
+                    util.addUpdateField(
+                            new DbField( "EXCERPT", StringEscapeUtils
+                                    .escapeSql( wordExample.getExcerpt() ) ) );
+                    util.addUpdateField( new DbField( "VOTES",
+                            wordExample.getVotes() + "" ) );
+                    util.addUpdateField( new DbField( "ANSWERS",
+                            wordExample.getAnswers() + "" ) );
+                    util.addWhereField(
+                            new DbField( "ID", wordExample.getQid() + "" ) );
                     logger.info( util.getUpdateSql() );
                     DbExecMgr.execOnlyOneUpdate( util.getUpdateSql() );
                 }

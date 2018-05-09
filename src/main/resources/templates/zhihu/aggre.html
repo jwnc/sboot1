@@ -38,6 +38,9 @@
 		//window.location.href = "/spyapi/zhihu/aggre?dateStr="+d;
 		window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+d;
 	}
+	function testDate(){
+		alert($("#weekStr").val());
+	}
 </script>
 
 </head>
@@ -46,6 +49,7 @@
 	<div class="content">
 		<div>
 			<td><input id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate()"/></td>
+			<td><input id="weekStr" type="week" onchange="testDate()"/></td>
 		</div>
 		<div class="summary-list">
 			<div class="summary" th:each="example : ${data}">
@@ -57,7 +61,7 @@
 					<div>
 						<div>
 							<span th:text="${example.cnt}" class="cnt"></span>
-							<a target="blank" th:href="${example.url}" th:utext="${example.title}" tid="${example.title}">Target Title</a>
+							<a target="_blank" th:href="|${example.url}|" th:utext="${example.title}">Target Title</a>
 						</div>
 						<div th:utext="${example.description}"></div>
 					</div>

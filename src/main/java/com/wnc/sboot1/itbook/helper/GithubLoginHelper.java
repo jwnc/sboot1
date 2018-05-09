@@ -18,8 +18,8 @@ public class GithubLoginHelper
                 .proxy( "openproxy.huawei.com", 8080 ).execute();
         Document parse = execute.parse();
         Map<String, String> cookies = execute.cookies();
-        String auth = parse.select( "input[name='authenticity_token']" )
-                .first().val();
+        String auth = parse.select( "input[name='authenticity_token']" ).first()
+                .val();
 
         String githubLoginUrl = "https://github.com/session";
         Response execute2 = Jsoup.connect( githubLoginUrl ).cookies( cookies )

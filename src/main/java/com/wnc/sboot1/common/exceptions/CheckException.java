@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1.common.exceptions;
 
 public class CheckException extends RuntimeException

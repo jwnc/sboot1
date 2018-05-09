@@ -24,7 +24,8 @@ public class LoggerAdvice
     private Logger logger = Logger.getLogger( this.getClass() );
 
     @Before( "within(com.wnc..*) && @annotation(loggerManage)" )
-    public void addBeforeLogger( JoinPoint joinPoint, LoggerManage loggerManage )
+    public void addBeforeLogger( JoinPoint joinPoint,
+            LoggerManage loggerManage )
     {
         logger.info( "执行 " + loggerManage.description() + " 开始" );
         logger.info( joinPoint.getSignature().toString() );
@@ -54,8 +55,8 @@ public class LoggerAdvice
         StringBuffer param = new StringBuffer( "传入参数[{}] " );
         for ( Object obj : parames )
         {
-            param.append( ToStringBuilder.reflectionToString( obj ) ).append(
-                    "  " );
+            param.append( ToStringBuilder.reflectionToString( obj ) )
+                    .append( "  " );
         }
         return param.toString();
     }

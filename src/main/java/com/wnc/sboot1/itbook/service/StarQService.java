@@ -58,8 +58,8 @@ public class StarQService
     {
         try
         {
-            DbExecMgr
-                    .execOnlyOneUpdate( "UPDATE QUESTION SET STAR=1,UPDATE_TIME='"
+            DbExecMgr.execOnlyOneUpdate(
+                    "UPDATE QUESTION SET STAR=1,UPDATE_TIME='"
                             + BasicDateUtil.getCurrentDateTimeString()
                             + "' where id=" + qid );
         } catch ( Exception e )

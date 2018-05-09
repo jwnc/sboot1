@@ -1,3 +1,4 @@
+
 package com.wnc.itbooktool.word;
 
 import com.alibaba.fastjson.JSONArray;
@@ -76,7 +77,8 @@ public class WordExpand
             part += part_name + "\n";
             if ( !tip.contains( "分析" ) )
             {
-                JSONArray means = arr.getJSONObject( i ).getJSONArray( "means" );
+                JSONArray means = arr.getJSONObject( i )
+                        .getJSONArray( "means" );
                 for ( int j = 0; j < means.size(); j++ )
                 {
                     // 每一种意思

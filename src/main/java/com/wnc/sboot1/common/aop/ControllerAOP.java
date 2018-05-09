@@ -20,47 +20,59 @@ import com.wnc.sboot1.common.exceptions.UnloginException;
  */
 // @Aspect
 // @Component
-public class ControllerAOP {
-	private static final Logger logger = Logger.getLogger(ControllerAOP.class);
+public class ControllerAOP
+{
+    private static final Logger logger = Logger
+            .getLogger( ControllerAOP.class );
 
-	@Pointcut("execution(public com.wnc.sboot1.common.beans.ResultBean *(..))")
-	public void controllerMethod() {
-	}
+    @Pointcut( "execution(public com.wnc.sboot1.common.beans.ResultBean *(..))" )
+    public void controllerMethod()
+    {
+    }
 
-	@Around("controllerMethod()")
-	public Object handlerControllerMethod(ProceedingJoinPoint pjp) {
-		long startTime = System.currentTimeMillis();
+    @Around( "controllerMethod()" )
+    public Object handlerControllerMethod( ProceedingJoinPoint pjp )
+    {
+        long startTime = System.currentTimeMillis();
 
-		ResultBean<?> result;
+        ResultBean<?> result;
 
-		try {
-			result = (ResultBean<?>) pjp.proceed();
-			logger.info(pjp.getSignature() + "use time:" + (System.currentTimeMillis() - startTime));
-		} catch (Throwable e) {
-			result = handlerException(pjp, e);
-		}
+        try
+        {
+            result = (ResultBean<?>)pjp.proceed();
+            logger.info( pjp.getSignature() + "use time:"
+                    + (System.currentTimeMillis() - startTime) );
+        } catch ( Throwable e )
+        {
+            result = handlerException( pjp, e );
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private ResultBean<?> handlerException(ProceedingJoinPoint pjp, Throwable e) {
-		ResultBean<?> result = new ResultBean();
+    private ResultBean<?> handlerException( ProceedingJoinPoint pjp,
+            Throwable e )
+    {
+        ResultBean<?> result = new ResultBean();
 
-		// 已知异常
-		if (e instanceof CheckException) {
-			result.setMsg(e.getLocalizedMessage());
-			result.setCode(ResultBean.FAIL);
-		} else if (e instanceof UnloginException) {
-			result.setMsg("Unlogin");
-			result.setCode(ResultBean.NO_LOGIN);
-		} else {
-			logger.error(pjp.getSignature() + " error ", e);
+        // 已知异常
+        if ( e instanceof CheckException )
+        {
+            result.setMsg( e.getLocalizedMessage() );
+            result.setCode( ResultBean.FAIL );
+        } else if ( e instanceof UnloginException )
+        {
+            result.setMsg( "Unlogin" );
+            result.setCode( ResultBean.NO_LOGIN );
+        } else
+        {
+            logger.error( pjp.getSignature() + " error ", e );
 
-			// TODO 未知的异常，应该格外注意，可以发送邮件通知等
-			result.setMsg(e.toString());
-			result.setCode(ResultBean.FAIL);
-		}
+            // TODO 未知的异常，应该格外注意，可以发送邮件通知等
+            result.setMsg( e.toString() );
+            result.setCode( ResultBean.FAIL );
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

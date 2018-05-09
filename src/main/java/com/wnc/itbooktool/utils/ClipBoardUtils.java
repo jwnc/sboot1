@@ -1,3 +1,4 @@
+
 package com.wnc.itbooktool.utils;
 
 import java.awt.Toolkit;

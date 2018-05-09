@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1.itbook.service;
 
 import java.sql.SQLException;
@@ -32,22 +33,24 @@ public class ITBookLogService
                 {
                     BookLog blog = JSONObject.parseObject( string,
                             BookLog.class );
-                    DbFieldSqlUtil util = new DbFieldSqlUtil( "itbook_log", "" );
+                    DbFieldSqlUtil util = new DbFieldSqlUtil( "itbook_log",
+                            "" );
                     util.addInsertField( new DbField( "device", device ) );
-                    util.addInsertField( new DbField( "dict_id", blog
-                            .getTopic() ) );
-                    util.addInsertField( new DbField( "content",
-                            StringEscapeUtils.escapeSql( blog.getContent() ) ) );
-                    util.addInsertField( new DbField( "log_time", blog
-                            .getTime() ) );
-                    util.addInsertField( new DbField( "type", blog.getType() ) );
+                    util.addInsertField(
+                            new DbField( "dict_id", blog.getTopic() ) );
+                    util.addInsertField(
+                            new DbField( "content", StringEscapeUtils
+                                    .escapeSql( blog.getContent() ) ) );
+                    util.addInsertField(
+                            new DbField( "log_time", blog.getTime() ) );
+                    util.addInsertField(
+                            new DbField( "type", blog.getType() ) );
 
                     try
                     {
-                        if ( !DbExecMgr
-                                .isExistData( "SELECT * FROM itbook_log WHERE LOG_TIME='"
-                                        + blog.getTime()
-                                        + "' AND DEVICE='"
+                        if ( !DbExecMgr.isExistData(
+                                "SELECT * FROM itbook_log WHERE LOG_TIME='"
+                                        + blog.getTime() + "' AND DEVICE='"
                                         + device + "'" ) )
                             DbExecMgr.execOnlyOneUpdate( util.getInsertSql() );
                     } catch ( SQLException e )

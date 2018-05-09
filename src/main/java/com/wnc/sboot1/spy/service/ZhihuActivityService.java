@@ -38,160 +38,185 @@ import com.wnc.sboot1.spy.zhihu.rep.TargetDescRepository;
 import com.wnc.sboot1.spy.zhihu.rep.TopicRepository;
 
 @Component
-public class ZhihuActivityService {
-	private static Logger logger = Logger.getLogger(ZhihuActivityService.class);
-	public static final int FOLLOW_COUNT = 20;
-	@Autowired
-	AnswerRepository answerRepository;
-	@Autowired
-	ArticleRepository articleRepository;
-	@Autowired
-	QuestionRepository questionRepository;
-	@Autowired
-	CollectionRepository collectionRepository;
-	@Autowired
-	ColumnRepository columnRepository;
-	@Autowired
-	RoundTableRepository roundTableRepository;
-	@Autowired
-	TopicRepository topicRepository;
-	@Autowired
-	TargetAggreInfoRepository targetAggreInfoRepository;
-	@Autowired
-	TargetDescRepository targetDescRepository;
+public class ZhihuActivityService
+{
+    private static Logger logger = Logger
+            .getLogger( ZhihuActivityService.class );
+    public static final int FOLLOW_COUNT = 20;
+    @Autowired
+    AnswerRepository answerRepository;
+    @Autowired
+    ArticleRepository articleRepository;
+    @Autowired
+    QuestionRepository questionRepository;
+    @Autowired
+    CollectionRepository collectionRepository;
+    @Autowired
+    ColumnRepository columnRepository;
+    @Autowired
+    RoundTableRepository roundTableRepository;
+    @Autowired
+    TopicRepository topicRepository;
+    @Autowired
+    TargetAggreInfoRepository targetAggreInfoRepository;
+    @Autowired
+    TargetDescRepository targetDescRepository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public void aggreYesterday() {
-		String day1 = SpiderUtils.getYesterDayStr();
-		String day2 = SpiderUtils.getDayWithLine();
-		aggre(day1, day2, 1);
-	}
+    public void aggreYesterday()
+    {
+        String day1 = SpiderUtils.getYesterDayStr();
+        String day2 = SpiderUtils.getDayWithLine();
+        aggre( day1, day2, 1 );
+    }
 
-	public void aggre(final String day1, final String day2, int aggreCode) {
-		String sql = "select act.cnt,tar.id tid,tar.info title,tar.type from (SELECT target_id, count(*) cnt FROM zh_activity WHERE FROM_UNIXTIME(created_time) >= '"
-				+ day1 + " 00:00;00' and FROM_UNIXTIME(created_time) < '" + day2
-				+ " 00:00:00' group by target_id having count(*) > " + FOLLOW_COUNT
-				+ ") act, zh_target tar where act.target_id=tar.id";
-		Query createNativeQuery = entityManager.createNativeQuery(sql);
-		List resultList = createNativeQuery.getResultList();
-		for (Object object : resultList) {
-			Object[] arr = (Object[]) object;
-			TargetAggreInfo targetAggreInfo = new TargetAggreInfo();
-			TargetDesc targetDesc = new TargetDesc();
-			targetDesc.setTid(String.valueOf(arr[1]));
-			targetDesc.setTitle(String.valueOf(arr[2]));
-			targetDesc.setType(String.valueOf(arr[3]));
+    public void aggre( final String day1, final String day2, int aggreCode )
+    {
+        String sql = "select act.cnt,tar.id tid,tar.info title,tar.type from (SELECT target_id, count(*) cnt FROM zh_activity WHERE FROM_UNIXTIME(created_time) >= '"
+                + day1 + " 00:00;00' and FROM_UNIXTIME(created_time) < '" + day2
+                + " 00:00:00' group by target_id having count(*) > "
+                + FOLLOW_COUNT
+                + ") act, zh_target tar where act.target_id=tar.id";
+        Query createNativeQuery = entityManager.createNativeQuery( sql );
+        List resultList = createNativeQuery.getResultList();
+        for ( Object object : resultList )
+        {
+            Object[] arr = (Object[])object;
+            TargetAggreInfo targetAggreInfo = new TargetAggreInfo();
+            TargetDesc targetDesc = new TargetDesc();
+            targetDesc.setTid( String.valueOf( arr[1] ) );
+            targetDesc.setTitle( String.valueOf( arr[2] ) );
+            targetDesc.setType( String.valueOf( arr[3] ) );
 
-			TargetAggreKey key = new TargetAggreKey();
-			key.setAggreCode(aggreCode);
-			// 日期
-			key.setDateStr(day1);
-			key.setTid(targetDesc.getTid());
+            TargetAggreKey key = new TargetAggreKey();
+            key.setAggreCode( aggreCode );
+            // 日期
+            key.setDateStr( day1 );
+            key.setTid( targetDesc.getTid() );
 
-			targetAggreInfo.setId(key);
-			targetAggreInfo.setCnt(BasicNumberUtil.getNumber(String.valueOf(arr[0])));
-			targetAggreInfo.setTargetDesc(targetDesc);
-			// targetAggreInfo.setAggreCode( 1 );
-			// targetAggreInfo.setDateStr( "20180507" );
-			// targetAggreInfo.setTid( targetDesc.getTid() );
+            targetAggreInfo.setId( key );
+            targetAggreInfo.setCnt(
+                    BasicNumberUtil.getNumber( String.valueOf( arr[0] ) ) );
+            targetAggreInfo.setTargetDesc( targetDesc );
+            // targetAggreInfo.setAggreCode( 1 );
+            // targetAggreInfo.setDateStr( "20180507" );
+            // targetAggreInfo.setTid( targetDesc.getTid() );
 
-			find(targetDesc);
-			try {
-				targetDescRepository.save(targetDesc);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error(e + "\n" + targetDesc);
-			}
-			try {
-				targetAggreInfoRepository.save(targetAggreInfo);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error(e + "\n" + targetAggreInfo);
-			}
-		}
-	}
+            find( targetDesc );
+            try
+            {
+                targetDescRepository.save( targetDesc );
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+                logger.error( e + "\n" + targetDesc );
+            }
+            try
+            {
+                targetAggreInfoRepository.save( targetAggreInfo );
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+                logger.error( e + "\n" + targetAggreInfo );
+            }
+        }
+    }
 
-	public List getAggreData(String dateStr) {
-		String sql = "select ti.cnt,td.description,td.tid,td.title,td.type,td.url from target_aggre_info ti, target_desc td where ti.tid = td.tid and date_str = '"
-				+ dateStr + "' order by cnt desc";
-		Query createNativeQuery = entityManager.createNativeQuery(sql);
-		List<Object[]> aggreData = createNativeQuery.getResultList();
-		List<TargetDescVo> list = new ArrayList<TargetDescVo>();
-		TargetDescVo vo;
-		for (Object[] arr : aggreData) {
-			vo = new TargetDescVo();
-			vo.setCnt(BasicNumberUtil.getNumber(String.valueOf(arr[0])));
-			vo.setDescription(String.valueOf(arr[1]));
-			vo.setTid(String.valueOf(arr[2]));
-			vo.setTitle(String.valueOf(arr[3]));
-			vo.setType(String.valueOf(arr[4]));
-			vo.setUrl(String.valueOf(arr[5]));
-			list.add(vo);
-		}
-		return list;
-	}
+    public List getAggreData( String dateStr )
+    {
+        String sql = "select ti.cnt,td.description,td.tid,td.title,td.type,td.url from target_aggre_info ti, target_desc td where ti.tid = td.tid and date_str = '"
+                + dateStr + "' order by cnt desc";
+        Query createNativeQuery = entityManager.createNativeQuery( sql );
+        List<Object[]> aggreData = createNativeQuery.getResultList();
+        List<TargetDescVo> list = new ArrayList<TargetDescVo>();
+        TargetDescVo vo;
+        for ( Object[] arr : aggreData )
+        {
+            vo = new TargetDescVo();
+            vo.setCnt( BasicNumberUtil.getNumber( String.valueOf( arr[0] ) ) );
+            vo.setDescription( String.valueOf( arr[1] ) );
+            vo.setTid( String.valueOf( arr[2] ) );
+            vo.setTitle( String.valueOf( arr[3] ) );
+            vo.setType( String.valueOf( arr[4] ) );
+            vo.setUrl( String.valueOf( arr[5] ) );
+            list.add( vo );
+        }
+        return list;
+    }
 
-	private void find(TargetDesc targetAggreInfo) {
-		String description = "";
-		String url = "";
-		try {
-			String type = targetAggreInfo.getType();
-			String tid = targetAggreInfo.getTid();
-			switch (type) {
-			case "answer":
-				Answer findOne = answerRepository.findOne(tid);
-				String question_id = findOne.getQuestion_id();
-				Question findOne2 = questionRepository.findOne(question_id);
-				String title = "";
-				if (findOne2 == null) {
-					HttpGet request = new HttpGet("https://api.zhihu.com/questions/" + question_id);
-					request.setHeader("authorization", "oauth " + TT2.initAuthorization());
-					String webPage = HttpClientUtil.getWebPage(request);
-					title = JSONObject.parseObject(webPage).getString("title");
-				} else {
-					title = findOne2.getTitle();
-				}
+    private void find( TargetDesc targetAggreInfo )
+    {
+        String description = "";
+        String url = "";
+        try
+        {
+            String type = targetAggreInfo.getType();
+            String tid = targetAggreInfo.getTid();
+            switch ( type )
+            {
+                case "answer":
+                    Answer findOne = answerRepository.findOne( tid );
+                    String question_id = findOne.getQuestion_id();
+                    Question findOne2 = questionRepository
+                            .findOne( question_id );
+                    String title = "";
+                    if ( findOne2 == null )
+                    {
+                        HttpGet request = new HttpGet(
+                                "https://api.zhihu.com/questions/"
+                                        + question_id );
+                        request.setHeader( "authorization",
+                                "oauth " + TT2.initAuthorization() );
+                        String webPage = HttpClientUtil.getWebPage( request );
+                        title = JSONObject.parseObject( webPage )
+                                .getString( "title" );
+                    } else
+                    {
+                        title = findOne2.getTitle();
+                    }
 
-				description = findOne.getExcerpt_new();
-				targetAggreInfo.setTitle(title);
-				url = "https://www.zhihu.com/question/" + question_id + "/answer/" + tid;
-				break;
-			case "article":
-				Article article = articleRepository.findOne(tid);
-				description = article.getExcerpt_new();
-				url = "https://zhuanlan.zhihu.com/p/" + tid;
-				break;
-			case "question":
-				Question question = questionRepository.findOne(tid);
-				description = question.getExcerpt();
-				url = "https://www.zhihu.com/question/" + tid;
-				break;
-			case "topic":
-				url = "https://www.zhihu.com/topic/" + tid + "/hot";
-				break;
-			case "column":
-				ZColumn column = columnRepository.findOne(tid);
-				description = column.getIntro();
-				url = "https://zhuanlan.zhihu.com/" + tid;
-				break;
-			case "collection":
-				url = "https://www.zhihu.com/collection/" + tid;
-				break;
-			case "roundtable":
-				RoundTable roundTable = roundTableRepository.findOne(tid);
-				description = roundTable.getDescription();
-				url = "https://www.zhihu.com//" + tid;
-				break;
-			default:
-				break;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                    description = findOne.getExcerpt_new();
+                    targetAggreInfo.setTitle( title );
+                    url = "https://www.zhihu.com/question/" + question_id
+                            + "/answer/" + tid;
+                    break;
+                case "article":
+                    Article article = articleRepository.findOne( tid );
+                    description = article.getExcerpt_new();
+                    url = "https://zhuanlan.zhihu.com/p/" + tid;
+                    break;
+                case "question":
+                    Question question = questionRepository.findOne( tid );
+                    description = question.getExcerpt();
+                    url = "https://www.zhihu.com/question/" + tid;
+                    break;
+                case "topic":
+                    url = "https://www.zhihu.com/topic/" + tid + "/hot";
+                    break;
+                case "column":
+                    ZColumn column = columnRepository.findOne( tid );
+                    description = column.getIntro();
+                    url = "https://zhuanlan.zhihu.com/" + tid;
+                    break;
+                case "collection":
+                    url = "https://www.zhihu.com/collection/" + tid;
+                    break;
+                case "roundtable":
+                    RoundTable roundTable = roundTableRepository.findOne( tid );
+                    description = roundTable.getDescription();
+                    url = "https://www.zhihu.com//" + tid;
+                    break;
+                default:
+                    break;
+            }
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
 
-		targetAggreInfo.setUrl(url);
-		targetAggreInfo.setDescription(description);
-	}
+        targetAggreInfo.setUrl( url );
+        targetAggreInfo.setDescription( description );
+    }
 }

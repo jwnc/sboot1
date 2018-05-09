@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1;
 
 import java.io.IOException;
@@ -24,7 +25,8 @@ public class MyFilter implements Filter
     {
         // TODO Auto-generated method stub
         HttpServletRequest request = (HttpServletRequest)srequest;
-        System.out.println( "this is MyFilter,url :" + request.getRequestURI() );
+        System.out
+                .println( "this is MyFilter,url :" + request.getRequestURI() );
         filterChain.doFilter( srequest, sresponse );
     }
 

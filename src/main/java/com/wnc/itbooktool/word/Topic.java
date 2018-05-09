@@ -1,3 +1,4 @@
+
 package com.wnc.itbooktool.word;
 
 public class Topic
@@ -88,10 +89,8 @@ public class Topic
     {
         final int prime = 31;
         int result = 1;
-        result = prime
-                * result
-                + ((matched_word == null) ? 0 : matched_word.toLowerCase()
-                        .hashCode());
+        result = prime * result + ((matched_word == null) ? 0
+                : matched_word.toLowerCase().hashCode());
         return result;
     }
 

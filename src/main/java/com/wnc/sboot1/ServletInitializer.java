@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;

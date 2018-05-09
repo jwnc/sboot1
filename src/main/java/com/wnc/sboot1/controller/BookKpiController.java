@@ -1,3 +1,4 @@
+
 package com.wnc.sboot1.controller;
 
 import java.util.List;
@@ -21,7 +22,8 @@ public class BookKpiController
     @PostMapping( "booklogkpi/column" )
     public ResultBean<List> column( String dayStart, String dayEnd )
     {
-        return new ResultBean<List>( bookKpiService.column( dayStart, dayEnd ) );
+        return new ResultBean<List>(
+                bookKpiService.column( dayStart, dayEnd ) );
     }
 
     @PostMapping( "booklogkpi/line" )

@@ -45,7 +45,8 @@ public class DbExecMgr
             ResultSetMetaData resultSetMetaData = set.getMetaData();
             while ( set.next() )
             {
-                for ( int i3 = 1; i3 < resultSetMetaData.getColumnCount() + 1; ++i3 )
+                for ( int i3 = 1; i3 < resultSetMetaData.getColumnCount()
+                        + 1; ++i3 )
                 {
                     map.put( resultSetMetaData.getColumnName( i3 )
                             .toUpperCase(), set.getString( i3 ) );
@@ -96,10 +97,12 @@ public class DbExecMgr
             while ( set.next() )
             {
                 Map<String, String> fieldMap = new HashMap<String, String>();
-                for ( int i3 = 1; i3 < resultSetMetaData.getColumnCount() + 1; ++i3 )
+                for ( int i3 = 1; i3 < resultSetMetaData.getColumnCount()
+                        + 1; ++i3 )
                 {
-                    fieldMap.put( resultSetMetaData.getColumnName( i3 )
-                            .toUpperCase(), set.getString( i3 ) );
+                    fieldMap.put(
+                            resultSetMetaData.getColumnName( i3 ).toUpperCase(),
+                            set.getString( i3 ) );
                 }
                 map.put( i, fieldMap );
                 i++;

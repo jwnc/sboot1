@@ -1,3 +1,4 @@
+
 package db;
 
 import java.sql.Connection;
@@ -111,7 +112,8 @@ public final class DBconnectionMgr
 
                 }
 
-                if ( ((localConnection1 = (Connection)_$vector.remove( 0 )) != null) )
+                if ( ((localConnection1 = (Connection)_$vector
+                        .remove( 0 )) != null) )
                 {
                 }
 
@@ -172,7 +174,8 @@ public final class DBconnectionMgr
             while ( _$vector.size() > 0 )
             {
                 Connection localConnection;
-                closeConnect( localConnection = (Connection)_$vector.remove( 0 ) );
+                closeConnect(
+                        localConnection = (Connection)_$vector.remove( 0 ) );
             }
 
         }
@@ -266,12 +269,14 @@ public final class DBconnectionMgr
         {
             try
             {
-                if ( (paramConnection != null) && (!paramConnection.isClosed()) )
+                if ( (paramConnection != null)
+                        && (!paramConnection.isClosed()) )
                 {
                     localStatement = paramConnection.createStatement( 1003,
                             1007 );
 
-                    if ( BasicStringUtil.isNullString( str = getCheckConnSql() ) )
+                    if ( BasicStringUtil
+                            .isNullString( str = getCheckConnSql() ) )
                     {
 
                         str = "select 1 from dual";
@@ -328,12 +333,14 @@ public final class DBconnectionMgr
         {
             try
             {
-                if ( (paramConnection != null) && (!paramConnection.isClosed()) )
+                if ( (paramConnection != null)
+                        && (!paramConnection.isClosed()) )
                 {
                     localStatement = paramConnection.createStatement( 1003,
                             1007 );
 
-                    if ( BasicStringUtil.isNullString( str = getCheckConnSql() ) )
+                    if ( BasicStringUtil
+                            .isNullString( str = getCheckConnSql() ) )
                     {
 
                         str = "select 1 from dual";
@@ -390,7 +397,8 @@ public final class DBconnectionMgr
         return localStringBuffer.toString();
     }
 
-    public static synchronized void returnConnection( Connection paramConnection )
+    public static synchronized void returnConnection(
+            Connection paramConnection )
     {
         synchronized ( _$vector )
         {

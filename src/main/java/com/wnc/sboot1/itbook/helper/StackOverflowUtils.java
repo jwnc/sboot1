@@ -65,7 +65,7 @@ public class StackOverflowUtils
             if ( document == null )
             {
                 document = Jsoup.connect( searchUrl ).timeout( 5000 )
-                // .proxy( "openproxy.huawei.com", 8080 )
+                        // .proxy( "openproxy.huawei.com", 8080 )
                         .get();
             }
         } catch ( IOException e )
@@ -108,9 +108,9 @@ public class StackOverflowUtils
             {
                 boolean fromDbflag = false;
                 Element first = element.select( ".result-link a" ).first();
-                int qid = BasicNumberUtil.getNumber( PatternUtil
-                        .getFirstPatternGroup( first.absUrl( "href" ),
-                                "questions/(\\d+)" ) );
+                int qid = BasicNumberUtil
+                        .getNumber( PatternUtil.getFirstPatternGroup(
+                                first.absUrl( "href" ), "questions/(\\d+)" ) );
                 if ( WordSearchService.existQuestion( qid ) )
                 {
                     wordExample = WordSearchService.getWordQuestion( qid );
@@ -120,8 +120,8 @@ public class StackOverflowUtils
                     wordExample = new WordExample();
                     wordExample.setExcerpt( element.select( ".excerpt" ).text()
                             .replace( "class=\"result-highlight\"", "" ) );
-                    wordExample.setQ( first.text().replace(
-                            "class=\"result-highlight\"", "" ) );
+                    wordExample.setQ( first.text()
+                            .replace( "class=\"result-highlight\"", "" ) );
                 }
                 wordExample.setWord( word );
                 wordExample.setHref( first.absUrl( "href" ) );
@@ -134,7 +134,8 @@ public class StackOverflowUtils
                 wordExample.setAnswers( BasicNumberUtil.getNumber( PatternUtil
                         .getFirstPatternGroup( text, "(\\d+)answers" ) ) );
 
-                boolean isMatched = isMatchedQuestion( wordExample, fromDbflag );
+                boolean isMatched = isMatchedQuestion( wordExample,
+                        fromDbflag );
                 if ( isMatched )
                 {
                     examples.add( wordExample );
@@ -156,14 +157,16 @@ public class StackOverflowUtils
         String excerpt = wordExample.getExcerpt();
         if ( q.contains( word ) || excerpt.contains( word ) )
         {
-            wordExample.setExcerpt( clearHtmlText( excerpt, word, fromDbflag ) );
+            wordExample
+                    .setExcerpt( clearHtmlText( excerpt, word, fromDbflag ) );
             wordExample.setQ( clearHtmlText( q, word, fromDbflag ) );
             isMatched = true;
         } else if ( !word.equalsIgnoreCase( orginalWord )
-                && (q.contains( orginalWord ) || excerpt.contains( orginalWord )) )
+                && (q.contains( orginalWord )
+                        || excerpt.contains( orginalWord )) )
         {
-            wordExample.setExcerpt( clearHtmlText( excerpt, orginalWord,
-                    fromDbflag ) );
+            wordExample.setExcerpt(
+                    clearHtmlText( excerpt, orginalWord, fromDbflag ) );
             wordExample.setQ( clearHtmlText( q, orginalWord, fromDbflag ) );
             isMatched = true;
         }
@@ -178,16 +181,17 @@ public class StackOverflowUtils
             text = text.replaceAll( "<.*?>", "" );
             text = StringEscapeUtils.escapeHtml( text );
         }
-        return text.replace( replaceMent, "<b class='word-highlight'>"
-                + replaceMent + "</b>" );
+        return text.replace( replaceMent,
+                "<b class='word-highlight'>" + replaceMent + "</b>" );
     }
 
     private void initResultCount( Document document )
     {
-        resultCount = BasicNumberUtil.getNumber( PatternUtil
-                .getFirstPatternGroup(
-                        document.select( ".subheader.results-header h2" )
-                                .text().replaceAll( "[\\s\\,]", "" ), "\\d+" ) );
+        resultCount = BasicNumberUtil
+                .getNumber( PatternUtil.getFirstPatternGroup(
+                        document.select( ".subheader.results-header h2" ).text()
+                                .replaceAll( "[\\s\\,]", "" ),
+                        "\\d+" ) );
 
     }
 
