@@ -24,38 +24,48 @@ public class ZhihuController
     private static Logger logger = Logger.getLogger( ZhihuController.class );
 
     @GetMapping( "aggre" )
-    public String aggre( Model model, String dateStr, Integer aggreCode )
+    public String aggre( Model model, String dateStr, String weekStr,
+            String monthStr, String yearStr, Integer aggreCode )
     {
+        String searchDay = "";
+        if ( dateStr == null )
+        {
+            dateStr = SpiderUtils.getYesterDayStr();
+        }
         if ( aggreCode == null )
         {
             aggreCode = ZhihuActivityService.AGGRE_DAY_CODE;
         }
-        if ( dateStr == null )
+
+        switch ( aggreCode )
         {
-            dateStr = SpiderUtils.getYesterDayStr();
-            aggreCode = ZhihuActivityService.AGGRE_DAY_CODE;
-        }
-        String dateStrCopy = dateStr;
-        if ( dateStr.matches( "\\d{4}\\-W\\d{2}" ) )
-        {
-            dateStr = SpiderUtils.getMondayOfWeek(
-                    BasicNumberUtil.getNumber(
-                            PatternUtil.getFirstPattern( dateStr, "\\d+" ) ),
-                    BasicNumberUtil.getNumber(
-                            PatternUtil.getLastPattern( dateStr, "\\d+" ) ) );
-            aggreCode = ZhihuActivityService.AGGRE_WEEK_CODE;
-        }
-        if ( dateStr.matches( "\\d{4}\\-\\d{2}" ) )
-        {
-            dateStr = dateStr + "-01";
-            aggreCode = ZhihuActivityService.AGGRE_MONTH_CODE;
+            case 1:
+                searchDay = dateStr;
+                break;
+            case 2:
+                searchDay = SpiderUtils.getMondayOfWeek(
+                        BasicNumberUtil.getNumber( PatternUtil
+                                .getFirstPattern( weekStr, "\\d+" ) ),
+                        BasicNumberUtil.getNumber( PatternUtil
+                                .getLastPattern( weekStr, "\\d+" ) ) );
+                break;
+            case 3:
+                searchDay = monthStr + "-01";
+                break;
+            case 4:
+                searchDay = yearStr + "-01-01";
+                break;
         }
 
         try
         {
-            List aggreData = zhihuActivityService.getAggreData( dateStr,
+            List aggreData = zhihuActivityService.getAggreData( searchDay,
                     aggreCode );
-            model.addAttribute( "dateStr", dateStrCopy );
+
+            model.addAttribute( "dateStr", dateStr );
+            model.addAttribute( "weekStr", weekStr );
+            model.addAttribute( "monthStr", monthStr );
+            model.addAttribute( "yearStr", yearStr );
             model.addAttribute( "aggreCode", aggreCode );
             model.addAttribute( "data", aggreData );
         } catch ( Exception e )

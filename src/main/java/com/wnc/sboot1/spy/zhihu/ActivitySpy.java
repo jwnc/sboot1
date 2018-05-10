@@ -79,9 +79,8 @@ public class ActivitySpy
             }
             Thread.sleep( 3000 );
         }
-        BasicFileUtil.writeFileString( "c:/zhihu-task.log",
-                "开始于:" + startTime + " 结束于:" + System.currentTimeMillis(), null,
-                true );
+        BasicFileUtil.writeFileString( "c:/zhihu-task.log", "开始于:" + startTime
+                + " 结束于:" + System.currentTimeMillis() + "\r\n", null, true );
         logger.info( "任务结束用时:" + getSpyDuration() );
 
     }

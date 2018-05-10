@@ -41,6 +41,16 @@
 <script th:src="@{/js/app.js}"></script>
 
 <script type="text/javascript" th:inline="javascript">
+	function findEmoji(text){
+		$.each(cnNamesEmojis, function(i, obj){
+			var cnName = cnNamesEmojis[i][0];
+			if(text.indexOf(cnName) != -1){
+				var x = [[@{/images/}]];
+				text = text.replace(new RegExp(cnName.replace('[','\\[').replace(']','\\]'),'g'), "<img width="+30+" src="+x+cnNamesEmojis[i][1]+"/>");
+			}
+		});
+		return text;
+	}	
 </script>
 
 </head>
@@ -75,7 +85,12 @@
 					<th:block th:each="log,iterStat : ${pageData}">
 						<tr height="100px" th:class="${log.zb8News?.describe}?first-cmt:(${iterStat.even}?row-bg-even:row-bg-odd)" th:onclick="|showline(this,${iterStat.count});exChangeBgColor(this)|" >
 							<td th:text="${log.id}" class="obj-hide">id</td>
-							<td th:text="${log.content}">content</td>
+							<td th:inline="javascript">
+								<script th:inline="javascript">
+									var msg = [[${log.content}]];
+									document.write(findEmoji(msg));
+								</script>
+							</td>
 							<td th:text="${log.up}">0</td>
 							<td th:text="${log.down}">0</td>
 							<td style="font-size:16px"><a target="_blank" th:text="${log.zb8News?.title}" th:href="|https://m.zhibo8.cc/news/web${log.zb8News?.url}|">content</a></td>

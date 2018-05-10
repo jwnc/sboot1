@@ -46,10 +46,12 @@ public class ZhihuActivityService
     public static final int FOLLOW_DAY_COUNT = 20;
     public static final int FOLLOW_WEEK_COUNT = 60;
     public static final int FOLLOW_MONTH_COUNT = 120;
+    public static final int FOLLOW_YEAR_COUNT = 400;
 
     public static final int AGGRE_DAY_CODE = 1;
     public static final int AGGRE_WEEK_CODE = 2;
     public static final int AGGRE_MONTH_CODE = 3;
+    public static final int AGGRE_YEAR_CODE = 4;
     @Autowired
     AnswerRepository answerRepository;
     @Autowired
@@ -83,11 +85,22 @@ public class ZhihuActivityService
         int currentWeekDay = BasicDateUtil.getCurrentWeekDay();
         String today = BasicDateUtil.getCurrentDateString();
         String lastSunday = BasicDateUtil.getDateBeforeDayDateString( today,
-                currentWeekDay - 1 );
+                currentWeekDay );
         String lastMonday = BasicDateUtil
                 .getDateBeforeDayDateString( lastSunday, 6 );
         aggre( SpiderUtils.wrapDayWithLine( lastMonday ),
                 SpiderUtils.wrapDayWithLine( lastSunday ), AGGRE_WEEK_CODE,
+                FOLLOW_WEEK_COUNT );
+    }
+
+    public void aggreThisWeek()
+    {
+        int currentWeekDay = BasicDateUtil.getCurrentWeekDay();
+        String today = BasicDateUtil.getCurrentDateString();
+        String thisMonday = BasicDateUtil.getDateBeforeDayDateString( today,
+                currentWeekDay - 1 );
+        aggre( SpiderUtils.wrapDayWithLine( thisMonday ),
+                SpiderUtils.wrapDayWithLine( today ), AGGRE_WEEK_CODE,
                 FOLLOW_WEEK_COUNT );
     }
 
@@ -101,6 +114,15 @@ public class ZhihuActivityService
                 SpiderUtils
                         .wrapDayWithLine( year + month + currentMonthLastDay ),
                 AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
+    }
+
+    public void aggreYear()
+    {
+        String year = BasicDateUtil.getCurrentYearString();
+
+        aggre( SpiderUtils.wrapDayWithLine( year + "0101" ),
+                SpiderUtils.wrapDayWithLine( year + "1231" ), AGGRE_YEAR_CODE,
+                FOLLOW_YEAR_COUNT );
     }
 
     /**
@@ -120,8 +142,8 @@ public class ZhihuActivityService
                 + count + ") act, zh_target tar where act.target_id=tar.id";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List resultList = createNativeQuery.getResultList();
-        logger.info( String.format( "Day:%s AggreCode:%d  Size:%d", day1,
-                aggreCode, resultList.size() ) );
+        logger.info( String.format( "Day:%s AggreCode:%d  Size:%d SQL:%s", day1,
+                aggreCode, resultList.size(), sql ) );
         for ( Object object : resultList )
         {
             Object[] arr = (Object[])object;

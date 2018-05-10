@@ -26,9 +26,16 @@
 #dateGroups input[name='aggreCode']{
 	height: 30px;
 	width: 30px;
+	margin-right: 10px;
 }
 #dateGroups {
-	font-size:30px;
+	font-size: 30px;
+}
+.nodata {
+	color: red;
+	font-size: 32px;
+	padding: 40px;
+	position: fixed;
 }
 .b1,.b2,.b3,.b4,.b1b,.b2b,.b3b,.b4b,.b{display:block;overflow:hidden;}
 .b1,.b2,.b3,.b1b,.b2b,.b3b{height:1px;}
@@ -45,10 +52,31 @@
 		$(".sel:eq([[${aggreCode-1}]])").show().siblings('.sel').hide();
 		$("input[name='aggreCode']").click(function(){
 			$(".sel:eq("+($(this).val()-1)+")").show().siblings('.sel').hide();
+			
+			if($(this).val() == 4){
+				if($("#yearStr").val()=='')
+					$("#yearStr").val(new Date().getFullYear());
+			}
+			
+			if($(this).val() == 3){
+				if($("#monthStr").val()=='')
+					$("#monthStr").val(getYearMonth());
+			}
+			
+			if($(this).val() == 2){
+				if($("#weekStr").val()=='')
+					$("#weekStr").val(getTheWeek());
+			}
+			
+			$("form").submit();
 		});
+		
 	});
-	function changeDate(obj){
-		window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+$(obj).val();
+	
+	
+	function changeDate(){
+		//window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+$(obj).val();
+		$("form").submit();
 	}
 </script>
 
@@ -56,12 +84,21 @@
 <body class="body-bg-lightgreen">
 	<div th:replace="header :: header('大V在干什么.')"></div>
 	<div class="content">
+		<form th:action="@{/spyapi/zhihu/aggre}" th:object="${user}" method="get" th:method="get">
 		<div id="dateGroups">
-			<input class="sel" id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate(this)"/>
-			<input class="sel" id="weekStr" type="week" name="dateStr" th:value="${dateStr}" onchange="changeDate(this)"/>
-			<input class="sel" id="monthStr" type="month" name="dateStr" th:value="${dateStr}" onchange="changeDate(this)"/>
-			每日<input type="radio" value="1" name="aggreCode" /> 每周<input type="radio" value="2" name="aggreCode"/> 每月<input type="radio" value="3" name="aggreCode"/>
+			<input class="sel" id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate()"/>
+			<input class="sel" id="weekStr" type="week" name="weekStr" th:value="${weekStr}" onchange="changeDate()"/>
+			<input class="sel" id="monthStr" type="month" name="monthStr" th:value="${monthStr}" onchange="changeDate()"/>
+			<select class="sel" id="yearStr" name="yearStr" th:value="${yearStr}" onchange="changeDate()">
+				<option value=""></option>
+				<option value="2017" th:selected="${yearStr=='2017'}">2017</option>
+				<option value="2018" th:selected="${yearStr=='2018'}">2018</option>
+				<option value="2019" th:selected="${yearStr=='2019'}">2019</option>
+				<option value="2020" th:selected="${yearStr=='2020'}">2020</option>
+			</select>
+			每日<input type="radio" value="1" name="aggreCode" /> 每周<input type="radio" value="2" name="aggreCode"/> 每月<input type="radio" value="3" name="aggreCode"/>每年<input type="radio" value="4" name="aggreCode"/>
 		</div>
+		</form>
 		<div class="summary-list">
 			<div class="summary" th:each="example : ${data}">
 				<b class="b1"></b>
@@ -82,6 +119,10 @@
 				<b class="b2b" th:classappend="${exampleStat.even}?row-bg-even:row-bg-odd"></b>
 				<b class="b1b"></b>
 			</div>
+			
+			<th:block th:if="${data.size()} eq 0">
+				<span class="nodata">没有搜素到数据!</span>
+			</th:block>
 		</div>
 		
 	</div>

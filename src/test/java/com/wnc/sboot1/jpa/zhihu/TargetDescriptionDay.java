@@ -35,6 +35,7 @@ public class TargetDescriptionDay
         // zhihuActivityService.aggre("2018-05-01", "2018-05-02", 1);
 
         // zhihuActivityService.aggreLastWeek();
-        zhihuActivityService.aggreMonth();
+        // zhihuActivityService.aggreMonth();
+        zhihuActivityService.aggreYear();
     }
 }
