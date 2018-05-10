@@ -13,26 +13,28 @@ import com.wnc.sboot1.spy.service.ZhihuActivityService;
  * 按日期保存统计信息
  * 
  * @author wnc
- *
  */
-@RunWith(SpringRunner.class)
+@RunWith( SpringRunner.class )
 @SpringBootTest
-public class TargetDescriptionDay {
-	@Autowired
-	private ZhihuActivityService zhihuActivityService;
+public class TargetDescriptionDay
+{
+    @Autowired
+    private ZhihuActivityService zhihuActivityService;
 
-	@Test
-	public void a() {
-		// zhihuActivityService.aggreYesterday();
-		// zhihuActivityService.aggre("2018-05-07", "2018-05-08", 1);
-		// zhihuActivityService.aggre("2018-05-06", "2018-05-07", 1);
-		// zhihuActivityService.aggre("2018-05-05", "2018-05-06", 1);
-		// zhihuActivityService.aggre("2018-05-04", "2018-05-05", 1);
-		// zhihuActivityService.aggre("2018-05-03", "2018-05-04", 1);
+    @Test
+    public void a()
+    {
+        // zhihuActivityService.aggreYesterday();
+        // zhihuActivityService.aggre("2018-05-07", "2018-05-08", 1);
+        // zhihuActivityService.aggre("2018-05-06", "2018-05-07", 1);
+        // zhihuActivityService.aggre("2018-05-05", "2018-05-06", 1);
+        // zhihuActivityService.aggre("2018-05-04", "2018-05-05", 1);
+        // zhihuActivityService.aggre("2018-05-03", "2018-05-04", 1);
 
-		// zhihuActivityService.aggre("2018-05-02", "2018-05-03", 1);
-		// zhihuActivityService.aggre("2018-05-01", "2018-05-02", 1);
+        // zhihuActivityService.aggre("2018-05-02", "2018-05-03", 1);
+        // zhihuActivityService.aggre("2018-05-01", "2018-05-02", 1);
 
-		zhihuActivityService.aggre("2018-04-30", "2018-05-01", 1);
-	}
+        // zhihuActivityService.aggreLastWeek();
+        zhihuActivityService.aggreMonth();
+    }
 }

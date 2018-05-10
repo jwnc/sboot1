@@ -37,6 +37,48 @@ public class ZhihuActivityAggreTask
         }
     }
 
+    @Scheduled( cron = "${cronJob.fork_zhihu_activity_aggre_week}" )
+    public void week()
+    {
+        sleep();
+        if ( flag )
+        {
+            return;
+        }
+        flag = true;
+        try
+        {
+            zhihuActivityService.aggreLastWeek();
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        } finally
+        {
+            flag = false;
+        }
+    }
+
+    @Scheduled( cron = "${cronJob.fork_zhihu_activity_aggre_month}" )
+    public void month()
+    {
+        sleep();
+        if ( flag )
+        {
+            return;
+        }
+        flag = true;
+        try
+        {
+            zhihuActivityService.aggreMonth();
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        } finally
+        {
+            flag = false;
+        }
+    }
+
     private void sleep()
     {
         try

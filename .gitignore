@@ -1,13 +1,12 @@
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
-target/
-tts/
+/target/
 .svn/
 *.properties
 *.rar
 *.zip
-software/
+/software/
 transaction-logs/
 
 # Folder config file

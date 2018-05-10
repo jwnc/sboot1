@@ -23,6 +23,13 @@
 	color:red;
 	margin-right:5px;
 }
+#dateGroups input[name='aggreCode']{
+	height: 30px;
+	width: 30px;
+}
+#dateGroups {
+	font-size:30px;
+}
 .b1,.b2,.b3,.b4,.b1b,.b2b,.b3b,.b4b,.b{display:block;overflow:hidden;}
 .b1,.b2,.b3,.b1b,.b2b,.b3b{height:1px;}
 .b2,.b3,.b4,.b2b,.b3b,.b4b,.b{border-left:1px solid #999;border-right:1px solid #999;}
@@ -33,23 +40,27 @@
 </style>
 
 <script type="text/javascript" th:inline="javascript">
-	function changeDate(){
-		var d = $("#dateStr").val();
-		//window.location.href = "/spyapi/zhihu/aggre?dateStr="+d;
-		window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+d;
-	}
-	function testDate(){
-		alert($("#weekStr").val());
+	$(function(){
+		$("input[name='aggreCode']:eq([[${aggreCode-1}]])").prop('checked',true);
+		$(".sel:eq([[${aggreCode-1}]])").show().siblings('.sel').hide();
+		$("input[name='aggreCode']").click(function(){
+			$(".sel:eq("+($(this).val()-1)+")").show().siblings('.sel').hide();
+		});
+	});
+	function changeDate(obj){
+		window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+$(obj).val();
 	}
 </script>
 
 </head>
 <body class="body-bg-lightgreen">
-	<div th:replace="header :: header('大V干了什么.')"></div>
+	<div th:replace="header :: header('大V在干什么.')"></div>
 	<div class="content">
-		<div>
-			<td><input id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate()"/></td>
-			<td><input id="weekStr" type="week" onchange="testDate()"/></td>
+		<div id="dateGroups">
+			<input class="sel" id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate(this)"/>
+			<input class="sel" id="weekStr" type="week" name="dateStr" th:value="${dateStr}" onchange="changeDate(this)"/>
+			<input class="sel" id="monthStr" type="month" name="dateStr" th:value="${dateStr}" onchange="changeDate(this)"/>
+			每日<input type="radio" value="1" name="aggreCode" /> 每周<input type="radio" value="2" name="aggreCode"/> 每月<input type="radio" value="3" name="aggreCode"/>
 		</div>
 		<div class="summary-list">
 			<div class="summary" th:each="example : ${data}">

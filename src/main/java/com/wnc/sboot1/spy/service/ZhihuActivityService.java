@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.crawl.core.util.HttpClientUtil;
+import com.wnc.basic.BasicDateUtil;
 import com.wnc.basic.BasicNumberUtil;
 import com.wnc.sboot1.spy.util.SpiderUtils;
 import com.wnc.sboot1.spy.zhihu.TT2;
@@ -42,7 +43,13 @@ public class ZhihuActivityService
 {
     private static Logger logger = Logger
             .getLogger( ZhihuActivityService.class );
-    public static final int FOLLOW_COUNT = 20;
+    public static final int FOLLOW_DAY_COUNT = 20;
+    public static final int FOLLOW_WEEK_COUNT = 60;
+    public static final int FOLLOW_MONTH_COUNT = 120;
+
+    public static final int AGGRE_DAY_CODE = 1;
+    public static final int AGGRE_WEEK_CODE = 2;
+    public static final int AGGRE_MONTH_CODE = 3;
     @Autowired
     AnswerRepository answerRepository;
     @Autowired
@@ -68,19 +75,53 @@ public class ZhihuActivityService
     public void aggreYesterday()
     {
         String day1 = SpiderUtils.getYesterDayStr();
-        String day2 = SpiderUtils.getDayWithLine();
-        aggre( day1, day2, 1 );
+        aggre( day1, day1, AGGRE_DAY_CODE, FOLLOW_DAY_COUNT );
     }
 
-    public void aggre( final String day1, final String day2, int aggreCode )
+    public void aggreLastWeek()
+    {
+        int currentWeekDay = BasicDateUtil.getCurrentWeekDay();
+        String today = BasicDateUtil.getCurrentDateString();
+        String lastSunday = BasicDateUtil.getDateBeforeDayDateString( today,
+                currentWeekDay - 1 );
+        String lastMonday = BasicDateUtil
+                .getDateBeforeDayDateString( lastSunday, 6 );
+        aggre( SpiderUtils.wrapDayWithLine( lastMonday ),
+                SpiderUtils.wrapDayWithLine( lastSunday ), AGGRE_WEEK_CODE,
+                FOLLOW_WEEK_COUNT );
+    }
+
+    public void aggreMonth()
+    {
+        String year = BasicDateUtil.getCurrentYearString();
+        String month = BasicDateUtil.getCurrentMonthString();
+        int currentMonthLastDay = BasicDateUtil.getCurrentMonthLastDay();
+
+        aggre( SpiderUtils.wrapDayWithLine( year + month + "01" ),
+                SpiderUtils
+                        .wrapDayWithLine( year + month + currentMonthLastDay ),
+                AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
+    }
+
+    /**
+     * 两个日期的闭区间的数据
+     * 
+     * @param day1
+     * @param day2
+     * @param aggreCode
+     * @param count
+     */
+    public void aggre( final String day1, final String day2, int aggreCode,
+            int count )
     {
         String sql = "select act.cnt,tar.id tid,tar.info title,tar.type from (SELECT target_id, count(*) cnt FROM zh_activity WHERE FROM_UNIXTIME(created_time) >= '"
-                + day1 + " 00:00;00' and FROM_UNIXTIME(created_time) < '" + day2
-                + " 00:00:00' group by target_id having count(*) > "
-                + FOLLOW_COUNT
-                + ") act, zh_target tar where act.target_id=tar.id";
+                + day1 + " 00:00:00' and FROM_UNIXTIME(created_time) <= '"
+                + day2 + " 23:59:59' group by target_id having count(*) > "
+                + count + ") act, zh_target tar where act.target_id=tar.id";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List resultList = createNativeQuery.getResultList();
+        logger.info( String.format( "Day:%s AggreCode:%d  Size:%d", day1,
+                aggreCode, resultList.size() ) );
         for ( Object object : resultList )
         {
             Object[] arr = (Object[])object;
@@ -100,34 +141,30 @@ public class ZhihuActivityService
             targetAggreInfo.setCnt(
                     BasicNumberUtil.getNumber( String.valueOf( arr[0] ) ) );
             targetAggreInfo.setTargetDesc( targetDesc );
-            // targetAggreInfo.setAggreCode( 1 );
-            // targetAggreInfo.setDateStr( "20180507" );
-            // targetAggreInfo.setTid( targetDesc.getTid() );
 
             find( targetDesc );
+
             try
             {
                 targetDescRepository.save( targetDesc );
             } catch ( Exception e )
             {
-                e.printStackTrace();
-                logger.error( e + "\n" + targetDesc );
             }
             try
             {
                 targetAggreInfoRepository.save( targetAggreInfo );
             } catch ( Exception e )
             {
-                e.printStackTrace();
-                logger.error( e + "\n" + targetAggreInfo );
             }
+
         }
     }
 
-    public List getAggreData( String dateStr )
+    public List getAggreData( String dateStr, int aggreCode )
     {
-        String sql = "select ti.cnt,td.description,td.tid,td.title,td.type,td.url from target_aggre_info ti, target_desc td where ti.tid = td.tid and date_str = '"
-                + dateStr + "' order by cnt desc";
+        String sql = "select ti.cnt,td.description,td.tid,td.title,td.type,td.url from target_aggre_info ti, target_desc td where ti.tid = td.tid and aggre_code="
+                + aggreCode + " and date_str = '" + dateStr
+                + "' order by cnt desc";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List<Object[]> aggreData = createNativeQuery.getResultList();
         List<TargetDescVo> list = new ArrayList<TargetDescVo>();

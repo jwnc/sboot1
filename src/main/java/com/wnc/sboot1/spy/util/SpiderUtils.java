@@ -3,6 +3,7 @@ package com.wnc.sboot1.spy.util;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.http.HttpEntity;
@@ -28,12 +29,38 @@ public class SpiderUtils
                         .replaceAll( "(\\?|\\&)[^\\&\\?]+=0\\.\\d{16}", "" ) );
     }
 
+    /**
+     * 获取一周中的星期一
+     * 
+     * @param year
+     * @param week
+     * @return
+     */
+    public static String getMondayOfWeek( int year, int week )
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.set( Calendar.YEAR, year ); // year年
+        cal.set( Calendar.WEEK_OF_YEAR, week ); // 设置为2018年的第week周
+        cal.set( Calendar.DAY_OF_WEEK, 2 ); // 1表示周日，2表示周一，7表示周六
+        Date date = cal.getTime();
+        return wrapDayWithLine( BasicDateUtil.getDateString( date ) );
+    }
+
     public static String getYesterDayStr()
     {
         String ret = BasicDateUtil.getDateBeforeDayDateString(
                 BasicDateUtil.getCurrentDateString(), 1 );
-        ret = ret.substring( 0, 4 ) + "-" + ret.substring( 4, 6 ) + "-"
-                + ret.substring( 6 );
+        ret = wrapDayWithLine( ret );
+        return ret;
+    }
+
+    public static String wrapDayWithLine( String ret )
+    {
+        if ( ret.matches( "\\d{8}" ) )
+        {
+            ret = ret.substring( 0, 4 ) + "-" + ret.substring( 4, 6 ) + "-"
+                    + ret.substring( 6 );
+        }
         return ret;
     }
 
