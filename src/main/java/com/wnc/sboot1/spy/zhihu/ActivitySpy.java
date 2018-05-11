@@ -31,14 +31,19 @@ public class ActivitySpy
     // 任务成功结束, 就把任务启动时间写入数据库,以便下次赋予LAST_SEEK_TIME
     // 第一次取全量, 下次取增量, 从数据库取
     public static long LAST_SEEK_TIME = 0;
-    public static int vCount = 0;
+    private int vCount = 0;
+    private volatile int cmtTopicCount = 0;
+    // 线程池获取
+    ThreadPoolExecutor netPageThreadPool = SpiderHttpClient.getInstance()
+            .getNetPageThreadPool();
+
     @Autowired
     private ZhihuActivityHelper zhihuActivityHelper;
 
     public void spy() throws Exception
     {
         initLastSeekTime();
-        VUSerPageTask.cmtTopicCount = 0;
+        cmtTopicCount = 0;
         vCount = 0;
         startTime = System.currentTimeMillis();
 
@@ -50,10 +55,6 @@ public class ActivitySpy
         // 初始化代理池
         ProxyProcess.getInstance().init();
         // ProxyPool.proxyQueue.add( new Direct( 1000 ) );
-
-        // 线程池获取
-        ThreadPoolExecutor netPageThreadPool = SpiderHttpClient.getInstance()
-                .getNetPageThreadPool();
 
         List<String> readFrom = FileOp.readFrom( "c:/zhihu-user-token.txt" );
         vCount = readFrom.size();
@@ -71,9 +72,7 @@ public class ActivitySpy
 
         while ( true )
         {
-            if ( netPageThreadPool.getActiveCount() == 0
-                    || VUSerPageTask.cmtTopicCount >= vCount
-                    || getSpyDuration() >= FOUR_HOURS )
+            if ( isTaskOver() )
             {
                 break;
             }
@@ -85,6 +84,73 @@ public class ActivitySpy
 
     }
 
+    /**
+     * 添加下一页任务,计数
+     * 
+     * @param nextUrl
+     * @param utoken
+     * @param proxyFlag
+     */
+    public synchronized void nextJob( String nextUrl, String utoken,
+            boolean proxyFlag )
+    {
+        vCount++;
+        netPageThreadPool.execute(
+                new VUSerPageTask( nextUrl, utoken, proxyFlag, this ) );
+    }
+
+    /**
+     * 任务完成之后的回调, 计数
+     * 
+     * @param type
+     * @param msg
+     */
+    public synchronized void callBackComplete( int type, String msg )
+    {
+        cmtTopicCount++;
+        logger.info( "当前完成任务数目:" + cmtTopicCount + "/" + vCount );
+    }
+
+    /**
+     * 记录错误日志
+     * 
+     * @param utoken
+     * @param apiUrl
+     * @param msg
+     */
+    public synchronized void errLog( String utoken, String apiUrl, String msg )
+    {
+        TaskErrLog taskErrLog = new TaskErrLog();
+        taskErrLog.setMsg( msg );
+        taskErrLog.setUrl( apiUrl );
+        taskErrLog.setuToken( utoken );
+
+        zhihuActivityHelper.errLog( taskErrLog );
+    }
+
+    /**
+     * 保存记录
+     * 
+     * @param parseArray
+     */
+    public synchronized void save( List<Activity> parseArray )
+    {
+        zhihuActivityHelper.save( parseArray );
+    }
+
+    /**
+     * 需要严格控制两个计数值
+     * 
+     * @return
+     */
+    private boolean isTaskOver()
+    {
+        return cmtTopicCount >= vCount || getSpyDuration() >= FOUR_HOURS;
+    }
+
+    /**
+     * 获得上次任务执行时间
+     */
     private void initLastSeekTime()
     {
         try
@@ -108,28 +174,8 @@ public class ActivitySpy
         }
     }
 
-    public synchronized void save( List<Activity> parseArray )
-    {
-        zhihuActivityHelper.save( parseArray );
-    }
-
     private long getSpyDuration()
     {
         return System.currentTimeMillis() - startTime;
-    }
-
-    public static void main( String[] args ) throws Exception
-    {
-        new ActivitySpy().spy();
-    }
-
-    public synchronized void errLog( String utoken, String apiUrl, String msg )
-    {
-        TaskErrLog taskErrLog = new TaskErrLog();
-        taskErrLog.setMsg( msg );
-        taskErrLog.setUrl( apiUrl );
-        taskErrLog.setuToken( utoken );
-
-        zhihuActivityHelper.errLog( taskErrLog );
     }
 }

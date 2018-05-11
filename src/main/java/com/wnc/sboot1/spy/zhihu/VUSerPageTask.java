@@ -20,7 +20,7 @@ public class VUSerPageTask extends AbstractPageTask
     private static Logger logger = Logger.getLogger( VUSerPageTask.class );
     private String utoken;
     private String apiUrl;
-    public static volatile int cmtTopicCount = 0;
+
     private ActivitySpy activitySpy;
 
     public VUSerPageTask( String apiUrl,String utoken,boolean b,
@@ -85,19 +85,25 @@ public class VUSerPageTask extends AbstractPageTask
     private void taskLog( String msg )
     {
         logger.info( msg );
-
-        // BasicFileUtil.writeFileString("log/task-" +
-        // ActivitySpy.TASK_TIMESTAMP +
-        // ".log", msg + "\r\n", null, true);
     }
 
     private void nextJob( JSONObject parseObject )
     {
-        String nextUrl = parseObject.getJSONObject( "paging" )
-                .getString( "next" );
-        ActivitySpy.vCount++;
-        spiderHttpClient.getNetPageThreadPool().execute(
-                new VUSerPageTask( nextUrl, utoken, proxyFlag, activitySpy ) );
+        String nextUrl = null;
+        try
+        {
+            nextUrl = parseObject.getJSONObject( "paging" ).getString( "next" );
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        } finally
+        {
+            if ( nextUrl != null )
+            {
+                activitySpy.nextJob( nextUrl, utoken, proxyFlag );
+            }
+        }
+
     }
 
     @Override
@@ -109,14 +115,22 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     protected void complete( int type, String msg )
     {
-        super.complete( type, msg );
-        if ( type != COMPLETE_STATUS_SUCCESS )
-        {
-            logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
-            activitySpy.errLog( utoken, apiUrl, msg );
-        }
 
-        cmtTopicCount++;
-        logger.info( "当前完成任务数目:" + cmtTopicCount + "/" + ActivitySpy.vCount );
+        try
+        {
+            super.complete( type, msg );
+
+            if ( type != COMPLETE_STATUS_SUCCESS )
+            {
+                logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
+                activitySpy.errLog( utoken, apiUrl, msg );
+            }
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        } finally
+        {
+            activitySpy.callBackComplete( type, msg );
+        }
     }
 }

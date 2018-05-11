@@ -1,6 +1,8 @@
 
 package com.wnc.sboot1.small;
 
+import java.util.Date;
+
 import com.wnc.basic.BasicDateUtil;
 import com.wnc.sboot1.spy.util.SpiderUtils;
 
@@ -18,6 +20,12 @@ public class DateUtil
                 .getDateBeforeDayDateString( lastSunday, 6 );
 
         System.out.println( SpiderUtils.getMondayOfWeek( 2018, 18 ) );
+
+        Date dateTimeFromString = BasicDateUtil.getDateTimeFromString(
+                "2017-11-11 22:11:11.111", "yyyy-MM-dd HH:mm:ss.SSS" );
+        System.out.println( dateTimeFromString );
+        System.out.println( dateTimeFromString.getTime() );
+        System.out.println( new Date( 1525996741798L ) );
 
     }
 }
