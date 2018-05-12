@@ -11,20 +11,19 @@ import org.springframework.stereotype.Component;
 
 import com.wnc.basic.BasicDateUtil;
 import com.wnc.basic.BasicFileUtil;
-import com.wnc.sboot1.spy.helper.FunnyCmtHelper;
+import com.wnc.sboot1.spy.util.SpiderUtils;
+import com.wnc.sboot1.spy.zuqiu.FunnyCommetSpy;
 
 @Component
 public class HotCmtTask
 {
-    @Autowired
-    private FunnyCmtHelper funnyCmtService;
     private static volatile boolean flag = false;
     private static volatile boolean flag17 = false;
 
     @Value( "${spy.cmt_fork_2017_lastday}" )
     private String lastDay;
     @Autowired
-    FunnyCmtHelper funnyCmtHelper;
+    private FunnyCommetSpy funnyCommetSpy;
 
     @Scheduled( cron = "${cronJob.fork_zb8_comment}" )
     public void a()
@@ -37,12 +36,12 @@ public class HotCmtTask
         flag = true;
         try
         {
-            funnyCmtService.forkToday();
+            funnyCommetSpy.setSpyDay( SpiderUtils.getDayWithLine() ).spy();
             int hour = Calendar.getInstance().get( Calendar.HOUR_OF_DAY );
             // 同时去找昨天的新闻
             if ( hour < 10 )
             {
-                funnyCmtService.forkYesterday();
+                funnyCommetSpy.setSpyDay( SpiderUtils.getYesterDayStr() ).spy();
             }
         } catch ( Exception e )
         {
@@ -73,7 +72,7 @@ public class HotCmtTask
                         + lastDay.substring( 6 );
                 try
                 {
-                    funnyCmtHelper.forkByDay( lastDay );
+                    funnyCommetSpy.setSpyDay( lastDay ).spy();
                     BasicFileUtil.writeFileString( "c:/spy.log",
                             BasicDateUtil.getCurrentDateTimeString()
                                     + " : FunnyCmt Over-" + lastDay + "\r\n",

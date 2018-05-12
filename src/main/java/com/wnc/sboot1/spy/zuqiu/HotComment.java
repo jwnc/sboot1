@@ -36,6 +36,8 @@ public class HotComment
     private String username;
 
     private Date updateDate;
+    @Column( updatable = false )
+    private int favorite;
 
     public String getContent()
     {
@@ -235,6 +237,16 @@ public class HotComment
     public void setUpdateDate( Date updateDate )
     {
         this.updateDate = updateDate;
+    }
+
+    public int getFavorite()
+    {
+        return favorite;
+    }
+
+    public void setFavorite( int favorite )
+    {
+        this.favorite = favorite;
     }
 
 }

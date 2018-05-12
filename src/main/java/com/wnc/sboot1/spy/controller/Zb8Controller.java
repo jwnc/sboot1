@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wnc.sboot1.itbook.helper.PageDataBean;
 import com.wnc.sboot1.spy.service.HotCommentService;
@@ -72,6 +74,49 @@ public class Zb8Controller
             e.printStackTrace();
         }
         return "zb8/comments";
+    }
+
+    @GetMapping( "favoritelist" )
+    public String favoriteList( Model model, Integer page, String day )
+    {
+        try
+        {
+            if ( page == null )
+            {
+                page = 1;
+            }
+            model.addAttribute( "day", day );
+            Page<HotComment> pagination = null;
+            pagination = hotCommentService.paginationFav( page, size, day );
+            if ( pagination != null )
+            {
+                model.addAttribute( "pageData", new PageDataBean<HotComment>(
+                        removeDuplicate( pagination ),
+                        pagination.getNumber() + 1, pagination.getSize(),
+                        (int)pagination.getTotalElements() ) );
+            }
+
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return "zb8/favorite";
+    }
+
+    @ResponseBody
+    @PostMapping( "favoritecmt" )
+    public String favoritecmt( Model model, Integer id )
+    {
+        try
+        {
+            hotCommentService.favorite( id );
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+            return "异常";
+        }
+
+        return "收藏成功";
     }
 
     private List<HotComment> removeDuplicate( Page<HotComment> pagination )

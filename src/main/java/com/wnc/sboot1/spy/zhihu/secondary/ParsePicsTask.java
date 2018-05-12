@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -25,6 +26,8 @@ public class ParsePicsTask
 {
     public static final String ERR_LOG = "D:\\个人工作\\spy\\zhihu\\topics\\表情图\\err.log";
     public static final String ALLPICS_LOG = "D:\\个人工作\\spy\\zhihu\\topics\\表情图\\all_pics.log";
+    @Autowired
+    static ProxyProcess proxyProcess;
 
     @SuppressWarnings( "unchecked" )
     public static void main( String[] args )
@@ -32,7 +35,7 @@ public class ParsePicsTask
         testValid();
         try
         {
-            ProxyProcess.getInstance().init();
+            proxyProcess.init();
         } catch ( IOException e )
         {
             // TODO Auto-generated catch block

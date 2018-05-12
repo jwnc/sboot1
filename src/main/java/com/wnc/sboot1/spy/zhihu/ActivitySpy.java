@@ -1,8 +1,12 @@
 
 package com.wnc.sboot1.spy.zhihu;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
@@ -13,36 +17,43 @@ import com.crawl.proxy.ProxyPool;
 import com.crawl.spider.SpiderHttpClient;
 import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.basic.BasicFileUtil;
-import com.wnc.basic.BasicNumberUtil;
+import com.wnc.sboot1.spy.Spy;
 import com.wnc.sboot1.spy.helper.ZhihuActivityHelper;
+import com.wnc.sboot1.spy.service.UserVService;
 import com.wnc.sboot1.spy.util.ProxyProcess;
 import com.wnc.sboot1.spy.zhihu.active.Activity;
 import com.wnc.sboot1.spy.zhihu.active.TaskErrLog;
-import com.wnc.string.PatternUtil;
-import com.wnc.tools.FileOp;
+import com.wnc.sboot1.spy.zhihu.active.UserV;
 
 @Component
-public class ActivitySpy
+public class ActivitySpy implements Spy
 {
     private static final long FOUR_HOURS = 1000 * 3600 * 4L;
-    private static final long TEN_DAYS = 1000 * 3600 * 24 * 10L;
     private static Logger logger = Logger.getLogger( ActivitySpy.class );
     private long startTime = 0L;
-    // 任务成功结束, 就把任务启动时间写入数据库,以便下次赋予LAST_SEEK_TIME
-    // 第一次取全量, 下次取增量, 从数据库取
-    public static long LAST_SEEK_TIME = 0;
     private int vCount = 0;
     private volatile int cmtTopicCount = 0;
+
+    // 记录各个用户的最后爬取日期
+    private Set<String> spyRefreshTimeRecorder = Collections
+            .synchronizedSet( new HashSet() );
+    List<UserV> userVList;
+
     // 线程池获取
     ThreadPoolExecutor netPageThreadPool = SpiderHttpClient.getInstance()
             .getNetPageThreadPool();
 
     @Autowired
+    ProxyProcess proxyProcess;
+    @Autowired
     private ZhihuActivityHelper zhihuActivityHelper;
+    @Autowired
+    private UserVService userVService;
 
     public void spy() throws Exception
     {
-        initLastSeekTime();
+        userVList = userVService.getUserVList();
+        spyRefreshTimeRecorder.clear();
         cmtTopicCount = 0;
         vCount = 0;
         startTime = System.currentTimeMillis();
@@ -53,21 +64,17 @@ public class ActivitySpy
             ProxyPool.proxyQueue.clear();
         }
         // 初始化代理池
-        ProxyProcess.getInstance().init();
+        proxyProcess.init();
         // ProxyPool.proxyQueue.add( new Direct( 1000 ) );
-
-        List<String> readFrom = FileOp.readFrom( "c:/zhihu-user-token.txt" );
-        vCount = readFrom.size();
 
         AbstractPageTask.retryMap.put( VUSerPageTask.class,
                 new HashMap<String, Integer>() );
         AbstractPageTask.retryMap.put( GeneralPageTask.class,
                 new HashMap<String, Integer>() );
-        for ( String utoken : readFrom )
+        for ( UserV userV : userVList )
         {
-            netPageThreadPool.execute(
-                    new VUSerPageTask( "https://www.zhihu.com/api/v4/members/"
-                            + utoken + "/activities", utoken, true, this ) );
+            doJob( "https://www.zhihu.com/api/v4/members/"
+                    + userV.getUserToken() + "/activities", userV, true );
         }
 
         while ( true )
@@ -88,15 +95,16 @@ public class ActivitySpy
      * 添加下一页任务,计数
      * 
      * @param nextUrl
+     * @param nextUrl
      * @param utoken
      * @param proxyFlag
      */
-    public synchronized void nextJob( String nextUrl, String utoken,
+    public synchronized void doJob( String apiUrl, UserV userV,
             boolean proxyFlag )
     {
         vCount++;
-        netPageThreadPool.execute(
-                new VUSerPageTask( nextUrl, utoken, proxyFlag, this ) );
+        netPageThreadPool
+                .execute( new VUSerPageTask( apiUrl, userV, true, this ) );
     }
 
     /**
@@ -105,7 +113,8 @@ public class ActivitySpy
      * @param type
      * @param msg
      */
-    public synchronized void callBackComplete( int type, String msg )
+    public synchronized void callBackComplete( int type, String msg,
+            Runnable task )
     {
         cmtTopicCount++;
         logger.info( "当前完成任务数目:" + cmtTopicCount + "/" + vCount );
@@ -132,10 +141,31 @@ public class ActivitySpy
      * 保存记录
      * 
      * @param parseArray
+     * @param beginSpyDate
      */
     public synchronized void save( List<Activity> parseArray )
     {
-        zhihuActivityHelper.save( parseArray );
+        try
+        {
+            zhihuActivityHelper.save( parseArray );
+        } catch ( Exception e )
+        {
+        }
+
+    }
+
+    public void updateLastTime( String userToken, Date beginSpyDate )
+    {
+        if ( spyRefreshTimeRecorder.add( userToken ) )
+        {
+            try
+            {
+                userVService.updateSpyTime( userToken, beginSpyDate );
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -143,38 +173,12 @@ public class ActivitySpy
      * 
      * @return
      */
-    private boolean isTaskOver()
+    public boolean isTaskOver()
     {
         return cmtTopicCount >= vCount || getSpyDuration() >= FOUR_HOURS;
     }
 
-    /**
-     * 获得上次任务执行时间
-     */
-    private void initLastSeekTime()
-    {
-        try
-        {
-            List<String> readFrom = FileOp.readFrom( "c:/zhihu-task.log" );
-            if ( readFrom.size() > 0 )
-            {
-                String string = readFrom.get( readFrom.size() - 1 );
-                LAST_SEEK_TIME = BasicNumberUtil.getLongNumber(
-                        PatternUtil.getFirstPattern( string, "\\d+" ) );
-                logger.info( "Last Seek Time:" + LAST_SEEK_TIME );
-            }
-        } catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        if ( LAST_SEEK_TIME < System.currentTimeMillis() - TEN_DAYS )
-        {
-            LAST_SEEK_TIME = System.currentTimeMillis() - TEN_DAYS;
-        }
-    }
-
-    private long getSpyDuration()
+    public long getSpyDuration()
     {
         return System.currentTimeMillis() - startTime;
     }

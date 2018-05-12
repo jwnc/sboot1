@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
-<title>直播吧热评</title>
+<title>直播吧热评收藏</title>
 <link rel="stylesheet" th:href="@{/css/itbook.css}"></link>
 <link rel="stylesheet" th:href="@{/css/bootstrap.css}"></link>
 <link rel="stylesheet" th:href="@{/css/font-awesome.css}"></link>
@@ -51,24 +51,6 @@
 		});
 		return text;
 	}
-	$(function(){
-		$('.cmt-content').click(function(){
-			console.log($(this).prev().text());
-			$.post([[@{/spyapi/zb8/favoritecmt}]],{id:$(this).prev().text()}, function(data){
-        		layer.alert(data,
-                    {
-        			//选项列表, 显示2秒钟, end函数在层小时的时候自动回调
-        				time:2000
-        			},
-        			//yes按钮回调函数
-        			function(index){
-        				//window.location.reload();//刷新当前页面  
-        				layer.close(index);
-                    }
-        		);
-			});
-		});
-	});
 	
 	function changeDate(){
 		$("input[name='page']").val(1);
@@ -79,16 +61,15 @@
 
 </head>
 <body class="body-bg-lightgreen">
-	<div th:replace="header :: header('今日热评.')"></div>
+	<div th:replace="header :: header('热评收藏.')"></div>
 	
 	<div class="content">
-		<input id="dayStr" type="date" th:value="${day}" onchange="changeDate()"/> <a th:href="@{/spyapi/zb8/favoritelist}"> 热评收藏</a>
+		<input id="dayStr" type="date" th:value="${day}" onchange="changeDate()"/> 
 		<div>
-			<form id="searchform" method="GET" th:action="@{/spyapi/zb8/comments}">
+			<form id="searchform" method="GET" th:action="@{/spyapi/zb8/favoritelist}">
 				<input type="hidden" name="page" th:value="${pageData.pageNum}" />
 				<input type="hidden" name="size" th:value="${pageData.pageSize}" />
 				<input type="hidden" name="day" th:value="${day}" />
-				<input type="hidden" name="orderNews" th:value="${orderNews}" />
 			</form>
 		</div>
 		

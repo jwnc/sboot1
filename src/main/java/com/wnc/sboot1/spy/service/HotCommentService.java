@@ -25,6 +25,39 @@ public class HotCommentService
     @Autowired
     private HotCommentRepository hotCommentRepository;
 
+    public void favorite( Integer id ) throws Exception
+    {
+        this.hotCommentRepository.favorite( id );
+    }
+
+    public Page<HotComment> paginationFav( int page, int size,
+            final String day ) throws Exception
+    {
+        Specification<HotComment> specification = new Specification<HotComment>()
+        {
+            public Predicate toPredicate( Root<HotComment> root,
+                    CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder )
+            {
+                Path<String> _name = root.get( "createtime" );
+
+                Path<String> favorite = root.get( "favorite" );
+                Predicate equal = criteriaBuilder.equal( favorite, 1 );
+                if ( day != null )
+                {
+                    Predicate timeLike = criteriaBuilder.like( _name,
+                            day + "%" );
+                    return criteriaBuilder.and( equal, timeLike );
+                }
+                return criteriaBuilder.and( equal );
+            }
+        };
+        String sortField = "createtime";
+        Sort sort = new Sort( Sort.Direction.DESC, sortField ); // 新闻按创建时间降序排序
+        sort = sort.and( new Sort( Sort.Direction.DESC, "up" ) );// 同一新闻按up降序
+        Pageable pageable = new PageRequest( page - 1, size, sort );
+        return this.hotCommentRepository.findAll( specification, pageable );
+    }
+
     public Page<HotComment> paginationByDay( int page, int size,
             final String day, int newsOrder ) throws Exception
     {

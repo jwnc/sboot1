@@ -22,7 +22,7 @@ public class DateUtil
         System.out.println( SpiderUtils.getMondayOfWeek( 2018, 18 ) );
 
         Date dateTimeFromString = BasicDateUtil.getDateTimeFromString(
-                "2017-11-11 22:11:11.111", "yyyy-MM-dd HH:mm:ss.SSS" );
+                "2018-04-30 00:00:00.000", "yyyy-MM-dd HH:mm:ss.SSS" );
         System.out.println( dateTimeFromString );
         System.out.println( dateTimeFromString.getTime() );
         System.out.println( new Date( 1525996741798L ) );

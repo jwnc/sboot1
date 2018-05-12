@@ -2,12 +2,9 @@
 Thumbs.db
 ehthumbs.db
 /target/
-.svn/
-*.properties
-*.rar
-*.zip
 /software/
-transaction-logs/
+/transaction-logs/
+.svn/
 
 # Folder config file
 Desktop.ini
@@ -21,6 +18,8 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+*.rar
+*.zip
 
 # Windows shortcuts
 *.lnk

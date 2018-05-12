@@ -34,10 +34,15 @@ public class FunnyCmtTask extends AbstractPageTask
         this.MAX_RETRY_TIMES = 8;
     }
 
+    public Zb8News getZb8News()
+    {
+        return this.news;
+    }
+
     @Override
     protected void retry()
     {
-        if ( funnyCommetSpy.isOverTask() )
+        if ( funnyCommetSpy.isTaskOver() )
         {
             return;
         }
@@ -49,7 +54,7 @@ public class FunnyCmtTask extends AbstractPageTask
     protected void handle( Page page ) throws Exception
     {
         // 如果已经结束了, 当前正在执行的任务也不能往Map里面添加了, 防止concurrent错误
-        if ( funnyCommetSpy.isOverTask() )
+        if ( funnyCommetSpy.isTaskOver() )
         {
             return;
         }
@@ -60,7 +65,7 @@ public class FunnyCmtTask extends AbstractPageTask
             List<HotComment> parseCommentList = parseCommentList( pinglun );
             if ( parseCommentList.size() > 0 )
             {
-                funnyCommetSpy.getMap().put( news, parseCommentList );
+                funnyCommetSpy.save( news, parseCommentList );
             }
         }
     }
@@ -70,7 +75,7 @@ public class FunnyCmtTask extends AbstractPageTask
         super.complete( type, msg );
         msg = Thread.currentThread().getName() + " " + removeRandom()
                 + (StringUtils.isNotBlank( msg ) ? (" Msg:" + msg) : "");
-        funnyCommetSpy.completeCallback( type, msg, news );
+        funnyCommetSpy.callBackComplete( type, msg, this );
         SpiderHttpClient.parseCount.getAndIncrement();
     }
 

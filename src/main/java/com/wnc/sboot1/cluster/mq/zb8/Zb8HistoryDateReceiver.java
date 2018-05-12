@@ -7,7 +7,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.wnc.sboot1.spy.helper.FunnyCmtHelper;
+import com.wnc.sboot1.spy.zuqiu.FunnyCommetSpy;
 
 @Component
 @RabbitListener( queues = "zb8_news_history_date" )
@@ -15,7 +15,7 @@ public class Zb8HistoryDateReceiver
 {
 
     @Autowired
-    private FunnyCmtHelper funnyCmtHelper;
+    private FunnyCommetSpy funnyCmtSpy;
     @Autowired
     Zb8HistoryDateSender zb8HistoryDateSender;
 
@@ -27,7 +27,7 @@ public class Zb8HistoryDateReceiver
         logger.info( "Receiver object : " + day );
         try
         {
-            funnyCmtHelper.forkByDay( day );
+            funnyCmtSpy.setSpyDay( day ).spy();
             logger.info( " : FunnyCmt Over-" + day );
         } catch ( Exception e )
         {

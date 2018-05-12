@@ -9,58 +9,83 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wnc.basic.BasicDateUtil;
 import com.wnc.basic.BasicFileUtil;
-import com.wnc.sboot1.spy.helper.FunnyCmtHelper;
+import com.wnc.sboot1.spy.zuqiu.FunnyCommetSpy;
 
-@RunWith(SpringRunner.class)
+@RunWith( SpringRunner.class )
 @SpringBootTest
-public class SpyFunnyCmt2016 {
+public class SpyFunnyCmt2016
+{
 
-	@Autowired
-	FunnyCmtHelper funnyCmtHelper;
+    @Autowired
+    private FunnyCommetSpy funnyCmtSpy;
 
-	// @Test
-	public void backward() {
-		String day = "2017-01-01";
-		while (!day.equals("2016-01-01")) {
-			day = BasicDateUtil.getDateBeforeDayDateString(day.replaceAll("-", ""), 1);
-			day = day.substring(0, 4) + "-" + day.substring(4, 6) + "-" + day.substring(6);
-			try {
-				funnyCmtHelper.forkByDay(day);
-				BasicFileUtil.writeFileString("spy.log",
-						BasicDateUtil.getCurrentDateTimeString() + " : FunnyCmt Over-" + day + "\r\n", null, true);
+    // @Test
+    public void backward()
+    {
+        String day = "2017-01-01";
+        while ( !day.equals( "2016-01-01" ) )
+        {
+            day = BasicDateUtil
+                    .getDateBeforeDayDateString( day.replaceAll( "-", "" ), 1 );
+            day = day.substring( 0, 4 ) + "-" + day.substring( 4, 6 ) + "-"
+                    + day.substring( 6 );
+            try
+            {
+                funnyCmtSpy.setSpyDay( day ).spy();
+                BasicFileUtil.writeFileString( "spy.log",
+                        BasicDateUtil.getCurrentDateTimeString()
+                                + " : FunnyCmt Over-" + day + "\r\n",
+                        null, true );
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				BasicFileUtil.writeFileString("spy.log",
-						BasicDateUtil.getCurrentDateTimeString() + " : FunnyCmt-Err in " + day + "\r\n", null, true);
-			}
-		}
-	}
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+                BasicFileUtil.writeFileString( "spy.log",
+                        BasicDateUtil.getCurrentDateTimeString()
+                                + " : FunnyCmt-Err in " + day + "\r\n",
+                        null, true );
+            }
+        }
+    }
 
-	// @Test
-	public void one() throws Exception {
-		String day = "2015-01-01";
-		funnyCmtHelper.forkByDay(day);
-		BasicFileUtil.writeFileString("spy.log",
-				BasicDateUtil.getCurrentDateTimeString() + " : FunnyCmt Over-" + day + "\r\n", null, true);
-	}
+    // @Test
+    public void one() throws Exception
+    {
+        String day = "2015-01-01";
+        funnyCmtSpy.setSpyDay( day ).spy();
+        BasicFileUtil
+                .writeFileString( "spy.log",
+                        BasicDateUtil.getCurrentDateTimeString()
+                                + " : FunnyCmt Over-" + day + "\r\n",
+                        null, true );
+    }
 
-	@Test
-	public void forward() {
-		String day = "2015-05-09";
-		while (!day.equals("2017-12-31")) {
-			day = BasicDateUtil.getDateBeforeDayDateString(day.replaceAll("-", ""), -1);
-			day = day.substring(0, 4) + "-" + day.substring(4, 6) + "-" + day.substring(6);
-			try {
-				funnyCmtHelper.forkByDay(day);
-				BasicFileUtil.writeFileString("spy.log",
-						BasicDateUtil.getCurrentDateTimeString() + " : FunnyCmt Over-" + day + "\r\n", null, true);
+    @Test
+    public void forward()
+    {
+        String day = "2015-05-09";
+        while ( !day.equals( "2017-12-31" ) )
+        {
+            day = BasicDateUtil.getDateBeforeDayDateString(
+                    day.replaceAll( "-", "" ), -1 );
+            day = day.substring( 0, 4 ) + "-" + day.substring( 4, 6 ) + "-"
+                    + day.substring( 6 );
+            try
+            {
+                funnyCmtSpy.setSpyDay( day ).spy();
+                BasicFileUtil.writeFileString( "spy.log",
+                        BasicDateUtil.getCurrentDateTimeString()
+                                + " : FunnyCmt Over-" + day + "\r\n",
+                        null, true );
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				BasicFileUtil.writeFileString("spy.log",
-						BasicDateUtil.getCurrentDateTimeString() + " : FunnyCmt-Err in " + day + "\r\n", null, true);
-			}
-		}
-	}
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+                BasicFileUtil.writeFileString( "spy.log",
+                        BasicDateUtil.getCurrentDateTimeString()
+                                + " : FunnyCmt-Err in " + day + "\r\n",
+                        null, true );
+            }
+        }
+    }
 }

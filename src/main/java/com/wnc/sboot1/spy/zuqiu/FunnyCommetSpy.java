@@ -2,26 +2,25 @@
 package com.wnc.sboot1.spy.zuqiu;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.crawl.spider.SpiderHttpClient;
 import com.crawl.spider.task.AbstractPageTask;
-import com.wnc.basic.BasicFileUtil;
+import com.wnc.sboot1.spy.Spy;
+import com.wnc.sboot1.spy.helper.FunnyCmtHelper;
+import com.wnc.sboot1.spy.util.ProxyProcess;
 
 @Component
-public class FunnyCommetSpy
+public class FunnyCommetSpy implements Spy
 {
     private volatile int cmtTopicCount = 0;
     private int taskCount = 0;
@@ -32,13 +31,58 @@ public class FunnyCommetSpy
 
     @Value( "${spy.cmt_fork_rate}" )
     private double rate;
+
     private Logger logger = Logger.getLogger( FunnyCommetSpy.class );
+    @Autowired
+    ProxyProcess proxyProcess;
+    @Autowired
+    FunnyCmtHelper funnyCmtHelper;
 
     private ThreadPoolExecutor netPageThreadPool = SpiderHttpClient
             .getInstance().getNetPageThreadPool();
 
-    private Map<Zb8News, List<HotComment>> map;
-    private List<Zb8News> solvedList;
+    private String spyDay;
+
+    public FunnyCommetSpy setSpyDay( String spyDay )
+    {
+        this.spyDay = spyDay;
+        return this;
+    }
+
+    /**
+     * 外部任务借口
+     * 
+     * @param day
+     * @return
+     * @throws Exception
+     */
+    public void spy() throws Exception
+    {
+        if ( this.spyDay == null )
+        {
+            throw new NullPointerException();
+        }
+
+        proxyProcess.init();
+        reset();
+
+        getFunnyNBA( spyDay );
+        getFunnyZuqiu( spyDay );
+
+        while ( true )
+        {
+            logger.info( getMonitorLog() );
+
+            if ( isTaskOver() )
+            {
+                break;
+            }
+            Thread.sleep( 10000 );
+        }
+        logger.info(
+                "任务结束用时:" + getSpyDuration() + " 抓取新闻总数:" + cmtTopicCount );
+
+    }
 
     /**
      * 内部爬虫任务接口 - 完成任务之后的回调
@@ -47,14 +91,17 @@ public class FunnyCommetSpy
      * @param msg
      * @param news
      */
-    public synchronized void completeCallback( int type, String msg,
-            Zb8News news )
+    public synchronized void callBackComplete( int type, String msg,
+            Runnable task )
     {
+
         cmtTopicCount++;
         switch ( type )
         {
             case AbstractPageTask.COMPLETE_STATUS_SUCCESS:
-                this.solvedList.add( news );
+                // 会有大量重复的记录出现
+                // funnyCmtHelper
+                // .saveCompleteLog( ((FunnyCmtTask)task).getZb8News() );
                 break;
             case AbstractPageTask.COMPLETE_STATUS_FAIL_RETRY_OUT:
                 retryFaildCount++;
@@ -65,8 +112,6 @@ public class FunnyCommetSpy
         }
 
         System.out.println( "当前完成任务数目:" + cmtTopicCount );
-        BasicFileUtil.writeFileString( "complete.txt", msg + "\r\n", null,
-                true );
     }
 
     /**
@@ -76,7 +121,7 @@ public class FunnyCommetSpy
      * @param startTime
      * @return
      */
-    public boolean isOverTask()
+    public boolean isTaskOver()
     {
         if ( rate <= 0 )
         {
@@ -87,53 +132,20 @@ public class FunnyCommetSpy
     }
 
     /**
-     * 内部爬虫任务接口
+     * 获取spy持续进行的时间
      * 
+     * @param startTime
      * @return
      */
-    public Map<Zb8News, List<HotComment>> getMap()
+    public long getSpyDuration()
     {
-        return map;
+        return System.currentTimeMillis() - startTime;
     }
 
-    /**
-     * 外部任务借口
-     * 
-     * @param day
-     * @return
-     * @throws Exception
-     */
-    public Map<Zb8News, List<HotComment>> getFunnyAll( String day )
-            throws Exception
+    public synchronized void save( Zb8News news,
+            List<HotComment> parseCommentList )
     {
-        reset();
-
-        Map<Zb8News, List<HotComment>> funnyNBA = getFunnyNBA( day );
-        funnyNBA.putAll( getFunnyZuqiu( day ) );
-
-        while ( true )
-        {
-            logger.info( getMonitorLog() );
-
-            if ( isOverTask() )
-            {
-                break;
-            }
-            Thread.sleep( 10000 );
-        }
-        logger.info( "任务结束用时:" + getSpyDuration() + " 抓取新闻总数:" + map.size() );
-
-        return funnyNBA;
-    }
-
-    /**
-     * 外部任务借口, 返回去做数据库或其他操作
-     * 
-     * @return
-     */
-    public List<Zb8News> getSolvedList()
-    {
-        return solvedList;
+        funnyCmtHelper.singleNews( news, parseCommentList );
     }
 
     /**
@@ -154,16 +166,14 @@ public class FunnyCommetSpy
         return accum.toString();
     }
 
-    private Map<Zb8News, List<HotComment>> getFunnyNBA( String day )
-            throws Exception
+    private void getFunnyNBA( String day ) throws Exception
     {
-        return getFunnyComments( Zb8Const.NBA, day );
+        getFunnyComments( Zb8Const.NBA, day );
     }
 
-    private Map<Zb8News, List<HotComment>> getFunnyZuqiu( String day )
-            throws Exception
+    private void getFunnyZuqiu( String day ) throws Exception
     {
-        return getFunnyComments( Zb8Const.ZUQIU, day );
+        getFunnyComments( Zb8Const.ZUQIU, day );
     }
 
     /**
@@ -172,8 +182,7 @@ public class FunnyCommetSpy
      * @return
      * @throws IOException
      */
-    private Map<Zb8News, List<HotComment>> getFunnyComments( String catelog,
-            String day ) throws Exception
+    private void getFunnyComments( String catelog, String day ) throws Exception
     {
         Set<String> set = new HashSet<String>();
         List<Zb8News> list = new Zb8NewsService().getNews( catelog, day );
@@ -186,18 +195,6 @@ public class FunnyCommetSpy
             }
         }
 
-        return getMap();
-    }
-
-    /**
-     * 获取spy持续进行的时间
-     * 
-     * @param startTime
-     * @return
-     */
-    private long getSpyDuration()
-    {
-        return System.currentTimeMillis() - startTime;
     }
 
     /**
@@ -205,8 +202,6 @@ public class FunnyCommetSpy
      */
     private void reset()
     {
-        map = new HashMap<Zb8News, List<HotComment>>();
-        solvedList = Collections.synchronizedList( new ArrayList<Zb8News>() );
         startTime = System.currentTimeMillis();
         cmtTopicCount = 0;
         taskCount = 0;
@@ -215,9 +210,11 @@ public class FunnyCommetSpy
         if ( AbstractPageTask.retryMap.get( FunnyCmtTask.class ) != null )
         {
             AbstractPageTask.retryMap.get( FunnyCmtTask.class ).clear();
+        } else
+        {
+            AbstractPageTask.retryMap.put( FunnyCmtTask.class,
+                    new ConcurrentHashMap<String, Integer>() );
         }
-        AbstractPageTask.retryMap.put( FunnyCmtTask.class,
-                new ConcurrentHashMap<String, Integer>() );
     }
 
 }
