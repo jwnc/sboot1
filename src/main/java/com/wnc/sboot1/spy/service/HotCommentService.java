@@ -51,7 +51,7 @@ public class HotCommentService
                 return criteriaBuilder.and( equal );
             }
         };
-        String sortField = "createtime";
+        String sortField = "zb8News.createtime";
         Sort sort = new Sort( Sort.Direction.DESC, sortField ); // 新闻按创建时间降序排序
         sort = sort.and( new Sort( Sort.Direction.DESC, "up" ) );// 同一新闻按up降序
         Pageable pageable = new PageRequest( page - 1, size, sort );
