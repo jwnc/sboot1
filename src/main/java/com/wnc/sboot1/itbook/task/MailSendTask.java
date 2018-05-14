@@ -2,7 +2,6 @@
 package com.wnc.sboot1.itbook.task;
 
 import java.util.List;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +37,6 @@ public class MailSendTask
     @Value( "${cronJob.mail_retry_times}" )
     private int retryTimes;
 
-    private static volatile boolean flag = false;
-
     @Scheduled( cron = "${cronJob.mail_week}" )
     public void sendTemplateMail()
     {
@@ -65,12 +62,6 @@ public class MailSendTask
 
     private void send( String summary, String dateStr, List list )
     {
-        sleep();
-        if ( flag )
-        {
-            return;
-        }
-        flag = true;
         LOGGER.info( "【" + summary + "】开始自动发送邮件给" + emailTo );
         try
         {
@@ -97,9 +88,6 @@ public class MailSendTask
         } catch ( Exception e )
         {
             e.printStackTrace();
-        } finally
-        {
-            flag = false;
         }
     }
 
@@ -108,14 +96,4 @@ public class MailSendTask
         return BasicDateUtil.getCurrentDateString();
     }
 
-    private void sleep()
-    {
-        try
-        {
-            Thread.sleep( new Random().nextInt( 10000 ) );
-        } catch ( InterruptedException e1 )
-        {
-            e1.printStackTrace();
-        }
-    }
 }
