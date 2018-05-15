@@ -189,7 +189,8 @@ public class ProxyHashService
     public void checkAll()
     {
         Map<String, Integer> availableProxies = readAvailableProxy();
-        logger.info( "checkAll任务数:" + availableProxies.size() );
+        final int size = availableProxies.size();
+        logger.info( "checkAll任务数:" + size );
         for ( final Map.Entry<String, Integer> entry : availableProxies
                 .entrySet() )
         {
@@ -199,10 +200,10 @@ public class ProxyHashService
                 public void run()
                 {
                     String proxyStr = entry.getKey();
-                    if ( !ProxyUtil.checkNetWork() )
-                    {
-                        return;
-                    }
+                    // if ( !ProxyUtil.checkNetWork() )
+                    // {
+                    // return;
+                    // }
                     boolean checkAvailable = false;
 
                     long t1 = System.currentTimeMillis();
@@ -211,20 +212,19 @@ public class ProxyHashService
                         checkAvailable = ProxyUtil.checkAvailable( proxyStr );
                     } catch ( IOException e )
                     {
-                        logger.error( proxyStr + ">" + e.toString() );
+                        System.out.println(
+                                "代理失效:" + proxyStr + ">" + e.toString() );
                     } finally
                     {
                         checkCount++;
                         if ( !checkAvailable )
                         {
-                            logger.info( "已check数目:" + checkCount + ", 代理失效:"
-                                    + proxyStr );
                             opsForHash.put( redisHashKey, proxyStr,
                                     INVALID_PROXY_REPLYTIME );
                         } else
                         {
-                            System.out.println( "已check数目:" + checkCount
-                                    + ", 代理有效:" + proxyStr );
+                            System.out.println( "已check数目:" + checkCount + "/"
+                                    + size + ", 代理有效:" + proxyStr );
                             opsForHash.put( redisHashKey, proxyStr,
                                     (int)(System.currentTimeMillis() - t1) );
                         }
@@ -242,7 +242,7 @@ public class ProxyHashService
                 e.printStackTrace();
             }
         }
-        logger.info( "线程池顺利结束!" );
+        logger.info( "代理检验线程池顺利结束!" );
     }
 
     /**

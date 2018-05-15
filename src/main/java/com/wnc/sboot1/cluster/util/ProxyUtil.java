@@ -22,8 +22,11 @@ public class ProxyUtil
 
     public static void main( String[] args ) throws IOException
     {
+        long l = System.currentTimeMillis();
         if ( ProxyUtil.checkNetWork() )
         {
+            long x = System.currentTimeMillis() - l;
+            System.out.println( x );
             boolean checkAvailable = ProxyUtil
                     .checkAvailable( "159.65.184.229:3128" );
             System.out.println( checkAvailable );
