@@ -7,12 +7,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.wnc.sboot1.spy.rep.HotCommentRepository;
-import com.wnc.sboot1.spy.rep.TaskCompleteLogRepository;
-import com.wnc.sboot1.spy.rep.Zb8NewsRepository;
 import com.wnc.sboot1.spy.zuqiu.HotComment;
 import com.wnc.sboot1.spy.zuqiu.TaskCompleteLog;
 import com.wnc.sboot1.spy.zuqiu.Zb8News;
+import com.wnc.sboot1.spy.zuqiu.rep.HotCommentRepository;
+import com.wnc.sboot1.spy.zuqiu.rep.TaskCompleteLogRepository;
+import com.wnc.sboot1.spy.zuqiu.rep.Zb8NewsRepository;
 
 @Component
 public class FunnyCmtHelper

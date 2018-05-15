@@ -22,17 +22,21 @@ public class VUSerPageTask extends AbstractPageTask
     private static Logger logger = Logger.getLogger( VUSerPageTask.class );
     private String utoken;
     private String apiUrl;
-    //
+    // 以首个任务开始请求接口时的时间为准, 而不是初始化提交到线程池时为准
+    // 在重试和下一个任务时, beginSpyDate会一直流转下去
     private Date beginSpyDate;
     private ActivitySpy activitySpy;
     private UserV userV;
 
     public VUSerPageTask( String apiUrl,UserV userV,boolean b,
-            ActivitySpy activitySpy )
+            ActivitySpy activitySpy,Date beginSpyDate )
     {
         this.userV = userV;
         this.utoken = userV.getUserToken();
-        this.beginSpyDate = new Date();
+        if ( beginSpyDate != null )
+        {
+            this.beginSpyDate = beginSpyDate;
+        }
 
         this.apiUrl = apiUrl;
         this.proxyFlag = b;
@@ -44,52 +48,65 @@ public class VUSerPageTask extends AbstractPageTask
     }
 
     @Override
+    public void run()
+    {
+        if ( beginSpyDate == null )
+        {
+            this.beginSpyDate = new Date();
+        }
+        super.run();
+    }
+
+    @Override
     protected void retry()
     {
-        spiderHttpClient.getNetPageThreadPool().execute(
-                new VUSerPageTask( apiUrl, userV, proxyFlag, activitySpy ) );
+        spiderHttpClient.getNetPageThreadPool().execute( new VUSerPageTask(
+                apiUrl, userV, proxyFlag, activitySpy, this.beginSpyDate ) );
     }
 
     @Override
     protected void handle( Page page )
     {
         System.out.println( "进行:" + utoken );
-        JSONObject parseObject = JSONObject.parseObject( page.getHtml() );
+        JSONObject restData = JSONObject.parseObject( page.getHtml() );
 
-        JSONArray jsonArray = parseObject.getJSONArray( "data" );
+        JSONArray jsonArray = restData.getJSONArray( "data" );
         int size = jsonArray.size();
-        try
+        if ( size > 0 )
         {
-            if ( size > 0 )
+            if ( !isNewActivity( jsonArray.getJSONObject( 0 ) ) )
             {
-                if ( !isNewActivity( jsonArray.getJSONObject( 0 ) ) )
-                {
-                    taskLog( utoken + "无最新动态" );
-                    return;
-                }
+                taskStop( "无最新动态" );
+                return;
+            }
 
-                // 消费本次动态列表
-                List<Activity> parseArray = jsonArray
-                        .toJavaList( Activity.class );
-                activitySpy.save( parseArray );
+            // 消费本次动态列表
+            List<Activity> parseArray = jsonArray.toJavaList( Activity.class );
+            activitySpy.save( parseArray );
 
-                JSONObject jsonObject = jsonArray.getJSONObject( size - 1 );
-                if ( isNewActivity( jsonObject ) )
-                {
-                    nextJob( parseObject );
-                } else
-                {
-                    taskLog( utoken + "已经到了尽头" );
-                }
+            JSONObject lastActObj = jsonArray.getJSONObject( size - 1 );
+            if ( isNewActivity( lastActObj ) )
+            {
+                nextJob( restData );
             } else
             {
-                taskLog( utoken + "无动态" );
-
+                taskStop( "已经到了上次的截止期限" );
             }
-        } finally
+        } else
         {
-            activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
+            taskStop( "无动态" );
         }
+    }
+
+    /**
+     * 任务停止, 并更新最后时间
+     * 
+     * @param msg
+     */
+    private void taskStop( String msg )
+    {
+        activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
+        taskLog( utoken + msg );
     }
 
     private boolean isNewActivity( JSONObject jsonObject )
@@ -116,7 +133,8 @@ public class VUSerPageTask extends AbstractPageTask
         {
             if ( nextUrl != null )
             {
-                activitySpy.doJob( nextUrl, userV, proxyFlag );
+                activitySpy.doJob( nextUrl, userV, proxyFlag,
+                        this.beginSpyDate );
             }
         }
 

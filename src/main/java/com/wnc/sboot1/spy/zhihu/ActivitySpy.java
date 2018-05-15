@@ -74,7 +74,7 @@ public class ActivitySpy implements Spy
         for ( UserV userV : userVList )
         {
             doJob( "https://www.zhihu.com/api/v4/members/"
-                    + userV.getUserToken() + "/activities", userV, true );
+                    + userV.getUserToken() + "/activities", userV, true, null );
         }
 
         while ( true )
@@ -98,13 +98,14 @@ public class ActivitySpy implements Spy
      * @param nextUrl
      * @param utoken
      * @param proxyFlag
+     * @param beginSpyDate
      */
     public synchronized void doJob( String apiUrl, UserV userV,
-            boolean proxyFlag )
+            boolean proxyFlag, Date beginSpyDate )
     {
         vCount++;
-        netPageThreadPool
-                .execute( new VUSerPageTask( apiUrl, userV, true, this ) );
+        netPageThreadPool.execute(
+                new VUSerPageTask( apiUrl, userV, true, this, beginSpyDate ) );
     }
 
     /**

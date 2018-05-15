@@ -1,5 +1,5 @@
 
-package com.wnc.sboot1.spy.rep;
+package com.wnc.sboot1.spy.zuqiu.rep;
 
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,8 +1,6 @@
 
 package com.wnc.sboot1.spy.task;
 
-import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -19,7 +17,6 @@ public class ZhihuActivityTask
     @Scheduled( cron = "${cronJob.fork_zhihu_activity}" )
     public void a()
     {
-        sleep();
         if ( flag )
         {
             return;
@@ -34,17 +31,6 @@ public class ZhihuActivityTask
         } finally
         {
             flag = false;
-        }
-    }
-
-    private void sleep()
-    {
-        try
-        {
-            Thread.sleep( new Random().nextInt( 10000 ) );
-        } catch ( InterruptedException e1 )
-        {
-            e1.printStackTrace();
         }
     }
 }

@@ -16,8 +16,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import com.wnc.sboot1.spy.rep.HotCommentRepository;
 import com.wnc.sboot1.spy.zuqiu.HotComment;
+import com.wnc.sboot1.spy.zuqiu.rep.HotCommentRepository;
 
 @Component
 public class HotCommentService

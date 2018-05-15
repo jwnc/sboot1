@@ -20,8 +20,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wnc.sboot1.spy.rep.HotCommentRepository;
 import com.wnc.sboot1.spy.zuqiu.HotComment;
+import com.wnc.sboot1.spy.zuqiu.rep.HotCommentRepository;
 
 @RunWith( SpringRunner.class )
 @SpringBootTest

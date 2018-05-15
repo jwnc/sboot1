@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.wnc.sboot1.spy.rep.HotCommentRepository;
-import com.wnc.sboot1.spy.rep.Zb8NewsRepository;
+import com.wnc.sboot1.spy.zuqiu.rep.HotCommentRepository;
+import com.wnc.sboot1.spy.zuqiu.rep.Zb8NewsRepository;
 
 @RunWith( SpringRunner.class )
 @SpringBootTest
