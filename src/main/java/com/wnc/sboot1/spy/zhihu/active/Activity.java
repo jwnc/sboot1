@@ -1,13 +1,10 @@
 
 package com.wnc.sboot1.spy.zhihu.active;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wnc.sboot1.spy.zhihu.active.target.Answer;
@@ -21,27 +18,24 @@ import com.wnc.sboot1.spy.zhihu.active.target.ZColumn;
 
 @Entity
 @Table( name = "ZH_ACTIVITY" )
-public class Activity
+public class Activity extends ActivityKey
 {
-    @Transient
-    private static Logger logger = Logger.getLogger( Activity.class );
-    @Id
-    @GeneratedValue
-    private Long id;
+    private static final long serialVersionUID = 8195407694303106539L;
+
+    @EmbeddedId
+    private ActivityKey key;
+    private String type;
+    private Integer action_id;
+    private String target_id;
 
     @Transient
     private Actor actor;
-    private String actor_id;
     @Transient
     private Action action;
-    private Integer action_id;
     @Transient
     private String verb;
     @Transient
     private String action_text;
-
-    private Long created_time;
-    private String type;
 
     @Transient
     private JSONObject target;
@@ -50,7 +44,6 @@ public class Activity
      */
     @Transient
     private Target entity;
-    private String target_id;
 
     public void convertTargetAndId()
     {
@@ -110,8 +103,8 @@ public class Activity
                 break;
             default:
                 // log err
-                logger.error( this.getAction_id() + "行为不支持:" + verb );
-                return;
+                throw new RuntimeException(
+                        this.getAction_id() + "行为不支持:" + verb );
         }
 
         setActor_id( getActor().getId() );
@@ -142,26 +135,6 @@ public class Activity
         this.actor = actor;
     }
 
-    public Long getCreated_time()
-    {
-        return created_time;
-    }
-
-    public void setCreated_time( Long created_time )
-    {
-        this.created_time = created_time;
-    }
-
-    public Long getId()
-    {
-        return id;
-    }
-
-    public void setId( Long id )
-    {
-        this.id = id;
-    }
-
     public String getType()
     {
         return type;
@@ -190,16 +163,6 @@ public class Activity
     public void setEntity( Target entity )
     {
         this.entity = entity;
-    }
-
-    public String getActor_id()
-    {
-        return actor_id;
-    }
-
-    public void setActor_id( String actor_id )
-    {
-        this.actor_id = actor_id;
     }
 
     public String getTarget_id()
