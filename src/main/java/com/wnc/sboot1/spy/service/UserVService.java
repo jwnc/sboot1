@@ -27,7 +27,7 @@ public class UserVService
     public List<UserV> getUserVList()
     {
         List<UserV> list = new ArrayList<>();
-        String sql = "select user_token, last_spy_time from user_v where status = 0 order by followers desc";
+        String sql = "select user_token, last_spy_time from user_v where status = 0 and hash_id='ba13e8f380592c123d3218d8f25529fa' order by followers desc";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List<Object[]> resultList = createNativeQuery.getResultList();
         UserV v = null;

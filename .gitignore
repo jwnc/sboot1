@@ -20,7 +20,7 @@ $RECYCLE.BIN/
 *.msp
 *.rar
 *.zip
-
+*.properties
 # Windows shortcuts
 *.lnk
 

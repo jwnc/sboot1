@@ -98,9 +98,10 @@ public class ZhihuActivityHelper
             } catch ( Exception e )
             {
                 e.printStackTrace();
-                logger.error( activity.getAction().getAction_text() + " "
-                        + entity.getUrl() + e.toString() );
-                throw new Exception( e.getMessage() );
+                logger.error( activity.getVerb() + " " + entity.getUrl()
+                        + e.toString() );
+                throw new Exception(
+                        e.getMessage() + " target:" + activity.getTarget() );
             }
         }
     }
