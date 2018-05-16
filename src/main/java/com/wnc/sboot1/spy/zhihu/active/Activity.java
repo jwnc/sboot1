@@ -23,7 +23,7 @@ public class Activity extends ActivityKey
     private static final long serialVersionUID = 8195407694303106539L;
 
     @EmbeddedId
-    private ActivityKey key;
+    private ActivityKey id;
     private String type;
     private Integer action_id;
     private String target_id;
@@ -213,6 +213,16 @@ public class Activity extends ActivityKey
     public void setAction_text( String action_text )
     {
         this.action_text = action_text;
+    }
+
+    public ActivityKey getId()
+    {
+        return id;
+    }
+
+    public void setId( ActivityKey id )
+    {
+        this.id = id;
     }
 
 }

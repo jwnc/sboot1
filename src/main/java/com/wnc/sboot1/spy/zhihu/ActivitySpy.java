@@ -87,7 +87,7 @@ public class ActivitySpy implements Spy
         }
         BasicFileUtil.writeFileString( "c:/zhihu-task.log", "开始于:" + startTime
                 + " 结束于:" + System.currentTimeMillis() + "\r\n", null, true );
-        logger.info( "任务结束用时:" + getSpyDuration() );
+        logger.info( "任务结束用时:" + getSpyDuration() + " 完成任务数:" + vCount );
 
     }
 
@@ -118,7 +118,7 @@ public class ActivitySpy implements Spy
             Runnable task )
     {
         cmtTopicCount++;
-        logger.info( "当前完成任务数目:" + cmtTopicCount + "/" + vCount );
+        System.out.println( "当前完成任务数目:" + cmtTopicCount + "/" + vCount );
     }
 
     /**
@@ -143,16 +143,12 @@ public class ActivitySpy implements Spy
      * 
      * @param parseArray
      * @param beginSpyDate
+     * @throws Exception
+     *             严重异常, 如数据库失去连接, 表结构变更等
      */
-    public synchronized void save( List<Activity> parseArray )
+    public synchronized void save( List<Activity> parseArray ) throws Exception
     {
-        try
-        {
-            zhihuActivityHelper.save( parseArray );
-        } catch ( Exception e )
-        {
-        }
-
+        zhihuActivityHelper.save( parseArray );
     }
 
     public void updateLastTime( String userToken, Date beginSpyDate )

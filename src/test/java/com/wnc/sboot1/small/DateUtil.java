@@ -3,6 +3,7 @@ package com.wnc.sboot1.small;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wnc.basic.BasicDateUtil;
 import com.wnc.sboot1.spy.util.SpiderUtils;
 
@@ -27,5 +28,9 @@ public class DateUtil
         System.out.println( dateTimeFromString.getTime() );
         System.out.println( new Date( 1525996741798L ) );
 
+        String x = "{\"a\" :\"1\", \"b\" : \"2\"}";
+        JSONObject parseObject = JSONObject.parseObject( x );
+        System.out.println( parseObject.remove( "a" ) );
+        System.out.println( parseObject );
     }
 }

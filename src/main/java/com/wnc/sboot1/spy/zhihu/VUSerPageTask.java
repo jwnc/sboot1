@@ -20,6 +20,7 @@ import com.wnc.sboot1.spy.zhihu.active.UserV;
 public class VUSerPageTask extends AbstractPageTask
 {
     private static Logger logger = Logger.getLogger( VUSerPageTask.class );
+    public static final int COMPLETE_STATUS_SQL_ERROR = 4;
     private String utoken;
     private String apiUrl;
     // 以首个任务开始请求接口时的时间为准, 而不是初始化提交到线程池时为准
@@ -65,12 +66,14 @@ public class VUSerPageTask extends AbstractPageTask
     }
 
     @Override
-    protected void handle( Page page )
+    protected void handle( Page page ) throws Exception
     {
         System.out.println( "进行:" + utoken );
         JSONObject restData = JSONObject.parseObject( page.getHtml() );
 
         JSONArray jsonArray = restData.getJSONArray( "data" );
+        // 删除多余的id键
+        removeJsonAttr( jsonArray );
         int size = jsonArray.size();
         if ( size > 0 )
         {
@@ -82,7 +85,22 @@ public class VUSerPageTask extends AbstractPageTask
 
             // 消费本次动态列表
             List<Activity> parseArray = jsonArray.toJavaList( Activity.class );
-            activitySpy.save( parseArray );
+            try
+            {
+                activitySpy.save( parseArray );
+            } catch ( Exception e )
+            {
+                String msg = "数据库执行严重异常, 请检查! - " + e.getMessage();
+                logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
+                try
+                {
+                    activitySpy.errLog( utoken, apiUrl, msg );
+                } catch ( Exception e1 )
+                {
+                    e1.printStackTrace();
+                }
+                return;
+            }
 
             JSONObject lastActObj = jsonArray.getJSONObject( size - 1 );
             if ( isNewActivity( lastActObj ) )
@@ -95,6 +113,14 @@ public class VUSerPageTask extends AbstractPageTask
         } else
         {
             taskStop( "无动态" );
+        }
+    }
+
+    private void removeJsonAttr( JSONArray jsonArray )
+    {
+        for ( int i = 0; i < jsonArray.size(); i++ )
+        {
+            jsonArray.getJSONObject( i ).remove( "id" );
         }
     }
 

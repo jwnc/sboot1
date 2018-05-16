@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.wnc.sboot1.spy.zhihu.active.Activity;
+import com.wnc.sboot1.spy.zhihu.active.ActivityKey;
 import com.wnc.sboot1.spy.zhihu.active.TaskErrLog;
 import com.wnc.sboot1.spy.zhihu.active.target.Answer;
 import com.wnc.sboot1.spy.zhihu.active.target.Article;
@@ -52,7 +53,7 @@ public class ZhihuActivityHelper
     @Autowired
     TaskErrLogRepository taskErrLogRepository;
 
-    public void save( List<Activity> activityList )
+    public void save( List<Activity> activityList ) throws Exception
     {
         Target entity = new Target();
         for ( Activity activity : activityList )
@@ -60,6 +61,10 @@ public class ZhihuActivityHelper
             try
             {
                 activity.convertTargetAndId();
+                ActivityKey id = new ActivityKey();
+                id.setActor_id( activity.getActor_id() );
+                id.setCreated_time( activity.getCreated_time() );
+                activity.setId( id );
                 actRepository.save( activity );
                 entity = activity.getEntity();
 
@@ -95,6 +100,7 @@ public class ZhihuActivityHelper
                 e.printStackTrace();
                 logger.error( activity.getAction().getAction_text() + " "
                         + entity.getUrl() + e.toString() );
+                throw new Exception( e.getMessage() );
             }
         }
     }

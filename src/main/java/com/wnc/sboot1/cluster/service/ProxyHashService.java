@@ -188,6 +188,7 @@ public class ProxyHashService
      */
     public void checkAll()
     {
+        checkCount = 0;
         Map<String, Integer> availableProxies = readAvailableProxy();
         final int size = availableProxies.size();
         logger.info( "checkAll任务数:" + size );

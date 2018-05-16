@@ -24,18 +24,27 @@ public class TargetDescriptionDay
     @Test
     public void a()
     {
-        // zhihuActivityService.aggreYesterday();
-        // zhihuActivityService.aggre("2018-05-07", "2018-05-08", 1);
-        // zhihuActivityService.aggre("2018-05-06", "2018-05-07", 1);
-        // zhihuActivityService.aggre("2018-05-05", "2018-05-06", 1);
-        // zhihuActivityService.aggre("2018-05-04", "2018-05-05", 1);
-        // zhihuActivityService.aggre("2018-05-03", "2018-05-04", 1);
 
-        // zhihuActivityService.aggre("2018-05-02", "2018-05-03", 1);
-        // zhihuActivityService.aggre("2018-05-01", "2018-05-02", 1);
+        // zhihuActivityService.aggre( "2018-04-30", "2018-04-30", 1,
+        // ZhihuActivityService.FOLLOW_DAY_COUNT );
+        for ( int i = 10; i < 16; i++ )
+        {
+            zhihuActivityService.aggre( "2018-05-" + i, "2018-05-" + i, 1,
+                    ZhihuActivityService.FOLLOW_DAY_COUNT );
+        }
+
+        zhihuActivityService.aggre( "2018-04-30", "2018-05-06",
+                ZhihuActivityService.AGGRE_WEEK_CODE,
+                ZhihuActivityService.FOLLOW_WEEK_COUNT );
+        zhihuActivityService.aggre( "2018-05-07", "2018-05-13",
+                ZhihuActivityService.AGGRE_WEEK_CODE,
+                ZhihuActivityService.FOLLOW_WEEK_COUNT );
+        zhihuActivityService.aggre( "2018-05-14", "2018-05-20",
+                ZhihuActivityService.AGGRE_WEEK_CODE,
+                ZhihuActivityService.FOLLOW_WEEK_COUNT );
 
         // zhihuActivityService.aggreLastWeek();
-        // zhihuActivityService.aggreMonth();
+        zhihuActivityService.aggreMonth();
         zhihuActivityService.aggreYear();
     }
 }

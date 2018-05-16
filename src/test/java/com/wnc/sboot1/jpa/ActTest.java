@@ -16,34 +16,42 @@ import com.wnc.sboot1.spy.helper.ZhihuActivityHelper;
 import com.wnc.sboot1.spy.zhihu.active.Activity;
 import com.wnc.tools.FileOp;
 
-@RunWith(SpringRunner.class)
+@RunWith( SpringRunner.class )
 @SpringBootTest
-public class ActTest {
-	private static Logger logger = Logger.getLogger(ActTest.class);
-	@Autowired
-	private ZhihuActivityHelper zhihuActivityHelper;
+public class ActTest
+{
+    private static Logger logger = Logger.getLogger( ActTest.class );
+    @Autowired
+    private ZhihuActivityHelper zhihuActivityHelper;
 
-	@Test
-	public void a() {
-		File[] listFiles = new File("D:\\个人工作\\spy\\zhihu\\activities").listFiles();
-		for (File file : listFiles) {
-			testTarget(file);
-		}
-	}
+    @Test
+    public void a() throws Exception
+    {
+        File[] listFiles = new File( "D:\\个人工作\\spy\\zhihu\\activities" )
+                .listFiles();
+        for ( File file : listFiles )
+        {
+            testTarget( file );
+        }
+    }
 
-	private void testTarget(File file) {
-		System.out.println(file.getName());
-		List<String> readFrom = FileOp.readFrom(file.getAbsolutePath());
-		String ret = "";
-		for (String string : readFrom) {
-			ret += string;
-		}
-		JSONObject parseObject = JSONObject.parseObject(ret);
-		String data = parseObject.getString("data");
-		if (data == null || data.length() < 10) {
-			return;
-		}
-		List<Activity> parseArray = JSONObject.parseArray(data, Activity.class);
-		zhihuActivityHelper.save(parseArray);
-	}
+    private void testTarget( File file ) throws Exception
+    {
+        System.out.println( file.getName() );
+        List<String> readFrom = FileOp.readFrom( file.getAbsolutePath() );
+        String ret = "";
+        for ( String string : readFrom )
+        {
+            ret += string;
+        }
+        JSONObject parseObject = JSONObject.parseObject( ret );
+        String data = parseObject.getString( "data" );
+        if ( data == null || data.length() < 10 )
+        {
+            return;
+        }
+        List<Activity> parseArray = JSONObject.parseArray( data,
+                Activity.class );
+        zhihuActivityHelper.save( parseArray );
+    }
 }
