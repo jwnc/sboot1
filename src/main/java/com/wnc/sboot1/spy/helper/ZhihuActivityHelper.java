@@ -74,6 +74,7 @@ public class ZhihuActivityHelper
                     answerRepository.save( answer );
                     // 注意info和title的处理, 直接save的话会为null
                     Question question = answer.getQuestion();
+                    question.setTid( question.getId() + question.getType() );
                     question.setInfo( question.getTitle() );
                     questionRepository.save( question );
                 } else if ( entity instanceof Article )
@@ -98,7 +99,7 @@ public class ZhihuActivityHelper
             } catch ( Exception e )
             {
                 e.printStackTrace();
-                logger.error( activity.getVerb() + " " + entity.getUrl()
+                logger.error( activity.getVerb() + " " + entity.getTid() + "/"
                         + e.toString() );
                 throw new Exception(
                         e.getMessage() + " target:" + activity.getTarget() );

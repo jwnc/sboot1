@@ -136,10 +136,10 @@ public class ZhihuActivityService
     public void aggre( final String day1, final String day2, int aggreCode,
             int count )
     {
-        String sql = "select act.cnt,tar.id tid,tar.info title,tar.type from (SELECT target_id, count(*) cnt FROM zh_activity WHERE FROM_UNIXTIME(created_time) >= '"
+        String sql = "select act.cnt,tar.tid tid,tar.info title,tar.type from (SELECT target_id, count(*) cnt FROM zh_activity WHERE FROM_UNIXTIME(created_time) >= '"
                 + day1 + " 00:00:00' and FROM_UNIXTIME(created_time) <= '"
                 + day2 + " 23:59:59' group by target_id having count(*) > "
-                + count + ") act, zh_target tar where act.target_id=tar.id";
+                + count + ") act, zh_target tar where act.target_id=tar.tid";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List resultList = createNativeQuery.getResultList();
         logger.info( String.format( "Day:%s AggreCode:%d  Size:%d SQL:%s", day1,

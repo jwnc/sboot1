@@ -28,7 +28,7 @@ import com.wnc.sboot1.spy.zhihu.active.UserV;
 @Component
 public class ActivitySpy implements Spy
 {
-    private static final long SIX_HOURS = 1000 * 3600 * 6L;
+    private static final long SIX_HOURS = 1000 * 3600 * 50L;
     private static Logger logger = Logger.getLogger( ActivitySpy.class );
     private long startTime = 0L;
     private int vCount = 0;

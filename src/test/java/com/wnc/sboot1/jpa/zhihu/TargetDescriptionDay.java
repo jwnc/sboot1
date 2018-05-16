@@ -25,11 +25,16 @@ public class TargetDescriptionDay
     public void a()
     {
 
-        // zhihuActivityService.aggre( "2018-04-30", "2018-04-30", 1,
-        // ZhihuActivityService.FOLLOW_DAY_COUNT );
-        for ( int i = 10; i < 16; i++ )
+        zhihuActivityService.aggre( "2018-04-30", "2018-04-30", 1,
+                ZhihuActivityService.FOLLOW_DAY_COUNT );
+        for ( int i = 1; i < 16; i++ )
         {
-            zhihuActivityService.aggre( "2018-05-" + i, "2018-05-" + i, 1,
+            String s = i + "";
+            if ( i < 10 )
+            {
+                s = "0" + s;
+            }
+            zhihuActivityService.aggre( "2018-05-" + s, "2018-05-" + s, 1,
                     ZhihuActivityService.FOLLOW_DAY_COUNT );
         }
 

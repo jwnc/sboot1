@@ -57,7 +57,7 @@ public class Activity extends ActivityKey
                 entity = target.toJavaObject( Article.class );
                 Article article = (Article)entity;
                 article.setActor_id( article.getAuthor().getId() );
-                article.setColumn_id( article.getColumn().getId() );
+                article.setColumn_id( article.getColumn().getTid() );
                 article.setInfo( article.getTitle() );
                 break;
             case "ANSWER_VOTE_UP":
@@ -67,7 +67,7 @@ public class Activity extends ActivityKey
                 entity = target.toJavaObject( Answer.class );
                 Answer answer = (Answer)entity;
                 answer.setActor_id( answer.getAuthor().getId() );
-                answer.setQuestion_id( answer.getQuestion().getId() );
+                answer.setQuestion_id( answer.getQuestion().getTid() );
                 entity.setInfo( answer.getExcerpt_new() );
                 break;
             case "QUESTION_CREATE":
@@ -108,7 +108,7 @@ public class Activity extends ActivityKey
         }
 
         setActor_id( getActor().getId() );
-        setTarget_id( getEntity().getId() );
+        setTarget_id( getEntity().getTid() );
     }
 
     private void action( int i )

@@ -1,6 +1,7 @@
 
 package com.wnc.sboot1.spy.zhihu;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class VUSerPageTask extends AbstractPageTask
     public VUSerPageTask( String apiUrl,UserV userV,boolean b,
             ActivitySpy activitySpy,Date beginSpyDate )
     {
+        this.MAX_RETRY_TIMES = 20;
         this.userV = userV;
         this.utoken = userV.getUserToken();
         if ( beginSpyDate != null )
@@ -87,7 +89,7 @@ public class VUSerPageTask extends AbstractPageTask
             List<Activity> parseArray = jsonArray.toJavaList( Activity.class );
             try
             {
-                activitySpy.save( parseArray );
+                activitySpy.save( getNewList( parseArray ) );
             } catch ( Exception e )
             {
                 String msg = "数据库执行严重异常, 请检查! - " + e.getMessage();
@@ -116,11 +118,30 @@ public class VUSerPageTask extends AbstractPageTask
         }
     }
 
+    private List<Activity> getNewList( List<Activity> parseArray )
+    {
+        List<Activity> list = new ArrayList<Activity>();
+        for ( Activity activity : parseArray )
+        {
+            if ( isNewActivity( activity ) )
+            {
+                list.add( activity );
+            }
+        }
+        return list;
+    }
+
     private void removeJsonAttr( JSONArray jsonArray )
     {
+        JSONObject jsonObject = null;
+        JSONObject target = null;
         for ( int i = 0; i < jsonArray.size(); i++ )
         {
-            jsonArray.getJSONObject( i ).remove( "id" );
+            jsonObject = jsonArray.getJSONObject( i );
+            jsonObject.remove( "id" );
+            target = jsonObject.getJSONObject( "target" );
+            target.put( "tid", target.getString( "id" ) + "+"
+                    + target.getString( "type" ) );
         }
     }
 
@@ -133,6 +154,12 @@ public class VUSerPageTask extends AbstractPageTask
     {
         activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
         taskLog( utoken + msg );
+    }
+
+    private boolean isNewActivity( Activity activity )
+    {
+        return activity.getCreated_time() * 1000 > userV.getLastSpyTime()
+                .getTime();
     }
 
     private boolean isNewActivity( JSONObject jsonObject )

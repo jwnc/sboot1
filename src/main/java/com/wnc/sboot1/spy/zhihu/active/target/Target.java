@@ -7,48 +7,60 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
-@Table(name = "ZH_TARGET")
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Target {
-	@Id
-	@Column(length = 64)
-	private String id;
-	private String type;
-	private String url;
-	private String info;// 描述信息
+@Table( name = "ZH_TARGET" )
+@Inheritance( strategy = InheritanceType.JOINED )
+public class Target
+{
+    @Id
+    @Column( length = 64 )
+    private String tid;// tid为id+type的组合形式
 
-	public String getId() {
-		return id;
-	}
+    @Transient
+    private String id; // json自带, 无需保存
+    private String type;
+    private String info;// 描述信息
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId()
+    {
+        return id;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setId( String id )
+    {
+        this.id = id;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType()
+    {
+        return type;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public void setType( String type )
+    {
+        this.type = type;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public String getInfo()
+    {
+        return info;
+    }
 
-	public String getInfo() {
-		return info;
-	}
+    public void setInfo( String info )
+    {
+        this.info = info;
+    }
 
-	public void setInfo(String info) {
-		this.info = info;
-	}
+    public String getTid()
+    {
+        return tid;
+    }
+
+    public void setTid( String tid )
+    {
+        this.tid = tid;
+    }
 
 }
