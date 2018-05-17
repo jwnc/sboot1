@@ -40,6 +40,13 @@ public class UserV
         this.lastSpyTime = lastSpyTime;
     }
 
+    public UserV( String userToken,String url,Date lastSpyTime )
+    {
+        this.userToken = userToken;
+        this.url = url;
+        this.lastSpyTime = lastSpyTime;
+    }
+
     public int getId()
     {
         return id;

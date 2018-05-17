@@ -37,7 +37,7 @@ public class ActivitySpy implements Spy
     // 记录各个用户的最后爬取日期
     private Set<String> spyRefreshTimeRecorder = Collections
             .synchronizedSet( new HashSet() );
-    List<UserV> userVList;
+    protected List<UserV> userVList;
 
     // 线程池获取
     ThreadPoolExecutor netPageThreadPool = SpiderHttpClient.getInstance()
@@ -48,11 +48,10 @@ public class ActivitySpy implements Spy
     @Autowired
     private ZhihuActivityHelper zhihuActivityHelper;
     @Autowired
-    private UserVService userVService;
+    protected UserVService userVService;
 
     public void spy() throws Exception
     {
-        userVList = userVService.getUserVList();
         spyRefreshTimeRecorder.clear();
         cmtTopicCount = 0;
         vCount = 0;
@@ -71,11 +70,7 @@ public class ActivitySpy implements Spy
                 new HashMap<String, Integer>() );
         AbstractPageTask.retryMap.put( GeneralPageTask.class,
                 new HashMap<String, Integer>() );
-        for ( UserV userV : userVList )
-        {
-            doJob( "https://www.zhihu.com/api/v4/members/"
-                    + userV.getUserToken() + "/activities", userV, true, null );
-        }
+        spyByUsers();
 
         while ( true )
         {
@@ -91,14 +86,27 @@ public class ActivitySpy implements Spy
 
     }
 
+    protected void spyByUsers()
+    {
+        userVList = userVService.getUserVList();
+        for ( UserV userV : userVList )
+        {
+            doJob( "https://www.zhihu.com/api/v4/members/"
+                    + userV.getUserToken() + "/activities", userV, true, null );
+        }
+    }
+
     /**
      * 添加下一页任务,计数
      * 
-     * @param nextUrl
-     * @param nextUrl
+     * @param apiUrl
+     *            地址
      * @param utoken
+     *            用户token
      * @param proxyFlag
+     *            是否使用代理
      * @param beginSpyDate
+     *            任务开始时间
      */
     public synchronized void doJob( String apiUrl, UserV userV,
             boolean proxyFlag, Date beginSpyDate )

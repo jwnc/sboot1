@@ -24,6 +24,9 @@ public class UserTest
     {
         List<UserV> userVList = userVService.getUserVList();
         System.out.println( userVList.size() );
+
+        List<UserV> retryUserVList = userVService.getRetryUserVList();
+        System.out.println( userVList.size() );
     }
 
 }

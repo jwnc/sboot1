@@ -39,6 +39,22 @@ public class UserVService
         return list;
     }
 
+    public List<UserV> getRetryUserVList()
+    {
+        List<UserV> list = new ArrayList<>();
+        String sql = "select v.user_token, er.url, v.last_spy_time from user_v v,zh_task_errlog er where v.user_token = er.u_token and status = 0 order by followers desc";
+        Query createNativeQuery = entityManager.createNativeQuery( sql );
+        List<Object[]> resultList = createNativeQuery.getResultList();
+        UserV v = null;
+        for ( Object[] object : resultList )
+        {
+            v = new UserV( String.valueOf( object[0] ),
+                    String.valueOf( object[1] ), (Date)object[2] );
+            list.add( v );
+        }
+        return list;
+    }
+
     public void updateSpyTime( String userToken, Date beginSpyDate )
     {
         userVRepository.updateSpyTime( userToken, beginSpyDate );
