@@ -2,6 +2,7 @@
 Thumbs.db
 ehthumbs.db
 /target/
+/src/main/resources/
 /software/
 /transaction-logs/
 .svn/
