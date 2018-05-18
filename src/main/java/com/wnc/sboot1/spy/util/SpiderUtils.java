@@ -70,6 +70,23 @@ public class SpiderUtils
         return df.format( new Date() );
     }
 
+    public static String getLastDayOfMonth( int year, int month )
+    {
+        Calendar cal = Calendar.getInstance();
+        // 设置年份
+        cal.set( Calendar.YEAR, year );
+        // 设置月份
+        cal.set( Calendar.MONTH, month - 1 );
+        // 获取某月最大天数
+        int lastDay = cal.getActualMaximum( Calendar.DAY_OF_MONTH );
+        // 设置日历中月份的最大天数
+        cal.set( Calendar.DAY_OF_MONTH, lastDay );
+        // 格式化日期
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+        String lastDayOfMonth = sdf.format( cal.getTime() );
+        return lastDayOfMonth;
+    }
+
     public static String getJsonHtml( String url ) throws IOException
     {
         return Jsoup.connect( url ).ignoreContentType( true ).timeout( 60000 )

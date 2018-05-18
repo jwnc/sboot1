@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.crawl.spider.SpiderHttpClient;
 import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.sboot1.spy.Spy;
 import com.wnc.sboot1.spy.helper.FunnyCmtHelper;
@@ -22,12 +22,12 @@ import com.wnc.sboot1.spy.util.ProxyProcess;
 @Component
 public class FunnyCommetSpy implements Spy
 {
-    private volatile int cmtTopicCount = 0;
+    private int cmtTopicCount = 0;
     private int taskCount = 0;
     private long startTime = 0L;
 
-    private volatile int retryFaildCount = 0;
-    private volatile int status404Count = 0;
+    private int retryFaildCount = 0;
+    private int status404Count = 0;
 
     @Value( "${spy.cmt_fork_rate}" )
     private double rate;
@@ -38,8 +38,8 @@ public class FunnyCommetSpy implements Spy
     @Autowired
     FunnyCmtHelper funnyCmtHelper;
 
-    private ThreadPoolExecutor netPageThreadPool = SpiderHttpClient
-            .getInstance().getNetPageThreadPool();
+    private static ThreadPoolExecutor pageThreadPool = (ThreadPoolExecutor)Executors
+            .newFixedThreadPool( 8 );
 
     private String spyDay;
 
@@ -66,8 +66,8 @@ public class FunnyCommetSpy implements Spy
         proxyProcess.init();
         reset();
 
-        getFunnyNBA( spyDay );
-        getFunnyZuqiu( spyDay );
+        getFunnyNBA();
+        getFunnyZuqiu();
 
         while ( true )
         {
@@ -82,6 +82,11 @@ public class FunnyCommetSpy implements Spy
         logger.info(
                 "任务结束用时:" + getSpyDuration() + " 抓取新闻总数:" + cmtTopicCount );
 
+    }
+
+    public ThreadPoolExecutor getPageThreadExecutor()
+    {
+        return this.pageThreadPool;
     }
 
     /**
@@ -166,14 +171,14 @@ public class FunnyCommetSpy implements Spy
         return accum.toString();
     }
 
-    private void getFunnyNBA( String day ) throws Exception
+    private void getFunnyNBA() throws Exception
     {
-        getFunnyComments( Zb8Const.NBA, day );
+        getFunnyComments( Zb8Const.NBA, this.spyDay );
     }
 
-    private void getFunnyZuqiu( String day ) throws Exception
+    private void getFunnyZuqiu() throws Exception
     {
-        getFunnyComments( Zb8Const.ZUQIU, day );
+        getFunnyComments( Zb8Const.ZUQIU, this.spyDay );
     }
 
     /**
@@ -191,7 +196,7 @@ public class FunnyCommetSpy implements Spy
             if ( set.add( news.getPinglun() ) )
             {
                 taskCount++;
-                netPageThreadPool.execute( new FunnyCmtTask( this, news ) );
+                pageThreadPool.execute( new FunnyCmtTask( this, news ) );
             }
         }
 

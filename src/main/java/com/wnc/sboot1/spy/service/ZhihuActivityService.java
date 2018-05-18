@@ -43,10 +43,10 @@ public class ZhihuActivityService
 {
     private static Logger logger = Logger
             .getLogger( ZhihuActivityService.class );
-    public static final int FOLLOW_DAY_COUNT = 20;
-    public static final int FOLLOW_WEEK_COUNT = 60;
-    public static final int FOLLOW_MONTH_COUNT = 120;
-    public static final int FOLLOW_YEAR_COUNT = 400;
+    public static final int FOLLOW_DAY_COUNT = 15;
+    public static final int FOLLOW_WEEK_COUNT = 40;
+    public static final int FOLLOW_MONTH_COUNT = 90;
+    public static final int FOLLOW_YEAR_COUNT = 300;
 
     public static final int AGGRE_DAY_CODE = 1;
     public static final int AGGRE_WEEK_CODE = 2;

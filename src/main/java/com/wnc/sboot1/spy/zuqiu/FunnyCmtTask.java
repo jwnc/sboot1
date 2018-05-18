@@ -25,6 +25,7 @@ public class FunnyCmtTask extends AbstractPageTask
 
     public FunnyCmtTask( FunnyCommetSpy funnyCommetSpy,Zb8News news )
     {
+        this.MAX_RETRY_TIMES = 20;
         this.funnyCommetSpy = funnyCommetSpy;
         this.news = news;
         this.pinglun = news.getPinglun();
@@ -46,7 +47,7 @@ public class FunnyCmtTask extends AbstractPageTask
         {
             return;
         }
-        SpiderHttpClient.getInstance().getNetPageThreadPool()
+        funnyCommetSpy.getPageThreadExecutor()
                 .execute( new FunnyCmtTask( funnyCommetSpy, news ) );
     }
 

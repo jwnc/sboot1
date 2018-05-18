@@ -1,28 +1,14 @@
 
-package com.wnc.sboot1.jpa.zhihu;
+package com.wnc.sboot1.small;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wnc.basic.BasicDateUtil;
-import com.wnc.sboot1.spy.service.ZhihuActivityService;
+import com.wnc.basic.BasicNumberUtil;
 import com.wnc.sboot1.spy.util.SpiderUtils;
 
-/**
- * 按日期保存统计信息
- * 
- * @author wnc
- */
-@RunWith( SpringRunner.class )
-@SpringBootTest
-public class TargetDescriptionDay
+public class DateUtil2
 {
-    @Autowired
-    private ZhihuActivityService zhihuActivityService;
-
     @Test
     public void a()
     {
@@ -32,8 +18,6 @@ public class TargetDescriptionDay
         weekAggre();
 
         monthAggre();
-
-        yAggre();
     }
 
     private void monthAggre()
@@ -42,18 +26,11 @@ public class TargetDescriptionDay
         String mStr = "";
         for ( int i = 1; i < 6; i++ )
         {
-            lastday = SpiderUtils.getLastDayOfMonth( 2018, i );
+            lastday = SpiderUtils.getLastDayOfMonth( BasicNumberUtil
+                    .getNumber( BasicDateUtil.getCurrentYearString() ), i );
             mStr = i < 10 ? "0" + i : "" + i;
-            zhihuActivityService.aggre( "2018-" + mStr + "-01", lastday,
-                    ZhihuActivityService.AGGRE_MONTH_CODE,
-                    ZhihuActivityService.FOLLOW_MONTH_COUNT );
             System.out.println( "2018-" + mStr + "-01" + "    " + lastday );
         }
-    }
-
-    private void yAggre()
-    {
-        zhihuActivityService.aggreYear();
     }
 
     private void weekAggre()
@@ -62,9 +39,7 @@ public class TargetDescriptionDay
         String sunday = "2018-01-07";
         while ( monday.compareTo( "2018-05-21" ) < 0 )
         {
-            zhihuActivityService.aggre( monday, sunday,
-                    ZhihuActivityService.AGGRE_WEEK_CODE,
-                    ZhihuActivityService.FOLLOW_WEEK_COUNT );
+
             System.out.println( monday + "  " + sunday );
             monday = SpiderUtils
                     .wrapDayWithLine( BasicDateUtil.getDateBeforeDayDateString(
@@ -80,9 +55,6 @@ public class TargetDescriptionDay
         String day = "2018-01-01";
         while ( day.compareTo( "2018-05-20" ) < 0 )
         {
-            zhihuActivityService.aggre( day, day,
-                    ZhihuActivityService.AGGRE_DAY_CODE,
-                    ZhihuActivityService.FOLLOW_DAY_COUNT );
             System.out.println( day );
             day = SpiderUtils.wrapDayWithLine( BasicDateUtil
                     .getDateBeforeDayDateString( day.replace( "-", "" ), -1 ) );
