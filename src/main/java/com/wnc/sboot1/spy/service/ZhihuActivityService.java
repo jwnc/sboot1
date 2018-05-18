@@ -1,7 +1,9 @@
 
 package com.wnc.sboot1.spy.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -118,18 +120,18 @@ public class ZhihuActivityService
 
     public void aggreLastMonth()
     {
-        String day = BasicDateUtil.getCurrentDateString();
-        String last3Day = BasicDateUtil.getDateBeforeDayDateString( day, 3 );
-        String yearOfLastDay = last3Day.substring( 0, 4 );
-        String monOfLastDay = last3Day.substring( 4, 6 );
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+        // 获取前一个月第一天
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.add( Calendar.MONTH, -1 );
+        calendar1.set( Calendar.DAY_OF_MONTH, 1 );
+        String firstDay = sdf.format( calendar1.getTime() );
+        // 获取前一个月最后一天
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.set( Calendar.DAY_OF_MONTH, 0 );
+        String lastDay = sdf.format( calendar2.getTime() );
 
-        String lastDayOfMonth = SpiderUtils.getLastDayOfMonth(
-                BasicNumberUtil.getNumber( yearOfLastDay ),
-                BasicNumberUtil.getNumber( monOfLastDay ) );
-
-        aggre( SpiderUtils
-                .wrapDayWithLine( yearOfLastDay + monOfLastDay + "01" ),
-                lastDayOfMonth, AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
+        aggre( firstDay, lastDay, AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
     }
 
     public void aggreLastYear()
