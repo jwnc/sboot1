@@ -72,7 +72,7 @@ public class ZhihuActivityAggreTask
     }
 
     @Scheduled( cron = "${cronJob.fork_zhihu_activity_aggre_week_now}" )
-    public void weekThis()
+    public void week()
     {
         new AbstractCronTask()
         {
@@ -117,6 +117,11 @@ public class ZhihuActivityAggreTask
             @Override
             protected void task()
             {
+                if ( BasicDateUtil.getCurrentMonth() == 1
+                        && BasicDateUtil.getCurrentDay() < 4 )
+                {
+                    zhihuActivityService.aggreLastYear();
+                }
                 zhihuActivityService.aggreYear();
             }
         }.start();

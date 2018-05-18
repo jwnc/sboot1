@@ -119,9 +119,9 @@ public class ZhihuActivityService
     public void aggreLastMonth()
     {
         String day = BasicDateUtil.getCurrentDateString();
-        String lastDay = BasicDateUtil.getDateBeforeDayDateString( day, 1 );
-        String yearOfLastDay = lastDay.substring( 0, 4 );
-        String monOfLastDay = lastDay.substring( 4, 6 );
+        String last3Day = BasicDateUtil.getDateBeforeDayDateString( day, 3 );
+        String yearOfLastDay = last3Day.substring( 0, 4 );
+        String monOfLastDay = last3Day.substring( 4, 6 );
 
         String lastDayOfMonth = SpiderUtils.getLastDayOfMonth(
                 BasicNumberUtil.getNumber( yearOfLastDay ),
@@ -130,6 +130,16 @@ public class ZhihuActivityService
         aggre( SpiderUtils
                 .wrapDayWithLine( yearOfLastDay + monOfLastDay + "01" ),
                 lastDayOfMonth, AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
+    }
+
+    public void aggreLastYear()
+    {
+        String year = BasicDateUtil.getCurrentYearString();
+        String lastYear = "" + (BasicNumberUtil.getNumber( year ) - 1);
+
+        aggre( SpiderUtils.wrapDayWithLine( lastYear + "0101" ),
+                SpiderUtils.wrapDayWithLine( lastYear + "1231" ),
+                AGGRE_YEAR_CODE, FOLLOW_YEAR_COUNT );
     }
 
     public void aggreYear()
