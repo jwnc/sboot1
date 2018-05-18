@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.wnc.basic.BasicDateUtil;
 import com.wnc.sboot1.spy.service.ZhihuActivityService;
 
 @Component
@@ -79,21 +80,12 @@ public class ZhihuActivityAggreTask
             @Override
             protected void task()
             {
+                // 周三之前需要同步上星期数据
+                if ( BasicDateUtil.getCurrentWeekDay() < 4 )
+                {
+                    zhihuActivityService.aggreLastWeek();
+                }
                 zhihuActivityService.aggreThisWeek();
-            }
-        }.start();
-    }
-
-    @Scheduled( cron = "${cronJob.fork_zhihu_activity_aggre_week_last}" )
-    public void weekLast()
-    {
-        new AbstractCronTask()
-        {
-
-            @Override
-            protected void task()
-            {
-                zhihuActivityService.aggreLastWeek();
             }
         }.start();
     }
@@ -107,6 +99,11 @@ public class ZhihuActivityAggreTask
             @Override
             protected void task()
             {
+                // 如果是本月前三天, 同步上月数据
+                if ( BasicDateUtil.getCurrentDay() < 4 )
+                {
+                    zhihuActivityService.aggreLastMonth();
+                }
                 zhihuActivityService.aggreMonth();
             }
         }.start();

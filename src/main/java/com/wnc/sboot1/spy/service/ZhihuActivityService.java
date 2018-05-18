@@ -116,6 +116,22 @@ public class ZhihuActivityService
                 AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
     }
 
+    public void aggreLastMonth()
+    {
+        String day = BasicDateUtil.getCurrentDateString();
+        String lastDay = BasicDateUtil.getDateBeforeDayDateString( day, 1 );
+        String yearOfLastDay = lastDay.substring( 0, 4 );
+        String monOfLastDay = lastDay.substring( 4, 6 );
+
+        String lastDayOfMonth = SpiderUtils.getLastDayOfMonth(
+                BasicNumberUtil.getNumber( yearOfLastDay ),
+                BasicNumberUtil.getNumber( monOfLastDay ) );
+
+        aggre( SpiderUtils
+                .wrapDayWithLine( yearOfLastDay + monOfLastDay + "01" ),
+                lastDayOfMonth, AGGRE_MONTH_CODE, FOLLOW_MONTH_COUNT );
+    }
+
     public void aggreYear()
     {
         String year = BasicDateUtil.getCurrentYearString();

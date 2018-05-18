@@ -18,6 +18,23 @@ public class DateUtil2
         weekAggre();
 
         monthAggre();
+
+        testLastMonthDay();
+        System.out.println( BasicDateUtil.getCurrentDay() );
+    }
+
+    private void testLastMonthDay()
+    {
+        String day = "20180501";
+        String lastDay = BasicDateUtil.getDateBeforeDayDateString( day, 1 );
+        String yearOfLastDay = lastDay.substring( 0, 4 );
+        String monOfLastDay = lastDay.substring( 4, 6 );
+
+        String lastDayOfMonth = SpiderUtils.getLastDayOfMonth(
+                BasicNumberUtil.getNumber( yearOfLastDay ),
+                BasicNumberUtil.getNumber( monOfLastDay ) );
+
+        System.out.println( lastDayOfMonth );
     }
 
     private void monthAggre()
