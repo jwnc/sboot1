@@ -29,6 +29,7 @@ public class VUSerPageTask extends AbstractPageTask
     private Date beginSpyDate;
     private ActivitySpy activitySpy;
     private UserV userV;
+    private boolean ignoreComplete = false;
 
     public VUSerPageTask( String apiUrl,UserV userV,boolean b,
             ActivitySpy activitySpy,Date beginSpyDate )
@@ -50,6 +51,12 @@ public class VUSerPageTask extends AbstractPageTask
                 "oauth " + TT2.initAuthorization() );
     }
 
+    public VUSerPageTask setMaxRetryTimes( int tm )
+    {
+        this.MAX_RETRY_TIMES = tm;
+        return this;
+    }
+
     @Override
     public void run()
     {
@@ -63,8 +70,7 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     protected void retry()
     {
-        spiderHttpClient.getNetPageThreadPool().execute( new VUSerPageTask(
-                apiUrl, userV, proxyFlag, activitySpy, this.beginSpyDate ) );
+        activitySpy.doJob( apiUrl, userV, proxyFlag, beginSpyDate );
     }
 
     @Override
@@ -81,7 +87,7 @@ public class VUSerPageTask extends AbstractPageTask
         {
             if ( !isNewActivity( jsonArray.getJSONObject( 0 ) ) )
             {
-                taskStop( "无最新动态" );
+                taskSuccStop( "无最新动态" );
                 return;
             }
 
@@ -96,11 +102,14 @@ public class VUSerPageTask extends AbstractPageTask
                 logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
                 try
                 {
-                    activitySpy.errLog( utoken, apiUrl, msg );
+                    activitySpy.errLog( utoken, apiUrl, msg, currentProxy );
                 } catch ( Exception e1 )
                 {
                     e1.printStackTrace();
                 }
+                activitySpy.callBackComplete( COMPLETE_STATUS_SQL_ERROR, msg,
+                        this );
+                ignoreComplete = true;
                 return;
             }
 
@@ -108,13 +117,14 @@ public class VUSerPageTask extends AbstractPageTask
             if ( isNewActivity( lastActObj ) )
             {
                 nextJob( restData );
+                ignoreComplete = true;
             } else
             {
-                taskStop( "已经到了上次的截止期限" );
+                taskSuccStop( "已经到了上次的截止期限" );
             }
         } else
         {
-            taskStop( "无动态" );
+            taskSuccStop( "无动态" );
         }
     }
 
@@ -146,11 +156,11 @@ public class VUSerPageTask extends AbstractPageTask
     }
 
     /**
-     * 任务停止, 并更新最后时间
+     * 任务成功停止, 并更新最后时间
      * 
      * @param msg
      */
-    private void taskStop( String msg )
+    private void taskSuccStop( String msg )
     {
         activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
         taskLog( utoken + msg );
@@ -202,7 +212,10 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     protected void complete( int type, String msg )
     {
-
+        if ( ignoreComplete )
+        {
+            return;
+        }
         try
         {
             super.complete( type, msg );
@@ -210,7 +223,7 @@ public class VUSerPageTask extends AbstractPageTask
             if ( type != COMPLETE_STATUS_SUCCESS )
             {
                 logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
-                activitySpy.errLog( utoken, apiUrl, msg );
+                activitySpy.errLog( utoken, apiUrl, msg, currentProxy );
             }
         } catch ( Exception e )
         {

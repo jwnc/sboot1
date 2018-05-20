@@ -20,41 +20,59 @@ public class ZhihuActivityTask
     @Scheduled( cron = "${cronJob.fork_zhihu_activity}" )
     public void a()
     {
-        if ( flag )
+        new Thread( new Runnable()
         {
-            return;
-        }
-        flag = true;
-        try
-        {
-            activitySpy.spy();
-        } catch ( Exception e )
-        {
-            e.printStackTrace();
-        } finally
-        {
-            flag = false;
-        }
+            @Override
+            public void run()
+            {
+                if ( flag )
+                {
+                    return;
+                }
+                flag = true;
+                try
+                {
+                    activitySpy.spy();
+                } catch ( Exception e )
+                {
+                    e.printStackTrace();
+                } finally
+                {
+                    flag = false;
+                }
+            }
+        } ).start();
     }
 
+    /**
+     * 改为线程独立执行, 防止占用quarz线程资源
+     */
     @Scheduled( cron = "${cronJob.fork_zhihu_activity2}" )
     public void b()
     {
-        if ( flag )
+        new Thread( new Runnable()
         {
-            return;
-        }
-        flag = true;
-        try
-        {
-            activityRetrySpy.spy();
-        } catch ( Exception e )
-        {
-            e.printStackTrace();
-        } finally
-        {
-            flag = false;
-        }
+            @Override
+            public void run()
+            {
+                if ( flag )
+                {
+                    return;
+                }
+                flag = true;
+                try
+                {
+                    activityRetrySpy.spy();
+                } catch ( Exception e )
+                {
+                    e.printStackTrace();
+                } finally
+                {
+                    flag = false;
+                }
+            }
+        } ).start();
+
     }
 
 }

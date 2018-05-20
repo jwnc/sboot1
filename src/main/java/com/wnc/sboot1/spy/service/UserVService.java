@@ -42,7 +42,7 @@ public class UserVService
     public List<UserV> getRetryUserVList()
     {
         List<UserV> list = new ArrayList<>();
-        String sql = "select v.user_token, er.url, v.last_spy_time from user_v v,zh_task_errlog er where v.user_token = er.u_token and status = 0 order by followers desc";
+        String sql = "select v.user_token, er.url, v.last_spy_time from user_v  v, zh_task_errlog er where v.`status` = 0 and v.last_spy_time < '2018-05' and v.user_token  = er.u_token";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List<Object[]> resultList = createNativeQuery.getResultList();
         UserV v = null;

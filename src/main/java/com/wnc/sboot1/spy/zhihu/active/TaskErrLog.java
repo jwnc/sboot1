@@ -16,6 +16,17 @@ public class TaskErrLog
     private String uToken;
     private String url;
     private String msg;
+    private String proxyStr;
+
+    public String getProxyStr()
+    {
+        return proxyStr;
+    }
+
+    public void setProxyStr( String proxyStr )
+    {
+        this.proxyStr = proxyStr;
+    }
 
     public int getId()
     {

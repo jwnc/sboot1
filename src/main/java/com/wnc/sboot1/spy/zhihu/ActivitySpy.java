@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.crawl.proxy.ProxyPool;
+import com.crawl.proxy.entity.Proxy;
 import com.crawl.spider.SpiderHttpClient;
 import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.basic.BasicFileUtil;
@@ -31,8 +32,8 @@ public class ActivitySpy implements Spy
     private static final long SIX_HOURS = 1000 * 3600 * 50L;
     private static Logger logger = Logger.getLogger( ActivitySpy.class );
     private long startTime = 0L;
-    private int vCount = 0;
-    private volatile int cmtTopicCount = 0;
+    protected int vCount = 0;
+    private int cmtTopicCount = 0;
 
     // 记录各个用户的最后爬取日期
     private Set<String> spyRefreshTimeRecorder = Collections
@@ -108,10 +109,16 @@ public class ActivitySpy implements Spy
      * @param beginSpyDate
      *            任务开始时间
      */
-    public synchronized void doJob( String apiUrl, UserV userV,
+    public synchronized void doJobAndAccum( String apiUrl, UserV userV,
             boolean proxyFlag, Date beginSpyDate )
     {
         vCount++;
+        doJob( apiUrl, userV, proxyFlag, beginSpyDate );
+    }
+
+    public synchronized void doJob( String apiUrl, UserV userV,
+            boolean proxyFlag, Date beginSpyDate )
+    {
         netPageThreadPool.execute(
                 new VUSerPageTask( apiUrl, userV, true, this, beginSpyDate ) );
     }
@@ -136,13 +143,17 @@ public class ActivitySpy implements Spy
      * @param apiUrl
      * @param msg
      */
-    public synchronized void errLog( String utoken, String apiUrl, String msg )
+    public synchronized void errLog( String utoken, String apiUrl, String msg,
+            Proxy proxy )
     {
         TaskErrLog taskErrLog = new TaskErrLog();
         taskErrLog.setMsg( msg );
         taskErrLog.setUrl( apiUrl );
         taskErrLog.setuToken( utoken );
-
+        if ( proxy != null )
+        {
+            taskErrLog.setProxyStr( proxy.getProxyStr() );
+        }
         zhihuActivityHelper.errLog( taskErrLog );
     }
 
