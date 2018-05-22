@@ -19,10 +19,6 @@ public class ActivityContinueSpy extends ActivitySpy
         Date taskBeginTime = BasicDateUtil.getDateTimeFromString("2018-05-22 9:30:00.000",
             "yyyy-MM-dd HH:mm:ss.SSS");
         userVList = userVService.getContinueUserVList();
-        if (userVList.size() == 0)
-        {
-            userVList = userVService.getInitUserVList();
-        }
         for (UserV userV : userVList)
         {
             doJobAndAccum(userV.getUrl(), userV, true, taskBeginTime);

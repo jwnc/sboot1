@@ -70,45 +70,12 @@ public class UserVService
         long afterId = defaultAfterId;
         for (Object[] object : resultList)
         {
-            if (object[1] == null)
-            {
-                afterId = defaultAfterId;
-            }
-            else
-            {
-                afterId = BasicNumberUtil.getLongNumber(String.valueOf(object[1]));
-            }
-
+            afterId = object[1] == null ? defaultAfterId : BasicNumberUtil.getLongNumber(
+                String.valueOf(object[1]));
             uToken = String.valueOf(object[0]);
             url = "https://www.zhihu.com/api/v4/members/" + uToken
                   + "/activities?limit=7&after_id=" + afterId + "&desktop=True";
             v = new UserV(uToken, url, (Date)object[2]);
-            list.add(v);
-        }
-        return list;
-    }
-
-    /**
-     * 首次执行的时候用， afterId表示当前时间戳后的
-     * 
-     * @return
-     */
-    public List<UserV> getInitUserVList()
-    {
-        List<UserV> list = new ArrayList<>();
-        String sql = "select v.user_token,  v.last_spy_time from user_v v where v.`status`=0 ";
-        Query createNativeQuery = entityManager.createNativeQuery(sql);
-        List<Object[]> resultList = createNativeQuery.getResultList();
-        UserV v = null;
-        String url = null;
-        String uToken = null;
-        long afterId = new Date().getTime() / 1000;
-        for (Object[] object : resultList)
-        {
-            uToken = String.valueOf(object[0]);
-            url = "https://www.zhihu.com/api/v4/members/" + uToken
-                  + "/activities?limit=7&after_id=" + afterId + "&desktop=True";
-            v = new UserV(uToken, url, (Date)object[1]);
             list.add(v);
         }
         return list;
