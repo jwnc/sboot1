@@ -1,6 +1,7 @@
 
 package com.wnc.sboot1.spy.zhihu;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,29 +16,37 @@ import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.sboot1.spy.zhihu.active.Activity;
 import com.wnc.sboot1.spy.zhihu.active.UserV;
 
+
 /**
  * 找出两个月之间的
  */
 public class VUSerPageTask extends AbstractPageTask
 {
-    private static Logger logger = Logger.getLogger( VUSerPageTask.class );
+    private static Logger logger = Logger.getLogger(VUSerPageTask.class);
+
     public static final int COMPLETE_STATUS_SQL_ERROR = 4;
+
     private String utoken;
+
     private String apiUrl;
+
     // 以首个任务开始请求接口时的时间为准, 而不是初始化提交到线程池时为准
     // 在重试和下一个任务时, beginSpyDate会一直流转下去
     private Date beginSpyDate;
+
     private ActivitySpy activitySpy;
+
     private UserV userV;
+
     private boolean ignoreComplete = false;
 
-    public VUSerPageTask( String apiUrl,UserV userV,boolean b,
-            ActivitySpy activitySpy,Date beginSpyDate )
+    public VUSerPageTask(String apiUrl, UserV userV, boolean b, ActivitySpy activitySpy,
+                         Date beginSpyDate)
     {
         this.MAX_RETRY_TIMES = 20;
         this.userV = userV;
         this.utoken = userV.getUserToken();
-        if ( beginSpyDate != null )
+        if (beginSpyDate != null)
         {
             this.beginSpyDate = beginSpyDate;
         }
@@ -46,12 +55,11 @@ public class VUSerPageTask extends AbstractPageTask
         this.proxyFlag = b;
         this.activitySpy = activitySpy;
 
-        request = new HttpGet( apiUrl );
-        request.setHeader( "authorization",
-                "oauth " + TT2.initAuthorization() );
+        request = new HttpGet(apiUrl);
+        request.setHeader("authorization", "oauth " + TT2.initAuthorization());
     }
 
-    public VUSerPageTask setMaxRetryTimes( int tm )
+    public VUSerPageTask setMaxRetryTimes(int tm)
     {
         this.MAX_RETRY_TIMES = tm;
         return this;
@@ -60,7 +68,7 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     public void run()
     {
-        if ( beginSpyDate == null )
+        if (beginSpyDate == null)
         {
             this.beginSpyDate = new Date();
         }
@@ -70,89 +78,95 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     protected void retry()
     {
-        activitySpy.doJob( apiUrl, userV, proxyFlag, beginSpyDate );
+        activitySpy.doJob(apiUrl, userV, proxyFlag, beginSpyDate);
     }
 
     @Override
-    protected void handle( Page page ) throws Exception
+    protected void handle(Page page)
+        throws Exception
     {
-        System.out.println( "进行:" + utoken );
-        JSONObject restData = JSONObject.parseObject( page.getHtml() );
+        System.out.println("进行:" + utoken);
+        JSONObject restData = JSONObject.parseObject(page.getHtml());
 
-        JSONArray jsonArray = restData.getJSONArray( "data" );
-        // 删除多余的id键
-        removeJsonAttr( jsonArray );
+        JSONArray jsonArray = restData.getJSONArray("data");
         int size = jsonArray.size();
-        if ( size > 0 )
+        if (size > 0)
         {
-            if ( !isNewActivity( jsonArray.getJSONObject( 0 ) ) )
+            if (!isNewActivity(jsonArray.getJSONObject(0)))
             {
-                taskSuccStop( "无最新动态" );
+                taskSuccStop("无最新动态");
                 return;
             }
-
+            removeIdAttr(jsonArray);
             // 消费本次动态列表
-            List<Activity> parseArray = jsonArray.toJavaList( Activity.class );
+            List<Activity> parseArray = jsonArray.toJavaList(Activity.class);
             try
             {
-                activitySpy.save( getNewList( parseArray ) );
-            } catch ( Exception e )
+                activitySpy.save(getNewList(parseArray));
+            }
+            catch (Exception e)
             {
                 String msg = "数据库执行严重异常, 请检查! - " + e.getMessage();
-                logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
+                logger.error(utoken + "在" + apiUrl + "失败, 失败原因:" + msg);
                 try
                 {
-                    activitySpy.errLog( utoken, apiUrl, msg, currentProxy );
-                } catch ( Exception e1 )
+                    activitySpy.errLog(utoken, apiUrl, msg, currentProxy);
+                }
+                catch (Exception e1)
                 {
                     e1.printStackTrace();
                 }
-                activitySpy.callBackComplete( COMPLETE_STATUS_SQL_ERROR, msg,
-                        this );
+                activitySpy.callBackComplete(COMPLETE_STATUS_SQL_ERROR, msg, this);
                 ignoreComplete = true;
                 return;
             }
 
-            JSONObject lastActObj = jsonArray.getJSONObject( size - 1 );
-            if ( isNewActivity( lastActObj ) )
+            JSONObject lastActObj = jsonArray.getJSONObject(size - 1);
+            if (isNewActivity(lastActObj))
             {
-                nextJob( restData );
+                nextJob(restData);
                 ignoreComplete = true;
-            } else
-            {
-                taskSuccStop( "已经到了上次的截止期限" );
             }
-        } else
+            else
+            {
+                taskSuccStop("已经到了上次的截止期限");
+            }
+        }
+        else
         {
-            taskSuccStop( "无动态" );
+            taskSuccStop("无动态");
         }
     }
 
-    private List<Activity> getNewList( List<Activity> parseArray )
+    /**
+     * 删除Activity中原来自带的id
+     * 
+     * @param jsonArray
+     */
+    private void removeIdAttr(JSONArray jsonArray)
+    {
+        for (int i = 0; i < jsonArray.size(); i++ )
+        {
+            jsonArray.getJSONObject(i).remove("id");
+        }
+    }
+
+    public void errLogExp(Exception e)
+    {
+        e.printStackTrace();
+    }
+
+    private List<Activity> getNewList(List<Activity> parseArray)
     {
         List<Activity> list = new ArrayList<Activity>();
-        for ( Activity activity : parseArray )
+        for (Activity activity : parseArray)
         {
-            if ( isNewActivity( activity ) )
+            if (isNewActivity(activity))
             {
-                list.add( activity );
+                list.add(activity);
             }
         }
         return list;
-    }
-
-    private void removeJsonAttr( JSONArray jsonArray )
-    {
-        JSONObject jsonObject = null;
-        JSONObject target = null;
-        for ( int i = 0; i < jsonArray.size(); i++ )
-        {
-            jsonObject = jsonArray.getJSONObject( i );
-            jsonObject.remove( "id" );
-            target = jsonObject.getJSONObject( "target" );
-            target.put( "tid", target.getString( "id" ) + "+"
-                    + target.getString( "type" ) );
-        }
     }
 
     /**
@@ -160,44 +174,43 @@ public class VUSerPageTask extends AbstractPageTask
      * 
      * @param msg
      */
-    private void taskSuccStop( String msg )
+    private void taskSuccStop(String msg)
     {
-        activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
-        taskLog( utoken + msg );
+        activitySpy.updateLastTime(userV.getUserToken(), beginSpyDate);
+        taskLog(utoken + msg);
     }
 
-    private boolean isNewActivity( Activity activity )
+    private boolean isNewActivity(Activity activity)
     {
-        return activity.getCreated_time() * 1000 > userV.getLastSpyTime()
-                .getTime();
+        return activity.getCreated_time() * 1000 > userV.getLastSpyTime().getTime();
     }
 
-    private boolean isNewActivity( JSONObject jsonObject )
+    private boolean isNewActivity(JSONObject jsonObject)
     {
-        return jsonObject.getLong( "created_time" ) * 1000 > userV
-                .getLastSpyTime().getTime();
+        return jsonObject.getLong("created_time") * 1000 > userV.getLastSpyTime().getTime();
     }
 
-    private void taskLog( String msg )
+    private void taskLog(String msg)
     {
-        logger.info( msg );
+        logger.info(msg);
     }
 
-    private void nextJob( JSONObject parseObject )
+    private void nextJob(JSONObject parseObject)
     {
         String nextUrl = null;
         try
         {
-            nextUrl = parseObject.getJSONObject( "paging" ).getString( "next" );
-        } catch ( Exception e )
+            nextUrl = parseObject.getJSONObject("paging").getString("next");
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
-        } finally
+        }
+        finally
         {
-            if ( nextUrl != null )
+            if (nextUrl != null)
             {
-                activitySpy.doJob( nextUrl, userV, proxyFlag,
-                        this.beginSpyDate );
+                activitySpy.doJob(nextUrl, userV, proxyFlag, this.beginSpyDate);
             }
         }
 
@@ -206,31 +219,33 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     protected String removeRandom()
     {
-        return apiUrl.replaceAll( "(\\?|\\&)[^\\&\\?]+=0\\.\\d{16}", "" );
+        return apiUrl.replaceAll("(\\?|\\&)[^\\&\\?]+=0\\.\\d{16}", "");
     }
 
     @Override
-    protected void complete( int type, String msg )
+    protected void complete(int type, String msg)
     {
-        if ( ignoreComplete )
+        if (ignoreComplete)
         {
             return;
         }
         try
         {
-            super.complete( type, msg );
+            super.complete(type, msg);
 
-            if ( type != COMPLETE_STATUS_SUCCESS )
+            if (type != COMPLETE_STATUS_SUCCESS)
             {
-                logger.error( utoken + "在" + apiUrl + "失败, 失败原因:" + msg );
-                activitySpy.errLog( utoken, apiUrl, msg, currentProxy );
+                logger.error(utoken + "在" + apiUrl + "失败, 失败原因:" + msg);
+                activitySpy.errLog(utoken, apiUrl, msg, currentProxy);
             }
-        } catch ( Exception e )
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
-        } finally
+        }
+        finally
         {
-            activitySpy.callBackComplete( type, msg, this );
+            activitySpy.callBackComplete(type, msg, this);
         }
     }
 }

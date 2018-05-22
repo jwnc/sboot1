@@ -1,6 +1,7 @@
 
 package com.wnc.sboot1.spy.zhihu.active.target;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -8,35 +9,57 @@ import javax.persistence.Transient;
 
 import com.wnc.sboot1.spy.zhihu.active.Actor;
 
+
 /**
  * 专栏
  * 
  * @author Administrator
  */
 @Entity
-@Table( name = "ZH_COLUMN" )
+@Table(name = "ZH_COLUMN")
 public class ZColumn extends Target
 {
     private String followers;
+
     @Transient
     private Actor author;
+
     private String actor_id;
 
     private String comment_permission;
+
     private String image_url;
+
     private String articles_count;
+
     private String intro;
-    @Column( length = 4000 )
+
+    @Column(length = 4000)
     private String description;
+
     private String title;
+
     private Long updated;
+
+    /**
+     * 重写计算方法， 有时候type为null
+     */
+    @Override
+    public String generateTid()
+    {
+        if (getType() == null)
+        {
+            setType("column");
+        }
+        return super.generateTid();
+    }
 
     public String getFollowers()
     {
         return followers;
     }
 
-    public void setFollowers( String followers )
+    public void setFollowers(String followers)
     {
         this.followers = followers;
     }
@@ -46,7 +69,7 @@ public class ZColumn extends Target
         return author;
     }
 
-    public void setAuthor( Actor author )
+    public void setAuthor(Actor author)
     {
         this.author = author;
     }
@@ -56,7 +79,7 @@ public class ZColumn extends Target
         return comment_permission;
     }
 
-    public void setComment_permission( String comment_permission )
+    public void setComment_permission(String comment_permission)
     {
         this.comment_permission = comment_permission;
     }
@@ -66,7 +89,7 @@ public class ZColumn extends Target
         return image_url;
     }
 
-    public void setImage_url( String image_url )
+    public void setImage_url(String image_url)
     {
         this.image_url = image_url;
     }
@@ -76,7 +99,7 @@ public class ZColumn extends Target
         return articles_count;
     }
 
-    public void setArticles_count( String articles_count )
+    public void setArticles_count(String articles_count)
     {
         this.articles_count = articles_count;
     }
@@ -86,7 +109,7 @@ public class ZColumn extends Target
         return intro;
     }
 
-    public void setIntro( String intro )
+    public void setIntro(String intro)
     {
         this.intro = intro;
     }
@@ -96,7 +119,7 @@ public class ZColumn extends Target
         return description;
     }
 
-    public void setDescription( String description )
+    public void setDescription(String description)
     {
         this.description = description;
     }
@@ -106,7 +129,7 @@ public class ZColumn extends Target
         return title;
     }
 
-    public void setTitle( String title )
+    public void setTitle(String title)
     {
         this.title = title;
     }
@@ -116,7 +139,7 @@ public class ZColumn extends Target
         return updated;
     }
 
-    public void setUpdated( Long updated )
+    public void setUpdated(Long updated)
     {
         this.updated = updated;
     }
@@ -126,7 +149,7 @@ public class ZColumn extends Target
         return actor_id;
     }
 
-    public void setActor_id( String actor_id )
+    public void setActor_id(String actor_id)
     {
         this.actor_id = actor_id;
     }

@@ -1,6 +1,7 @@
 
 package com.wnc.sboot1.spy.zhihu;
 
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,32 +27,39 @@ import com.wnc.sboot1.spy.zhihu.active.Activity;
 import com.wnc.sboot1.spy.zhihu.active.TaskErrLog;
 import com.wnc.sboot1.spy.zhihu.active.UserV;
 
+
 @Component
 public class ActivitySpy implements Spy
 {
-    private static final long SIX_HOURS = 1000 * 3600 * 50L;
-    private static Logger logger = Logger.getLogger( ActivitySpy.class );
+    private static final long SIX_HOURS = 1000 * 3600 * 500L;
+
+    private static Logger logger = Logger.getLogger(ActivitySpy.class);
+
     private long startTime = 0L;
+
     protected int vCount = 0;
+
     private int cmtTopicCount = 0;
 
     // 记录各个用户的最后爬取日期
-    private Set<String> spyRefreshTimeRecorder = Collections
-            .synchronizedSet( new HashSet() );
+    private Set<String> spyRefreshTimeRecorder = Collections.synchronizedSet(new HashSet());
+
     protected List<UserV> userVList;
 
     // 线程池获取
-    ThreadPoolExecutor netPageThreadPool = SpiderHttpClient.getInstance()
-            .getNetPageThreadPool();
+    ThreadPoolExecutor netPageThreadPool = SpiderHttpClient.getInstance().getNetPageThreadPool();
 
     @Autowired
     ProxyProcess proxyProcess;
+
     @Autowired
     private ZhihuActivityHelper zhihuActivityHelper;
+
     @Autowired
     protected UserVService userVService;
 
-    public void spy() throws Exception
+    public void spy()
+        throws Exception
     {
         spyRefreshTimeRecorder.clear();
         cmtTopicCount = 0;
@@ -59,7 +67,7 @@ public class ActivitySpy implements Spy
         startTime = System.currentTimeMillis();
 
         // 防止屏蔽本地ip
-        if ( ProxyPool.proxyQueue.size() == 1 )
+        if (ProxyPool.proxyQueue.size() == 1)
         {
             ProxyPool.proxyQueue.clear();
         }
@@ -67,33 +75,32 @@ public class ActivitySpy implements Spy
         proxyProcess.init();
         // ProxyPool.proxyQueue.add( new Direct( 1000 ) );
 
-        AbstractPageTask.retryMap.put( VUSerPageTask.class,
-                new HashMap<String, Integer>() );
-        AbstractPageTask.retryMap.put( GeneralPageTask.class,
-                new HashMap<String, Integer>() );
+        AbstractPageTask.retryMap.put(VUSerPageTask.class, new HashMap<String, Integer>());
+        AbstractPageTask.retryMap.put(GeneralPageTask.class, new HashMap<String, Integer>());
         spyByUsers();
 
-        while ( true )
+        while (true)
         {
-            if ( isTaskOver() )
+            if (isTaskOver())
             {
                 break;
             }
-            Thread.sleep( 3000 );
+            Thread.sleep(3000);
         }
-        BasicFileUtil.writeFileString( "c:/zhihu-task.log", "开始于:" + startTime
-                + " 结束于:" + System.currentTimeMillis() + "\r\n", null, true );
-        logger.info( "任务结束用时:" + getSpyDuration() + " 完成任务数:" + vCount );
+        BasicFileUtil.writeFileString("c:/zhihu-task.log",
+            "开始于:" + startTime + " 结束于:" + System.currentTimeMillis() + "\r\n", null, true);
+        logger.info("任务结束用时:" + getSpyDuration() + " 完成任务数:" + vCount);
 
     }
 
     protected void spyByUsers()
     {
         userVList = userVService.getUserVList();
-        for ( UserV userV : userVList )
+        for (UserV userV : userVList)
         {
-            doJob( "https://www.zhihu.com/api/v4/members/"
-                    + userV.getUserToken() + "/activities", userV, true, null );
+            doJobAndAccum(
+                "https://www.zhihu.com/api/v4/members/" + userV.getUserToken() + "/activities",
+                userV, true, null);
         }
     }
 
@@ -109,18 +116,17 @@ public class ActivitySpy implements Spy
      * @param beginSpyDate
      *            任务开始时间
      */
-    public synchronized void doJobAndAccum( String apiUrl, UserV userV,
-            boolean proxyFlag, Date beginSpyDate )
+    public synchronized void doJobAndAccum(String apiUrl, UserV userV, boolean proxyFlag,
+                                           Date beginSpyDate)
     {
-        vCount++;
-        doJob( apiUrl, userV, proxyFlag, beginSpyDate );
+        vCount++ ;
+        doJob(apiUrl, userV, proxyFlag, beginSpyDate);
     }
 
-    public synchronized void doJob( String apiUrl, UserV userV,
-            boolean proxyFlag, Date beginSpyDate )
+    public synchronized void doJob(String apiUrl, UserV userV, boolean proxyFlag,
+                                   Date beginSpyDate)
     {
-        netPageThreadPool.execute(
-                new VUSerPageTask( apiUrl, userV, true, this, beginSpyDate ) );
+        netPageThreadPool.execute(new VUSerPageTask(apiUrl, userV, true, this, beginSpyDate));
     }
 
     /**
@@ -129,11 +135,10 @@ public class ActivitySpy implements Spy
      * @param type
      * @param msg
      */
-    public synchronized void callBackComplete( int type, String msg,
-            Runnable task )
+    public synchronized void callBackComplete(int type, String msg, Runnable task)
     {
-        cmtTopicCount++;
-        System.out.println( "当前完成任务数目:" + cmtTopicCount + "/" + vCount );
+        cmtTopicCount++ ;
+        System.out.println("当前完成任务数目:" + cmtTopicCount + "/" + vCount);
     }
 
     /**
@@ -143,18 +148,17 @@ public class ActivitySpy implements Spy
      * @param apiUrl
      * @param msg
      */
-    public synchronized void errLog( String utoken, String apiUrl, String msg,
-            Proxy proxy )
+    public synchronized void errLog(String utoken, String apiUrl, String msg, Proxy proxy)
     {
         TaskErrLog taskErrLog = new TaskErrLog();
-        taskErrLog.setMsg( msg );
-        taskErrLog.setUrl( apiUrl );
-        taskErrLog.setuToken( utoken );
-        if ( proxy != null )
+        taskErrLog.setMsg(msg);
+        taskErrLog.setUrl(apiUrl);
+        taskErrLog.setuToken(utoken);
+        if (proxy != null)
         {
-            taskErrLog.setProxyStr( proxy.getProxyStr() );
+            taskErrLog.setProxyStr(proxy.getProxyStr());
         }
-        zhihuActivityHelper.errLog( taskErrLog );
+        zhihuActivityHelper.errLog(taskErrLog);
     }
 
     /**
@@ -165,19 +169,21 @@ public class ActivitySpy implements Spy
      * @throws Exception
      *             严重异常, 如数据库失去连接, 表结构变更等
      */
-    public synchronized void save( List<Activity> parseArray ) throws Exception
+    public synchronized void save(List<Activity> parseArray)
+        throws Exception
     {
-        zhihuActivityHelper.save( parseArray );
+        zhihuActivityHelper.save(parseArray);
     }
 
-    public void updateLastTime( String userToken, Date beginSpyDate )
+    public void updateLastTime(String userToken, Date beginSpyDate)
     {
-        if ( spyRefreshTimeRecorder.add( userToken ) )
+        if (spyRefreshTimeRecorder.add(userToken))
         {
             try
             {
-                userVService.updateSpyTime( userToken, beginSpyDate );
-            } catch ( Exception e )
+                userVService.updateSpyTime(userToken, beginSpyDate);
+            }
+            catch (Exception e)
             {
                 e.printStackTrace();
             }
