@@ -134,8 +134,18 @@ public class VUSerPageTask extends AbstractPageTask
         }
         else
         {
-            taskSuccStop("无动态");
+            emptyLog();
         }
+    }
+
+    /**
+     * 知乎api可能不太稳定，明明有动态但是接口返回为空。 这种情况需要手动对用户进行爬取
+     */
+    private void emptyLog()
+    {
+        taskSuccStop("无动态");
+        ignoreComplete = true;
+        activitySpy.errLog(utoken, apiUrl, "当前用户没有任何动态", currentProxy);
     }
 
     /**
@@ -222,6 +232,9 @@ public class VUSerPageTask extends AbstractPageTask
         return apiUrl.replaceAll("(\\?|\\&)[^\\&\\?]+=0\\.\\d{16}", "");
     }
 
+    /**
+     * 其他地方可能有自己的complete逻辑，需要忽略
+     */
     @Override
     protected void complete(int type, String msg)
     {

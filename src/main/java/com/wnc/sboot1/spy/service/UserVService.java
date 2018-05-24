@@ -60,7 +60,7 @@ public class UserVService
     public List<UserV> getContinueUserVList()
     {
         List<UserV> list = new ArrayList<>();
-        String sql = "select v.user_token, act.mintime, v.last_spy_time from user_v v left join (select actor_id, min(created_time) mintime from zh_activity group by actor_id) act on v.hash_id = act.actor_id where v.`status`=0 ";
+        String sql = "select v.user_token, act.mintime, v.last_spy_time from user_v v left join (select actor_id, min(created_time) mintime from zh_activity group by actor_id) act on v.hash_id = act.actor_id where v.`status`=0";
         Query createNativeQuery = entityManager.createNativeQuery(sql);
         List<Object[]> resultList = createNativeQuery.getResultList();
         UserV v = null;

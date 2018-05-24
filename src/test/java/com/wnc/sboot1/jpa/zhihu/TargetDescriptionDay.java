@@ -25,14 +25,14 @@ public class TargetDescriptionDay
     @Autowired
     private ZhihuActivityService zhihuActivityService;
 
-    @Test
+    // @Test
     public void n()
     {
         zhihuActivityService.aggre("2018-05-22", "2018-05-22", ZhihuActivityService.AGGRE_DAY_CODE,
             ZhihuActivityService.FOLLOW_DAY_COUNT);
     }
 
-    // @Test
+    @Test
     public void a()
     {
 
