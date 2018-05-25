@@ -37,7 +37,7 @@ public class ActivityLastTaskSpy extends ActivitySpy
     }
 
     /**
-     * 有时候可能是真的无动态， 所以不能设置为无限重试， 暂定为200
+     * 有时候可能是真的无动态， 所以不能设置为无限重试， 暂定为60
      */
     @Override
     public synchronized void doJob( String apiUrl, UserV userV,
@@ -45,6 +45,6 @@ public class ActivityLastTaskSpy extends ActivitySpy
     {
         netPageThreadPool.execute(
                 new VUSerPageTask( apiUrl, userV, true, this, beginSpyDate )
-                        .setMaxRetryTimes( 200 ) );
+                        .setMaxRetryTimes( 60 ) );
     }
 }

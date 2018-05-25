@@ -31,7 +31,7 @@ import com.wnc.sboot1.spy.zhihu.active.UserV;
 @Component
 public class ActivitySpy implements Spy
 {
-    private static final long SIX_HOURS = 1000 * 3600 * 500L;
+    protected long MAX_EXECUTE_TIME = 1000 * 3600 * 8L - 200 * 1000;
 
     private static Logger logger = Logger.getLogger( ActivitySpy.class );
 
@@ -189,7 +189,7 @@ public class ActivitySpy implements Spy
      */
     public boolean isTaskOver()
     {
-        return cmtTopicCount >= vCount || getSpyDuration() >= SIX_HOURS;
+        return cmtTopicCount >= vCount || getSpyDuration() >= MAX_EXECUTE_TIME;
     }
 
     public long getSpyDuration()
