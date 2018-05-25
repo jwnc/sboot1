@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.wnc.sboot1.spy.zhihu.active.Activity;
+import com.wnc.sboot1.spy.zhihu.active.ActivityCronLog;
 import com.wnc.sboot1.spy.zhihu.active.ActivityKey;
 import com.wnc.sboot1.spy.zhihu.active.TaskErrLog;
 import com.wnc.sboot1.spy.zhihu.active.target.Answer;
@@ -19,6 +20,7 @@ import com.wnc.sboot1.spy.zhihu.active.target.RoundTable;
 import com.wnc.sboot1.spy.zhihu.active.target.Target;
 import com.wnc.sboot1.spy.zhihu.active.target.Topic;
 import com.wnc.sboot1.spy.zhihu.active.target.ZColumn;
+import com.wnc.sboot1.spy.zhihu.rep.ActivityCronLogRepository;
 import com.wnc.sboot1.spy.zhihu.rep.ActivityRepository;
 import com.wnc.sboot1.spy.zhihu.rep.AnswerRepository;
 import com.wnc.sboot1.spy.zhihu.rep.ArticleRepository;
@@ -61,6 +63,9 @@ public class ZhihuActivityHelper
 
     @Autowired
     TaskErrLogRepository taskErrLogRepository;
+
+    @Autowired
+    ActivityCronLogRepository activityCronLogRepository;
 
     public void save(List<Activity> activityList)
         throws Exception
@@ -121,6 +126,11 @@ public class ZhihuActivityHelper
         }
     }
 
+    /**
+     * user任务错误记录
+     * 
+     * @param taskErrLog
+     */
     public void errLog(TaskErrLog taskErrLog)
     {
         try
@@ -130,6 +140,23 @@ public class ZhihuActivityHelper
         catch (Exception e)
         {
             logger.error(taskErrLog.getUrl() + " " + e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 定时任务执行记录
+     * 
+     * @param activityCronLog
+     */
+    public void cronLog(ActivityCronLog activityCronLog)
+    {
+        try
+        {
+            activityCronLogRepository.save(activityCronLog);
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }

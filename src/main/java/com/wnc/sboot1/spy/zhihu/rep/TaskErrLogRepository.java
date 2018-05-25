@@ -10,5 +10,4 @@ public interface TaskErrLogRepository
         extends PagingAndSortingRepository<TaskErrLog, Integer>,
         JpaSpecificationExecutor<TaskErrLog>
 {
-
 }

@@ -139,11 +139,11 @@ public class VUSerPageTask extends AbstractPageTask
     }
 
     /**
-     * 知乎api可能不太稳定，明明有动态但是接口返回为空。 这种情况需要手动对用户进行爬取
+     * 知乎api可能不太稳定，明明有动态但是接口返回为空。 这种情况不能更新last_spy_time，需要手动对用户进行爬取
      */
     private void emptyLog()
     {
-        taskSuccStop("无动态");
+        taskLog(utoken + "无动态");
         ignoreComplete = true;
         activitySpy.errLog(utoken, apiUrl, "当前用户没有任何动态", currentProxy);
     }
