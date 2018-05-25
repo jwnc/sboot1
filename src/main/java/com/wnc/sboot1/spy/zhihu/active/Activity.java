@@ -4,6 +4,7 @@ package com.wnc.sboot1.spy.zhihu.active;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -19,7 +20,8 @@ import com.wnc.sboot1.spy.zhihu.active.target.ZColumn;
 
 
 @Entity
-@Table(name = "ZH_ACTIVITY")
+@Table(name = "ZH_ACTIVITY", indexes = {@Index(columnList = "target_id"),
+    @Index(columnList = "created_time")})
 public class Activity extends ActivityKey
 {
     private static final long serialVersionUID = 8195407694303106539L;

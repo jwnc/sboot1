@@ -37,11 +37,8 @@ public class TargetDescriptionDay
     {
 
         dayAggre();
-
         weekAggre();
-
         monthAggre();
-
         yAggre();
     }
 

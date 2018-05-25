@@ -298,7 +298,7 @@ public class ZhihuActivityService
                 case "roundtable":
                     RoundTable roundTable = roundTableRepository.findOne(tid);
                     description = roundTable.getDescription();
-                    url = "https://www.zhihu.com/" + idInTid;
+                    url = "https://www.zhihu.com/roundtable/" + idInTid;
                     break;
                 default:
                     break;
