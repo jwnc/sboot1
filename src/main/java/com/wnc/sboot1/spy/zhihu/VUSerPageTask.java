@@ -161,7 +161,6 @@ public class VUSerPageTask extends AbstractPageTask
         // 不显示io异常
         if ( e instanceof IOException )
         {
-
             return;
         }
         e.printStackTrace();
