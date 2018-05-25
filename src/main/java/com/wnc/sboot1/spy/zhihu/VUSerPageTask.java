@@ -1,6 +1,7 @@
 
 package com.wnc.sboot1.spy.zhihu;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -157,6 +158,12 @@ public class VUSerPageTask extends AbstractPageTask
 
     public void errLogExp( Exception e )
     {
+        // 不显示io异常
+        if ( e instanceof IOException )
+        {
+
+            return;
+        }
         e.printStackTrace();
     }
 
