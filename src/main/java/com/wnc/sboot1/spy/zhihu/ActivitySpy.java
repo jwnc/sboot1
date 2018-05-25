@@ -125,7 +125,12 @@ public class ActivitySpy implements Spy
             Runnable task )
     {
         cmtTopicCount++;
-        System.out.println( "当前完成任务数目:" + cmtTopicCount + "/" + vCount );
+        System.out.println( "当前完成任务数目:" + getProgress() );
+    }
+
+    public String getProgress()
+    {
+        return cmtTopicCount + "/" + vCount;
     }
 
     /**

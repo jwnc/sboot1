@@ -3,6 +3,7 @@ package com.wnc.sboot1.spy.zhihu;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,8 @@ public class ActivityLastTaskSpy extends ActivitySpy
 {
     @Autowired
     private ZhihuActivityService zhihuActivityService;
+    private static Logger logger = Logger
+            .getLogger( ActivityLastTaskSpy.class );
 
     @Override
     protected void spyByUsers()
@@ -26,6 +29,7 @@ public class ActivityLastTaskSpy extends ActivitySpy
         Date lastTaskTime = zhihuActivityService.findLastTaskTime();
         // taskBeginTime = new Date();
         userVList = userVService.getLastTaskRetryUserVList( lastTaskTime );
+        logger.info( "重试用户数:" + userVList.size() );
         for ( UserV userV : userVList )
         {
             doJobAndAccum( userV.getUrl(), userV, true, lastTaskTime );

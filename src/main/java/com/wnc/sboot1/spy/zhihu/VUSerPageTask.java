@@ -138,7 +138,7 @@ public class VUSerPageTask extends AbstractPageTask
      */
     private void emptyRetry()
     {
-        taskLog( utoken + "无动态" );
+        taskLog( utoken + "无动态, 将重试" );
         super.retryMonitor( "当前用户没有任何动态" );
     }
 
@@ -181,7 +181,7 @@ public class VUSerPageTask extends AbstractPageTask
     private void taskSuccStop( String msg )
     {
         activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
-        taskLog( utoken + msg );
+        taskLog( utoken + msg + " 进度:" + activitySpy.getProgress() );
     }
 
     private boolean isNewActivity( Activity activity )
