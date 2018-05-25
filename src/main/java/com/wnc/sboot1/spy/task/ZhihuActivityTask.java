@@ -19,7 +19,8 @@ public class ZhihuActivityTask
     // @Autowired
     // private ActivityContinueSpy activityContinueSpy;
 
-    private static volatile boolean flag = false;
+    private static volatile boolean flag1 = false;
+    private static volatile boolean flag2 = false;
 
     @Scheduled( cron = "${cronJob.fork_zhihu_activity}" )
     public void a()
@@ -29,11 +30,11 @@ public class ZhihuActivityTask
             @Override
             public void run()
             {
-                if ( flag )
+                if ( flag1 )
                 {
                     return;
                 }
-                flag = true;
+                flag1 = true;
                 try
                 {
                     activitySpy.spy();
@@ -42,7 +43,7 @@ public class ZhihuActivityTask
                     e.printStackTrace();
                 } finally
                 {
-                    flag = false;
+                    flag1 = false;
                 }
             }
         } ).start();
@@ -59,11 +60,11 @@ public class ZhihuActivityTask
             @Override
             public void run()
             {
-                if ( flag )
+                if ( flag2 )
                 {
                     return;
                 }
-                flag = true;
+                flag2 = true;
                 try
                 {
                     activityLastTaskSpy.spy();
@@ -72,7 +73,7 @@ public class ZhihuActivityTask
                     e.printStackTrace();
                 } finally
                 {
-                    flag = false;
+                    flag2 = false;
                 }
             }
         } ).start();
