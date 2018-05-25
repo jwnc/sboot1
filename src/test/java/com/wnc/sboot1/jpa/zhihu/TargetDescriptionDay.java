@@ -35,7 +35,6 @@ public class TargetDescriptionDay
     @Test
     public void a()
     {
-
         dayAggre();
         weekAggre();
         monthAggre();
