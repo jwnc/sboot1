@@ -26,6 +26,7 @@ public class ActivityLastTaskSpy extends ActivitySpy
     @Override
     protected void spyByUsers()
     {
+        this.MAX_EXECUTE_TIME = this.MAX_EXECUTE_TIME / 2;
         Date lastTaskTime = zhihuActivityService.findLastTaskTime();
         // taskBeginTime = new Date();
         userVList = userVService.getLastTaskRetryUserVList( lastTaskTime );
@@ -37,7 +38,7 @@ public class ActivityLastTaskSpy extends ActivitySpy
     }
 
     /**
-     * 有时候可能是真的无动态， 所以不能设置为无限重试， 暂定为60
+     * 有时候可能是真的无动态， 所以不能设置为无限重试， 暂时控制时间为MAX_EXECUTE_TIME的一半
      */
     @Override
     public synchronized void doJob( String apiUrl, UserV userV,
@@ -45,6 +46,6 @@ public class ActivityLastTaskSpy extends ActivitySpy
     {
         netPageThreadPool.execute(
                 new VUSerPageTask( apiUrl, userV, true, this, beginSpyDate )
-                        .setMaxRetryTimes( 60 ) );
+                        .setMaxRetryTimes( Integer.MAX_VALUE ) );
     }
 }

@@ -333,7 +333,7 @@ public class ZhihuActivityService
 
     public Date findLastTaskTime()
     {
-        String sql = "select max(start_time) from activity_cron_log";
+        String sql = "select start_time from activity_cron_log l order by l.start_time desc limit 1,1";
         Query createNativeQuery = entityManager.createNativeQuery( sql );
         List<Object> aggreData = createNativeQuery.getResultList();
         if ( aggreData == null || aggreData.size() == 0 )

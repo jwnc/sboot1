@@ -79,7 +79,7 @@ public class ActivitySpy implements Spy
         }
         BasicFileUtil.writeFileString( "c:/zhihu-task.log", "开始于:" + startTime
                 + " 结束于:" + System.currentTimeMillis() + "\r\n", null, true );
-        logger.info( "任务结束用时:" + getSpyDuration() + " 完成任务数:" + vCount );
+        logger.info( "任务结束用时:" + getSpyDuration() + " 完成任务数:" + cmtTopicCount );
 
         if ( this.isSuper )
         {

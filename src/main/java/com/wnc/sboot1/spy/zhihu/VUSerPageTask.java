@@ -78,7 +78,10 @@ public class VUSerPageTask extends AbstractPageTask
     @Override
     protected void retry()
     {
-        activitySpy.doJob( apiUrl, userV, proxyFlag, beginSpyDate );
+        if ( !activitySpy.isTaskOver() )
+        {
+            activitySpy.doJob( apiUrl, userV, proxyFlag, beginSpyDate );
+        }
     }
 
     @Override
