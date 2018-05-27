@@ -31,7 +31,7 @@ import com.wnc.sboot1.spy.zhihu.active.UserV;
 @Component
 public class ActivitySpy implements Spy
 {
-    protected long MAX_EXECUTE_TIME = 1000 * 3600 * 8L - 200 * 1000;
+    protected long MAX_EXECUTE_TIME = 1000 * 3600 * 8L - 200 * 1000L;
 
     private static Logger logger = Logger.getLogger( ActivitySpy.class );
 
@@ -128,7 +128,7 @@ public class ActivitySpy implements Spy
         System.out.println( "当前完成任务数目:" + getProgress() );
     }
 
-    public String getProgress()
+    private String getProgress()
     {
         return cmtTopicCount + "/" + vCount;
     }

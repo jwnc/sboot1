@@ -81,6 +81,9 @@ public class VUSerPageTask extends AbstractPageTask
         if ( !activitySpy.isTaskOver() )
         {
             activitySpy.doJob( apiUrl, userV, proxyFlag, beginSpyDate );
+        } else
+        {
+            logger.info( apiUrl + "不能重试, 因为spy已经结束." );
         }
     }
 
@@ -125,14 +128,15 @@ public class VUSerPageTask extends AbstractPageTask
             JSONObject lastActObj = jsonArray.getJSONObject( size - 1 );
             if ( isNewActivity( lastActObj ) )
             {
-                nextJob( restData );
                 ignoreComplete = true;
+                nextJob( restData );
             } else
             {
                 taskSuccStop( "已经到了上次的截止期限" );
             }
         } else
         {
+            ignoreComplete = true;
             emptyRetry();
         }
     }
@@ -190,7 +194,7 @@ public class VUSerPageTask extends AbstractPageTask
     private void taskSuccStop( String msg )
     {
         activitySpy.updateLastTime( userV.getUserToken(), beginSpyDate );
-        taskLog( utoken + msg + " 进度:" + activitySpy.getProgress() );
+        taskLog( utoken + msg );
     }
 
     private boolean isNewActivity( Activity activity )
