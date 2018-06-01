@@ -59,8 +59,8 @@
 			}
 			
 			if($(this).val() == 3){
-				if($("#monthStr").val()=='')
-					$("#monthStr").val(getYearMonth());
+				if($("#yearMonthStr").val()=='')
+					$("#yearMonthStr").val(getYearMonth());
 			}
 			
 			if($(this).val() == 2){
@@ -68,13 +68,18 @@
 					$("#weekStr").val(getTheWeek());
 			}
 			
-			$("form").submit();
+			changeDate();
 		});
 		
 	});
 	
+	function action(val){
+		$("#action").val(val);	
+		$("form").submit();
+	}
 	
 	function changeDate(){
+		$("#action").val('');
 		//window.location.href=[[@{/spyapi/zhihu/aggre}]]+"?dateStr="+$(obj).val();
 		$("form").submit();
 	}
@@ -85,19 +90,23 @@
 	<div th:replace="header :: header('大V在干什么.')"></div>
 	<div class="content">
 		<form th:action="@{/spyapi/zhihu/aggre}" th:object="${user}" method="get" th:method="get">
-		<div id="dateGroups">
-			<input class="sel" id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate()"/>
-			<input class="sel" id="weekStr" type="week" name="weekStr" th:value="${weekStr}" onchange="changeDate()"/>
-			<input class="sel" id="monthStr" type="month" name="monthStr" th:value="${monthStr}" onchange="changeDate()"/>
-			<select class="sel" id="yearStr" name="yearStr" th:value="${yearStr}" onchange="changeDate()">
-				<option value=""></option>
-				<option value="2017" th:selected="${yearStr=='2017'}">2017</option>
-				<option value="2018" th:selected="${yearStr=='2018'}">2018</option>
-				<option value="2019" th:selected="${yearStr=='2019'}">2019</option>
-				<option value="2020" th:selected="${yearStr=='2020'}">2020</option>
-			</select>
-			每日<input type="radio" value="1" name="aggreCode" /> 每周<input type="radio" value="2" name="aggreCode"/> 每月<input type="radio" value="3" name="aggreCode"/>每年<input type="radio" value="4" name="aggreCode"/>
-		</div>
+			<div id="dateGroups">
+				<input class="sel" id="dateStr" type="date" name="dateStr" th:value="${dateStr}" onchange="changeDate()"/>
+				<input class="sel" id="weekStr" type="week" name="weekStr" th:value="${weekStr}" onchange="changeDate()"/>
+				<input class="sel" id="yearMonthStr" type="month" name="yearMonthStr" th:value="${yearMonthStr}" onchange="changeDate()"/>
+				<select class="sel" id="yearStr" name="yearStr" th:value="${yearStr}" onchange="changeDate()">
+					<option value=""></option>
+					<option value="2017" th:selected="${yearStr=='2017'}">2017</option>
+					<option value="2018" th:selected="${yearStr=='2018'}">2018</option>
+					<option value="2019" th:selected="${yearStr=='2019'}">2019</option>
+					<option value="2020" th:selected="${yearStr=='2020'}">2020</option>
+				</select>
+				<input id="action" type="hidden" th:value="${action}" name="action" />
+				每日<input type="radio" value="1" name="aggreCode" /> 每周<input type="radio" value="2" name="aggreCode"/> 每月<input type="radio" value="3" name="aggreCode"/>每年<input type="radio" value="4" name="aggreCode"/>
+				
+				<a target="_blank" onclick="action(-1)" href="javascript:void(0)"> 前一段</a>
+				<a target="_blank" onclick="action(1)" href="javascript:void(0)"> 后一段</a>
+			</div>
 		</form>
 		<div class="summary-list">
 			<div class="summary" th:each="example : ${data}">

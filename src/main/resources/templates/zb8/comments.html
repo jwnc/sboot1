@@ -76,6 +76,19 @@
 		$("input[name='day']").val($("#dayStr").val());
 		$("form").submit();
 	}
+	
+	function lastDay(){
+		var day = getDateStr($("#dayStr").val(), -1);
+		$("#dayStr").val(day);
+		changeDate();
+	}
+	
+	function nextDay(){
+		var day = getDateStr($("#dayStr").val(), 1);
+		$("#dayStr").val(day);
+		changeDate();
+	}
+	
 </script>
 
 </head>
@@ -85,7 +98,11 @@
 	<div class="content">
 		<div style="font-size:30px">
 			<input id="dayStr" type="date" th:value="${day}" onchange="changeDate()" /> 
-			<a th:href="@{/spyapi/zb8/comments}" style="margin-right:20px"> 重置</a><a target="_blank" th:href="@{/spyapi/zb8/favoritelist}"> 热评收藏</a>
+			<a th:href="@{/spyapi/zb8/comments}" style="margin-right:20px"> 重置</a>
+			<a target="_blank" th:href="@{/spyapi/zb8/favoritelist}"> 热评收藏</a>
+			<span style="margin-left: 40px;"></span>
+			<a target="_blank" onclick="lastDay()" href="javascript:void(0)"> 前一天</a>
+			<a target="_blank" onclick="nextDay()" href="javascript:void(0)"> 后一天</a>
 		</div>
 		<div>
 			<form id="searchform" method="GET" th:action="@{/spyapi/zb8/comments}">

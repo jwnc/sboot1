@@ -57,6 +57,17 @@
 		$("input[name='day']").val($("#dayStr").val());
 		$("form").submit();
 	}
+	function lastDay(){
+		var day = getDateStr($("#dayStr").val(), -1);
+		$("#dayStr").val(day);
+		changeDate();
+	}
+	
+	function nextDay(){
+		var day = getDateStr($("#dayStr").val(), 1);
+		$("#dayStr").val(day);
+		changeDate();
+	}
 </script>
 
 </head>
@@ -64,7 +75,11 @@
 	<div th:replace="header :: header('热评收藏.')"></div>
 	
 	<div class="content">
-		<input id="dayStr" type="date" th:value="${day}" onchange="changeDate()"/> 
+		<div style="font-size:30px">
+			<input id="dayStr" type="date" th:value="${day}" onchange="changeDate()"/> 
+			<a target="_blank" onclick="lastDay()" href="javascript:void(0)"> 前一天</a>
+			<a target="_blank" onclick="nextDay()" href="javascript:void(0)"> 后一天</a>
+		</div>
 		<div>
 			<form id="searchform" method="GET" th:action="@{/spyapi/zb8/favoritelist}">
 				<input type="hidden" name="page" th:value="${pageData.pageNum}" />
