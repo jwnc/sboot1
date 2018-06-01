@@ -94,6 +94,12 @@ public class ZhihuActivityService
     @PersistenceContext
     private EntityManager entityManager;
 
+    public void aggreToday()
+    {
+        String day1 = SpiderUtils.getDayWithLine();
+        aggre( day1, day1, AGGRE_DAY_CODE, FOLLOW_DAY_COUNT );
+    }
+
     public void aggreYesterday()
     {
         String day1 = SpiderUtils.getYesterDayStr();

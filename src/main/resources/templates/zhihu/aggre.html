@@ -104,8 +104,8 @@
 				<input id="action" type="hidden" th:value="${action}" name="action" />
 				每日<input type="radio" value="1" name="aggreCode" /> 每周<input type="radio" value="2" name="aggreCode"/> 每月<input type="radio" value="3" name="aggreCode"/>每年<input type="radio" value="4" name="aggreCode"/>
 				
-				<a target="_blank" onclick="action(-1)" href="javascript:void(0)"> 前一段</a>
-				<a target="_blank" onclick="action(1)" href="javascript:void(0)"> 后一段</a>
+				<a target="_blank" onclick="action(-1)" href="javascript:void(0)"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a target="_blank" onclick="action(1)" href="javascript:void(0)" style="margin-left: 10px"><span class="glyphicon glyphicon-chevron-right"></span></a>
 			</div>
 		</form>
 		<div class="summary-list">

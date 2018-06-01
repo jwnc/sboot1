@@ -57,6 +57,20 @@ public class ZhihuActivityAggreTask
         }
     }
 
+    @Scheduled( cron = "${cronJob.fork_zhihu_activity_aggre_today}" )
+    public void today()
+    {
+        new AbstractCronTask()
+        {
+
+            @Override
+            protected void task()
+            {
+                zhihuActivityService.aggreToday();
+            }
+        }.start();
+    }
+
     @Scheduled( cron = "${cronJob.fork_zhihu_activity_aggre_yesterday}" )
     public void yesterday()
     {

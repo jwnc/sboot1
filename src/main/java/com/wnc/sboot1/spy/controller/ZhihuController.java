@@ -45,7 +45,7 @@ public class ZhihuController
         String searchDay = "";
         if ( dateStr == null )
         {
-            dateStr = SpiderUtils.getYesterDayStr();
+            dateStr = SpiderUtils.getDayWithLine();
         }
         if ( aggreCode == null )
         {
