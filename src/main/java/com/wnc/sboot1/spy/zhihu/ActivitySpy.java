@@ -189,7 +189,13 @@ public class ActivitySpy implements Spy
      */
     public boolean isTaskOver()
     {
-        return cmtTopicCount >= vCount || getSpyDuration() >= MAX_EXECUTE_TIME;
+        return cmtTopicCount >= vCount
+                || getSpyDuration() >= getMaxExecuteTime();
+    }
+
+    protected long getMaxExecuteTime()
+    {
+        return MAX_EXECUTE_TIME;
     }
 
     public long getSpyDuration()
