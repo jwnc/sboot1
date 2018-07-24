@@ -11,7 +11,6 @@ import com.crawl.core.util.HttpClientUtil;
 import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.basic.BasicFileUtil;
 import com.wnc.sboot1.spy.zhihu.GeneralPageTask;
-import com.wnc.sboot1.spy.zhihu.TT2;
 
 public class EssenceTask
 {
@@ -38,8 +37,8 @@ public class EssenceTask
         while ( true )
         {
             HttpGet request = new HttpGet( urlBase + skip );
-            request.setHeader( "authorization",
-                    "oauth " + TT2.initAuthorization() );
+            // request.setHeader( "authorization",
+            // "oauth " + TT2.initAuthorization() );
             String webPage = HttpClientUtil.getWebPage( request );
             BasicFileUtil.writeFileString(
                     "D:\\个人工作\\spy\\zhihu\\topics\\表情图\\表情图-" + skip + ".json",

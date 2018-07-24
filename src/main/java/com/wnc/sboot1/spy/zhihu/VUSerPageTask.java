@@ -55,8 +55,8 @@ public class VUSerPageTask extends AbstractPageTask
         this.activitySpy = activitySpy;
 
         request = new HttpGet( apiUrl );
-        request.setHeader( "authorization",
-                "oauth " + TT2.initAuthorization() );
+        // request.setHeader( "authorization",
+        // "oauth " + TT2.initAuthorization() );
     }
 
     public VUSerPageTask setMaxRetryTimes( int tm )
