@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wnc.sboot1.cluster.service.ProxyListService;
+import com.wnc.sboot1.cluster.util.ProxyUtil;
 import com.wnc.sboot1.common.beans.ResultBean;
 
 @RestController
@@ -26,6 +27,19 @@ public class ProxyController
         try
         {
             return new ResultBean<List>( proxyListService.getFatestProxies() );
+        } catch ( IOException e )
+        {
+            e.printStackTrace();
+            return new ResultBean( e );
+        }
+    }
+
+    @GetMapping( "get66Proxy" )
+    public ResultBean<List> proxy66Ip()
+    {
+        try
+        {
+            return new ResultBean<List>( ProxyUtil.get61Proxies() );
         } catch ( IOException e )
         {
             e.printStackTrace();

@@ -8,10 +8,12 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.crawl.core.util.HttpClientUtil;
 import com.crawl.proxy.entity.Proxy;
 import com.crawl.spider.entity.Page;
+import com.wnc.sboot1.spy.util.ProxyProcess;
 import com.wnc.string.PatternUtil;
 
 public class ProxyUtil
@@ -73,6 +75,9 @@ public class ProxyUtil
 
     final static int MAX_SIZE = 4000;
 
+    @Autowired
+    private static ProxyProcess proxyProcess;
+
     /**
      * 一次最多返回4000个, 不然校验过程太漫长
      * 
@@ -81,11 +86,10 @@ public class ProxyUtil
      */
     public static List<String> get61Proxies() throws IOException
     {
-
-        Page webPage = PageUtil.getWebPage(
-                new HttpGet( "http://www.66ip.cn/nmtq.php?getnum=" + MAX_SIZE
-                        + "&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=2&api=66ip" ),
-                "UTF-8" );
+        HttpGet httpGet = new HttpGet( "http://www.66ip.cn/nmtq.php?getnum="
+                + MAX_SIZE
+                + "&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=2&api=66ip" );
+        Page webPage = PageUtil.getWebPage( httpGet, "UTF-8" );
         String content = webPage.getHtml();
         List<String> list = PatternUtil.getAllPatternGroup( content,
                 "\\d+.\\d+.\\d+.\\d+:\\d+" );

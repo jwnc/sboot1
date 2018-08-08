@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -19,9 +20,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.crawl.spider.entity.Page;
 import com.wnc.sboot1.cluster.util.MapUtil;
 import com.wnc.sboot1.cluster.util.MapUtil.KeyValue;
+import com.wnc.sboot1.cluster.util.PageUtil;
 import com.wnc.sboot1.cluster.util.ProxyUtil;
+import com.wnc.string.PatternUtil;
 
 @Component
 public class ProxyHashService
@@ -61,7 +65,15 @@ public class ProxyHashService
      */
     public int importProxies() throws Exception
     {
-        List<String> get61Proxies = ProxyUtil.get61Proxies();
+        // 用在测试
+        HttpGet httpGet = new HttpGet(
+                "http://118.126.116.16:8080/sboot1/proxy/get66Proxy" );
+        Page webPage = PageUtil.getWebPage( httpGet, "UTF-8" );
+        String content = webPage.getHtml();
+        List<String> get61Proxies = PatternUtil.getAllPatternGroup( content,
+                "\\d+.\\d+.\\d+.\\d+:\\d+" );
+        // 用在正式
+        // List<String> get61Proxies = ProxyUtil.get61Proxies();
         int sum = 0;
         for ( String proxyStr : get61Proxies )
         {
