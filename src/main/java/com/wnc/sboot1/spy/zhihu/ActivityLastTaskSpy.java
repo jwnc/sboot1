@@ -26,7 +26,6 @@ public class ActivityLastTaskSpy extends ActivitySpy
     @Override
     protected void spyByUsers()
     {
-        this.MAX_EXECUTE_TIME = this.MAX_EXECUTE_TIME / 2;
         Date lastTaskTime = zhihuActivityService.findLastTaskTime();
         // taskBeginTime = new Date();
         userVList = userVService.getLastTaskRetryUserVList( lastTaskTime );
@@ -35,6 +34,12 @@ public class ActivityLastTaskSpy extends ActivitySpy
         {
             doJobAndAccum( userV.getUrl(), userV, true, lastTaskTime );
         }
+    }
+
+    @Override
+    protected long getMaxExecuteTime()
+    {
+        return Math.min( super.getMaxExecuteTime() / 2, vCount * 60 * 1000L );
     }
 
     /**

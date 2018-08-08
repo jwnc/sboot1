@@ -21,7 +21,6 @@ import com.crawl.core.util.HttpClientUtil;
 import com.wnc.basic.BasicDateUtil;
 import com.wnc.basic.BasicNumberUtil;
 import com.wnc.sboot1.spy.util.SpiderUtils;
-import com.wnc.sboot1.spy.zhihu.TT2;
 import com.wnc.sboot1.spy.zhihu.active.aggre.TargetAggreInfo;
 import com.wnc.sboot1.spy.zhihu.active.aggre.TargetAggreKey;
 import com.wnc.sboot1.spy.zhihu.active.aggre.TargetDesc;
@@ -279,8 +278,8 @@ public class ZhihuActivityService
                         HttpGet request = new HttpGet(
                                 "https://api.zhihu.com/questions/"
                                         + getIdInTid( question_id ) );
-                        request.setHeader( "authorization",
-                                "oauth " + TT2.initAuthorization() );
+                        // request.setHeader( "authorization",
+                        // "oauth " + TT2.initAuthorization() );
                         String webPage = HttpClientUtil.getWebPage( request );
                         title = JSONObject.parseObject( webPage )
                                 .getString( "title" );

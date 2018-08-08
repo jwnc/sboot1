@@ -7,14 +7,18 @@ import java.util.List;
 
 import org.apache.http.client.methods.HttpGet;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.crawl.spider.entity.Page;
 import com.wnc.sboot1.cluster.util.PageUtil;
 import com.wnc.string.PatternUtil;
 
+@RunWith( SpringRunner.class )
+@SpringBootTest
 public class ProxyUtilTest
 {
-
     @Test
     public void a() throws IOException
     {
@@ -37,5 +41,6 @@ public class ProxyUtilTest
             retList.add( string );
         }
         return retList;
+
     }
 }
