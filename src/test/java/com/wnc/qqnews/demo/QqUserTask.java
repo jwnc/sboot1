@@ -63,8 +63,12 @@ public class QqUserTask extends AbstractPageTask
     @Override
     public void run()
     {
-        this.userStat
-                .setLastSpyTime( (int)(System.currentTimeMillis() / 1000) );
+        // 只有第一页运行的时候才设置lastSpayTime
+        if ( isFirstPage() )
+        {
+            this.userStat
+                    .setLastSpyTime( (int)(System.currentTimeMillis() / 1000) );
+        }
         super.run();
     }
 
@@ -135,50 +139,6 @@ public class QqUserTask extends AbstractPageTask
         return false;
     }
 
-    private void outputUserData( JSONObject dataObject )
-    {
-        JSONObject articlesJO = dataObject.getJSONObject( "articles" );
-        for ( String key : articlesJO.keySet() )
-        {
-            JSONObject articleJO = articlesJO.getJSONObject( key );
-            System.out.println( articleJO.getString( "title" ) );
-            // 输出文章到articles文件
-            QqArticleManager.addAndWriteArticle( articleJO );
-        }
-
-        if ( "0".equals( cursor ) )
-        {
-            JSONObject umetaJO = dataObject.getJSONObject( "usermeta" );
-            QqUserMetaManager.addAndWriteUserMeta( umetaJO );
-            rebuildUserStat( umetaJO );
-        }
-
-        JSONObject usersJO = dataObject.getJSONObject( "users" );
-        for ( String key : usersJO.keySet() )
-        {
-            JSONObject userJO = usersJO.getJSONObject( key );
-            System.out.println( userJO.getString( "nick" ) + " / "
-                    + userJO.getString( "userid" ) );
-            // 输出user到user目录
-            QqUserManager.addAndWriteUser( userJO );
-        }
-    }
-
-    private void rebuildUserStat( JSONObject umetaJO )
-    {
-        this.userStat.setOrieffcommentnum(
-                umetaJO.getIntValue( "orieffcommentnum" ) );
-        this.userStat.setRepeffcommentnum(
-                umetaJO.getIntValue( "repeffcommentnum" ) );
-        this.userStat.setUpnum( umetaJO.getIntValue( "upnum" ) );
-    }
-
-    private void nextJob( String nextCursor )
-    {
-        QqSpiderClient.getInstance()
-                .submitTask( new QqUserTask( userStat, nextCursor ) );
-    }
-
     @Override
     protected void complete( int type, String msg )
     {
@@ -212,5 +172,54 @@ public class QqUserTask extends AbstractPageTask
             e.printStackTrace();
         }
 
+    }
+
+    private void outputUserData( JSONObject dataObject )
+    {
+        JSONObject articlesJO = dataObject.getJSONObject( "articles" );
+        for ( String key : articlesJO.keySet() )
+        {
+            JSONObject articleJO = articlesJO.getJSONObject( key );
+            System.out.println( articleJO.getString( "title" ) );
+            // 输出文章到articles文件
+            QqArticleManager.addAndWriteArticle( articleJO );
+        }
+
+        if ( isFirstPage() )
+        {
+            JSONObject umetaJO = dataObject.getJSONObject( "usermeta" );
+            QqUserMetaManager.addAndWriteUserMeta( umetaJO );
+            rebuildUserStat( umetaJO );
+        }
+
+        JSONObject usersJO = dataObject.getJSONObject( "users" );
+        for ( String key : usersJO.keySet() )
+        {
+            JSONObject userJO = usersJO.getJSONObject( key );
+            System.out.println( userJO.getString( "nick" ) + " / "
+                    + userJO.getString( "userid" ) );
+            // 输出user到user目录
+            QqUserManager.addAndWriteUser( userJO );
+        }
+    }
+
+    private boolean isFirstPage()
+    {
+        return "0".equals( cursor );
+    }
+
+    private void rebuildUserStat( JSONObject umetaJO )
+    {
+        this.userStat.setOrieffcommentnum(
+                umetaJO.getIntValue( "orieffcommentnum" ) );
+        this.userStat.setRepeffcommentnum(
+                umetaJO.getIntValue( "repeffcommentnum" ) );
+        this.userStat.setUpnum( umetaJO.getIntValue( "upnum" ) );
+    }
+
+    private void nextJob( String nextCursor )
+    {
+        QqSpiderClient.getInstance()
+                .submitTask( new QqUserTask( userStat, nextCursor ) );
     }
 }

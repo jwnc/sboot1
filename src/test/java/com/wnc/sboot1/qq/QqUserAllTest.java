@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews;
+package com.wnc.sboot1.qq;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,6 +7,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wnc.basic.BasicFileUtil;
@@ -16,14 +21,19 @@ import com.wnc.qqnews.demo.QqNewsUtil;
 import com.wnc.qqnews.demo.QqSpiderClient;
 import com.wnc.qqnews.demo.QqUserTask;
 import com.wnc.qqnews.user.UserStat;
+import com.wnc.qqnews.user.UserStatFileUtil;
 import com.wnc.tools.FileOp;
 import com.wnc.wynews.utils.ProxyUtil;
 
+@RunWith( SpringRunner.class )
+@SpringBootTest
 public class QqUserAllTest
 {
-    public static void main( String[] args )
-            throws IOException, InterruptedException
+
+    @Test
+    public void testWithBoot() throws IOException, InterruptedException
     {
+
         QqNewsUtil.log( "QqUserSpy任务启动" );
         QqSpiderClient.getInstance().counterReset();
         long startTime = System.currentTimeMillis();
@@ -31,11 +41,16 @@ public class QqUserAllTest
         new ProxyUtil().initProxyPool();
 
         List<Integer> userIds = getUserIds();
-        for ( int i = 0; i < userIds.size(); i++ )
+        for ( int i = 320000; i < userIds.size() && i < 600000; i++ )
         {
             UserStat userStat = new UserStat( userIds.get( i ) ).setPos( i );
-            QqSpiderClient.getInstance()
-                    .submitTask( new QqUserTask( userStat ) );
+            int lastSpyTime = UserStatFileUtil.read( i ).getLastSpyTime();
+            if ( lastSpyTime == 0 )
+            {
+                // System.out.println( lastSpyTime );
+                QqSpiderClient.getInstance()
+                        .submitTask( new QqUserTask( userStat ) );
+            }
         }
 
         while ( QqSpiderClient.getInstance().getNetPageThreadPool()
@@ -50,13 +65,7 @@ public class QqUserAllTest
                 + "秒." );
     }
 
-    public static void main2( String[] args )
-            throws IOException, InterruptedException
-    {
-        getUserIds();
-    }
-
-    private static List<Integer> getUserIds()
+    private List<Integer> getUserIds()
     {
         Set<Integer> userSet = Collections
                 .synchronizedSet( new HashSet<Integer>() );

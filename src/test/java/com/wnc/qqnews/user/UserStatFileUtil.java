@@ -86,7 +86,7 @@ public class UserStatFileUtil
             long s = System.currentTimeMillis();
             // readAll();
             // randomWrite();
-            UserStat read = read( 30895 );
+            UserStat read = read( 332218 );
             System.out.println( read.getId() );
             System.out.println( System.currentTimeMillis() - s );
         } catch ( Exception e )

@@ -46,33 +46,26 @@ public class QqNewsModuleTask extends AbstractPageTask
 
         this.newsModule = newsModule;
         this.pageIdx = pageIdx;
-
-        this.url = getUrl( newsModule, pageIdx );
-
-        if ( beginSpyDate == null )
-        {
-            this.beginSpyDate = new Date();
-        } else
+        if ( beginSpyDate != null )
         {
             this.beginSpyDate = beginSpyDate;
         }
+
+        this.url = getUrl( newsModule, pageIdx );
+
         this.proxyFlag = true;
 
         request = new HttpGet( url );
     }
 
-    private String getUrl( NewsModule newsModule, int pageIdx )
+    @Override
+    public void run()
     {
-        if ( newsModule.getMore() == null )
+        if ( pageIdx == 0 )
         {
-            return newsModule.getUrl();
+            this.beginSpyDate = new Date();
         }
-        if ( newsModule.isOnePageModule() )
-        {
-            return newsModule.getMore();
-        }
-        return NewsPageUrlGenerator.generatorPageUrl( newsModule.getMore(),
-                pageIdx );
+        super.run();
     }
 
     public QqNewsModuleTask setMaxRetryTimes( int tm )
@@ -110,6 +103,74 @@ public class QqNewsModuleTask extends AbstractPageTask
             ignoreComp = false;
         }
 
+    }
+
+    // 404 可能还要继续
+    protected void errLog404( Page page )
+    {
+        // 假的404. 和代理有关, 重试
+        retryMonitor( page.getStatusCode() + " continue..." );
+        ignoreComp = true;
+    }
+
+    @Override
+    protected void complete( int type, String msg )
+    {
+        if ( ignoreComp )
+        {
+            return;
+        }
+        try
+        {
+            super.complete( type, msg );
+
+            String name = newsModule.getName();
+
+            if ( type != COMPLETE_STATUS_SUCCESS )
+            {
+                QqNewsUtil.err( newsModule,
+                        name + "在" + url + "失败, 失败原因:" + msg );
+            } else
+            {
+                // 任务完成数加1
+                QqSpiderClient.getInstance().counterTaskComp();
+                // 通过循环试探得知本页已是结束页, 取上次成功页
+                String preUrl = getUrl( this.newsModule, pageIdx - 1 );
+                QqNewsUtil.log( name + "在" + preUrl + "结束任务!" );
+                // 写最后任务时间
+                BasicFileUtil.writeFileString(
+                        QqConsts.MODULE_HISTORY + newsModule.getName() + ".txt",
+                        BasicDateUtil.getLocaleDate2String( this.beginSpyDate ),
+                        null, false );
+
+            }
+        } catch ( Exception e )
+        {
+            e.printStackTrace();
+        } finally
+        {
+
+        }
+    }
+
+    @Override
+    protected void errLogExp( Exception ex )
+    {
+        ex.printStackTrace();
+    }
+
+    private String getUrl( NewsModule newsModule, int pageIdx )
+    {
+        if ( newsModule.getMore() == null )
+        {
+            return newsModule.getUrl();
+        }
+        if ( newsModule.isOnePageModule() )
+        {
+            return newsModule.getMore();
+        }
+        return NewsPageUrlGenerator.generatorPageUrl( newsModule.getMore(),
+                pageIdx );
     }
 
     private void dealCurrentPageNews( JSONArray jsonArray )
@@ -176,60 +237,6 @@ public class QqNewsModuleTask extends AbstractPageTask
     {
         QqSpiderClient.getInstance().submitTask( new QqNewsModuleTask(
                 this.newsModule, ++pageIdx, beginSpyDate ) );
-    }
-
-    // 404 可能还要继续
-    protected void errLog404( Page page )
-    {
-        // 假的404. 和代理有关, 重试
-        retryMonitor( page.getStatusCode() + " continue..." );
-        ignoreComp = true;
-    }
-
-    @Override
-    protected void complete( int type, String msg )
-    {
-        if ( ignoreComp )
-        {
-            return;
-        }
-        try
-        {
-            super.complete( type, msg );
-
-            String name = newsModule.getName();
-
-            if ( type != COMPLETE_STATUS_SUCCESS )
-            {
-                QqNewsUtil.err( newsModule,
-                        name + "在" + url + "失败, 失败原因:" + msg );
-            } else
-            {
-                // 任务完成数加1
-                QqSpiderClient.getInstance().counterTaskComp();
-                // 通过循环试探得知本页已是结束页, 取上次成功页
-                String preUrl = getUrl( this.newsModule, pageIdx - 1 );
-                QqNewsUtil.log( name + "在" + preUrl + "结束任务!" );
-                // 写最后任务时间
-                BasicFileUtil.writeFileString(
-                        QqConsts.MODULE_HISTORY + newsModule.getName() + ".txt",
-                        BasicDateUtil.getLocaleDate2String( this.beginSpyDate ),
-                        null, false );
-
-            }
-        } catch ( Exception e )
-        {
-            e.printStackTrace();
-        } finally
-        {
-
-        }
-    }
-
-    @Override
-    protected void errLogExp( Exception ex )
-    {
-        ex.printStackTrace();
     }
 
 }
