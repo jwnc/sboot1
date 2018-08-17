@@ -1,13 +1,16 @@
 
-package com.wnc.qqnews;
+package com.wnc.sboot1.spy.qq;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.junit.Test;
+import org.springframework.stereotype.Component;
 
+import com.wnc.qqnews.QqCmtTask;
+import com.wnc.qqnews.QqConsts;
+import com.wnc.qqnews.QqNewsUtil;
+import com.wnc.qqnews.QqSpiderClient;
 import com.wnc.sboot1.spy.util.SpiderUtils;
 import com.wnc.string.PatternUtil;
 import com.wnc.tools.FileOp;
@@ -19,22 +22,23 @@ import com.wnc.wynews.utils.ProxyUtil;
  * 
  * @author nengcai.wang
  */
-public class QqCmtModuleDayTest
+@Component
+public class QqCmtModuleDaySpy
 {
-
-    @SuppressWarnings( "unused" )
-    @Test
-    public void d() throws IOException, InterruptedException
+    public void spy() throws IOException, InterruptedException
     {
+        QqNewsUtil.log( "QqCmtModuleDaySpy任务启动" );
+        QqSpiderClient.getInstance().counterReset();
+        long startTime = System.currentTimeMillis();
+
         new ProxyUtil().initProxyPool();
-        PropertyConfigurator.configure( "log4j.properties" );
+
         String yesterday = SpiderUtils.getYesterDayStr();
         List<String> readFrom = FileOp
                 .readFrom( QqConsts.NEWS_DAY_DIR + yesterday + ".txt" );
         for ( String string : readFrom )
         {
             String code = PatternUtil.getFirstPatternGroup( string, "\\d+" );
-            System.out.println( code );
 
             String moduleName = PatternUtil.getFirstPatternGroup( string,
                     "\\[(.*?)\\]" );
@@ -50,6 +54,10 @@ public class QqCmtModuleDayTest
         {
             Thread.sleep( 10000 );
         }
+        QqNewsUtil.log( "QqCmtModuleDaySpy任务成功完成. 完成子任务数:"
+                + QqSpiderClient.parseCount + "任务耗时:"
+                + (System.currentTimeMillis() - startTime) / 1000 + "秒." );
+
     }
 
 }

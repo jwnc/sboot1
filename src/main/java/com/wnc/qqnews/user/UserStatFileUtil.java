@@ -7,10 +7,11 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wnc.qqnews.demo.QqConsts;
+import com.wnc.qqnews.QqConsts;
 
 public class UserStatFileUtil
 {
+    private static final int OBJ_BYTES = 24;
     private static RandomAccessFile raf;
     static
     {
@@ -25,7 +26,7 @@ public class UserStatFileUtil
     }
 
     /**
-     * 覆盖, 获取pos
+     * 覆盖, 获取pos, 一个int4字节, 6个字段24字节
      * 
      * @param userStat
      * @throws IOException
@@ -33,8 +34,9 @@ public class UserStatFileUtil
     public static synchronized void write( UserStat userStat )
             throws IOException
     {
-        raf.seek( userStat.getPos() * 20 );
+        raf.seek( userStat.getPos() * OBJ_BYTES );
         raf.writeInt( userStat.getId() );
+        raf.writeInt( userStat.getLastActiveTime() );
         raf.writeInt( userStat.getLastSpyTime() );
         raf.writeInt( userStat.getOrieffcommentnum() );
         raf.writeInt( userStat.getRepeffcommentnum() );
@@ -43,10 +45,11 @@ public class UserStatFileUtil
 
     public static synchronized UserStat read( int pos ) throws IOException
     {
-        raf.seek( pos * 20 );// 读取时，将指针重置到文件的开始位置。
+        raf.seek( pos * OBJ_BYTES );// 读取时，将指针重置到文件的开始位置。
         UserStat userStat = new UserStat();
         userStat.setPos( pos );
         userStat.setId( raf.readInt() );
+        userStat.setLastActiveTime( raf.readInt() );
         userStat.setLastSpyTime( raf.readInt() );
         userStat.setOrieffcommentnum( raf.readInt() );
         userStat.setRepeffcommentnum( raf.readInt() );
@@ -62,7 +65,7 @@ public class UserStatFileUtil
         {
             while ( true )
             {
-                if ( i * 20 < raf.length() )
+                if ( i * OBJ_BYTES < raf.length() )
                 {
                     list.add( read( i ) );
                 } else
@@ -82,12 +85,15 @@ public class UserStatFileUtil
     {
         try
         {
-            // testWrite();
             long s = System.currentTimeMillis();
+            // testWrite();
             // readAll();
             // randomWrite();
-            UserStat read = read( 332218 );
-            System.out.println( read.getId() );
+            for ( int i = 0; i < 100; i++ )
+            {
+                UserStat read = read( i );
+                System.out.println( read.getId() );
+            }
             System.out.println( System.currentTimeMillis() - s );
         } catch ( Exception e )
         {
@@ -97,13 +103,12 @@ public class UserStatFileUtil
 
     private static void randomWrite() throws IOException
     {
-        write( new UserStat( 500001 ).setPos( 500000 )
-                .setLastSpyTime( 1000303 ) );
+        write( new UserStat( 1 ).setPos( 0 ) );
     }
 
     private static void testWrite() throws IOException
     {
-        for ( int i = 0; i < 1000000; i++ )
+        for ( int i = 0; i < 2000000; i++ )
         {
             write( new UserStat( i + 1 ).setPos( i ) );
         }

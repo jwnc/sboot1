@@ -6,13 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import com.wnc.basic.BasicFileUtil;
-import com.wnc.qqnews.demo.QqConsts;
-import com.wnc.qqnews.demo.QqUserTask;
 import com.wnc.qqnews.user.UserStat;
-import com.wnc.qqnews.user.UserStatFileUtil;
 import com.wnc.tools.FileOp;
 import com.wnc.wynews.utils.ProxyUtil;
 
@@ -24,12 +19,11 @@ public class QqUserTest
         // Set<NewsModule> newsModules = QqNewsUtil.getNewsModules();
         // System.out.println( newsModules );
         new ProxyUtil().initProxyPool();
-        PropertyConfigurator.configure( "log4j.properties" );
         int id = 20304315;
         id = 337065534;
         UserStat userStat = new UserStat( id ).setPos( 0 );
-        userStat = UserStatFileUtil.read( 0 );
-        new QqUserTask( userStat ).run();
+        // userStat = UserStatFileUtil.read( 0 );
+        new QqUserTask( userStat, false ).run();
     }
 
     public static void uniqueUsers()

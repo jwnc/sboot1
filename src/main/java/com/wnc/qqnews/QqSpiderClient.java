@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -25,7 +25,6 @@ public class QqSpiderClient extends AbstractHttpClient implements IHttpClient
     {
         if ( instance == null )
         {
-            Class var0 = QqSpiderClient.class;
             synchronized ( QqSpiderClient.class )
             {
                 if ( instance == null )
@@ -77,8 +76,8 @@ public class QqSpiderClient extends AbstractHttpClient implements IHttpClient
     {
         while ( true )
         {
-            System.err.println( "抓取总数：" + parseCount.get() + " 闲置代理数:"
-                    + ProxyPool.proxyQueue.size() );
+            System.err.println( "QqSpiderClient抓取总数：" + parseCount.get()
+                    + " 闲置代理数:" + ProxyPool.proxyQueue.size() );
 
             try
             {

@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import java.util.Collections;
 import java.util.HashSet;

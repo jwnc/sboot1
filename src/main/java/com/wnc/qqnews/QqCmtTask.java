@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,8 +115,30 @@ public class QqCmtTask extends AbstractPageTask
         } else
         {
             complete( errCode + 10000, "出错:errCode=" + errCode );
+            ignoreComp = true;
         }
 
+    }
+
+    @Override
+    protected void errLogExp( Exception e )
+    {
+        e.printStackTrace();
+    }
+
+    /**
+     * 重试时需要删除随机数
+     */
+    protected String removeRandom()
+    {
+        return url.replaceAll( "\\d{13}$", "" );
+    }
+
+    @Override
+    protected void errLog404( Page page )
+    {
+        retryMonitor( "404 continue..." );
+        ignoreComp = true;
     }
 
     private void outputCmtData( JSONObject dataObject )

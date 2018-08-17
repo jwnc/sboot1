@@ -1,6 +1,7 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.http.client.methods.HttpGet;
@@ -28,18 +29,22 @@ public class QqUserTask extends AbstractPageTask
     private int uCmtListSize;
 
     private boolean ignoreComp = false;
+    /**
+     * 需要大量的文章和用户数据的时候才开启
+     */
+    private boolean pullBigData = false;
     static
     {
         retryMap.put( QqUserTask.class,
                 new ConcurrentHashMap<String, Integer>() );
     }
 
-    public QqUserTask( UserStat userStat )
+    public QqUserTask( UserStat userStat,boolean pullBigData )
     {
-        this( userStat, "0" );
+        this( userStat, "0", pullBigData );
     }
 
-    public QqUserTask( UserStat userStat,String cursor )
+    public QqUserTask( UserStat userStat,String cursor,boolean pullBigData )
     {
         this.userStat = userStat;
         this.uid = userStat.getId();
@@ -76,7 +81,7 @@ public class QqUserTask extends AbstractPageTask
     protected void retry()
     {
         QqSpiderClient.getInstance()
-                .submitTask( new QqUserTask( userStat, cursor ) );
+                .submitTask( new QqUserTask( userStat, cursor, pullBigData ) );
     }
 
     @Override
@@ -94,34 +99,40 @@ public class QqUserTask extends AbstractPageTask
             JSONObject dataObject = parseObject.getJSONObject( "data" );
             hasNext = dataObject.getBooleanValue( "hasnext" );
 
-            int intValue = dataObject.getIntValue( "retnum" );
-            if ( intValue > 0 )
-            {
-                outputUserData( dataObject );
-                uCmtListSize = dataObject.getIntValue( "total" );
-            }
+            // 不考虑评论为0的情况了
+            // int intValue = dataObject.getIntValue( "retnum" );
+            outputUserData( dataObject );
+            uCmtListSize = dataObject.getIntValue( "total" );
             boolean mustPullMore = decideMore( dataObject );
-            if ( hasNext && mustPullMore )
+            if ( pullBigData && hasNext && mustPullMore )
             {
                 nextJob( dataObject.getString( "last" ) );
                 ignoreComp = true;
-            } else if ( "false".equals( dataObject.getString( "first" ) ) )
-            {
-                // 如果是首页, 且列表为空
-                if ( intValue == 0 )
-                {
-                    // 无记录, 记作错误日志
-                    complete( 99, "用户评论列表空白" );
-                    ignoreComp = true;
-                }
             }
+            // else if ( "false".equals( dataObject.getString( "first" ) ) )
+            // {
+            // // 如果是首页, 且列表为空
+            // if ( intValue == 0 )
+            // {
+            // // 无记录, 记作错误日志
+            // complete( 99, "用户评论列表空白" );
+            // ignoreComp = true;
+            // }
+            // }
         } else
         {
             complete( errCode + 10000, "出错:errCode=" + errCode );
+            ignoreComp = true;
         }
 
     }
 
+    /**
+     * 根据当前页评论时间判断是否下一页
+     * 
+     * @param dataObject
+     * @return
+     */
     private boolean decideMore( JSONObject dataObject )
     {
         JSONArray commentArr = dataObject.getJSONArray( "comments" );
@@ -137,6 +148,27 @@ public class QqUserTask extends AbstractPageTask
             }
         }
         return false;
+    }
+
+    @Override
+    protected void errLogExp( Exception e )
+    {
+        e.printStackTrace();
+    }
+
+    /**
+     * 重试时需要删除随机数
+     */
+    protected String removeRandom()
+    {
+        return url.replaceAll( "\\d{13}$", "" );
+    }
+
+    @Override
+    protected void errLog404( Page page )
+    {
+        retryMonitor( "404 continue..." );
+        ignoreComp = true;
     }
 
     @Override
@@ -157,41 +189,59 @@ public class QqUserTask extends AbstractPageTask
                         + " 应抓取总数:" + uCmtListSize );
             } else
             {
-                // 任务完成数加1
-                QqSpiderClient.getInstance().counterTaskComp();
                 logger.info(
                         "用户" + uid + "在" + url + "成功, 评论数:" + uCmtListSize );
                 QqNewsUtil.log( uid + "成功!抓取用户评论总数:" + uCmtListSize + "耗时:"
                         + (System.currentTimeMillis() / 1000
                                 - userStat.getLastSpyTime()) );
-                // 写UserStat数据
-                UserStatFileUtil.write( userStat );
             }
         } catch ( Exception e )
         {
             e.printStackTrace();
+        } finally
+        {
+            // 任务完成数加1
+            QqSpiderClient.getInstance().counterTaskComp();
+            // 写UserStat数据
+            try
+            {
+                UserStatFileUtil.write( userStat );
+            } catch ( IOException e )
+            {
+                e.printStackTrace();
+            }
         }
 
     }
 
+    /**
+     * 输出当页用户涉及到的数据
+     * 
+     * @param dataObject
+     */
     private void outputUserData( JSONObject dataObject )
     {
-        JSONObject articlesJO = dataObject.getJSONObject( "articles" );
-        for ( String key : articlesJO.keySet() )
-        {
-            JSONObject articleJO = articlesJO.getJSONObject( key );
-            System.out.println( articleJO.getString( "title" ) );
-            // 输出文章到articles文件
-            QqArticleManager.addAndWriteArticle( articleJO );
-        }
-
         if ( isFirstPage() )
         {
-            JSONObject umetaJO = dataObject.getJSONObject( "usermeta" );
-            QqUserMetaManager.addAndWriteUserMeta( umetaJO );
-            rebuildUserStat( umetaJO );
-        }
 
+            rebuildUserStat( dataObject );
+
+        }
+        // 需要爬大量文章和用户数据的时候才开启
+        if ( pullBigData )
+        {
+            outputArticle( dataObject );
+            outputUser( dataObject );
+        }
+    }
+
+    /**
+     * 输出评论设计的所有用户信息
+     * 
+     * @param dataObject
+     */
+    private void outputUser( JSONObject dataObject )
+    {
         JSONObject usersJO = dataObject.getJSONObject( "users" );
         for ( String key : usersJO.keySet() )
         {
@@ -203,23 +253,65 @@ public class QqUserTask extends AbstractPageTask
         }
     }
 
+    /**
+     * 输出评论设计的所有文章信息
+     * 
+     * @param dataObject
+     */
+    private void outputArticle( JSONObject dataObject )
+    {
+        JSONObject articlesJO = dataObject.getJSONObject( "articles" );
+        for ( String key : articlesJO.keySet() )
+        {
+            JSONObject articleJO = articlesJO.getJSONObject( key );
+            System.out.println( articleJO.getString( "title" ) );
+            // 输出文章到articles文件
+            QqArticleManager.addAndWriteArticle( articleJO );
+        }
+    }
+
     private boolean isFirstPage()
     {
         return "0".equals( cursor );
     }
 
-    private void rebuildUserStat( JSONObject umetaJO )
+    /**
+     * 设置UserStat的相关属性
+     * 
+     * @param umetaJO
+     */
+    private void rebuildUserStat( JSONObject dataObject )
     {
+        JSONObject umetaJO = dataObject.getJSONObject( "usermeta" );
+        QqUserMetaManager.addAndWriteUserMeta( umetaJO );
         this.userStat.setOrieffcommentnum(
                 umetaJO.getIntValue( "orieffcommentnum" ) );
         this.userStat.setRepeffcommentnum(
                 umetaJO.getIntValue( "repeffcommentnum" ) );
         this.userStat.setUpnum( umetaJO.getIntValue( "upnum" ) );
+        // 设置最后的活动时间
+        this.userStat.setLastActiveTime( getLastActiveTime( dataObject ) );
+    }
+
+    /**
+     * 获取最后一条评论的时间
+     * 
+     * @param dataObject
+     * @return
+     */
+    private int getLastActiveTime( JSONObject dataObject )
+    {
+        JSONArray commentArr = dataObject.getJSONArray( "comments" );
+        if ( commentArr.size() > 0 )
+        {
+            return commentArr.getJSONObject( 0 ).getIntValue( "time" );
+        }
+        return 0;
     }
 
     private void nextJob( String nextCursor )
     {
-        QqSpiderClient.getInstance()
-                .submitTask( new QqUserTask( userStat, nextCursor ) );
+        QqSpiderClient.getInstance().submitTask(
+                new QqUserTask( userStat, nextCursor, pullBigData ) );
     }
 }

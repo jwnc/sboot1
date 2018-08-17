@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wnc.basic.BasicFileUtil;
 import com.wnc.tools.FileOp;
@@ -44,25 +45,11 @@ public class QqUserManager
         {
             jsonObject.remove( "head" );
         }
-        try
+        Object obj = jsonObject.get( CERTINFO );
+        if ( obj instanceof JSONArray && ((JSONArray)obj).size() == 0
+                || obj instanceof JSONObject && ((JSONObject)obj).size() == 0 )
         {
-            if ( jsonObject.getJSONArray( CERTINFO ).size() == 0 )
-            {
-                jsonObject.remove( CERTINFO );
-            }
-        } catch ( Exception e )
-        {
-            e.printStackTrace();
-            try
-            {
-                if ( jsonObject.getJSONObject( CERTINFO ).size() == 0 )
-                {
-                    jsonObject.remove( CERTINFO );
-                }
-            } catch ( Exception e2 )
-            {
-                e2.printStackTrace();
-            }
+            jsonObject.remove( CERTINFO );
         }
 
         long uid = jsonObject.getLongValue( "userid" );

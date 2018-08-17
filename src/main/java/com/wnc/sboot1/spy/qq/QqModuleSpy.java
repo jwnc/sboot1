@@ -1,13 +1,9 @@
 
-package com.wnc.sboot1.qq;
+package com.wnc.sboot1.spy.qq;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.stereotype.Component;
 
 import com.wnc.qqnews.QqModuleIdsManager;
 import com.wnc.qqnews.QqNewsModuleTask;
@@ -21,16 +17,13 @@ import com.wnc.wynews.utils.ProxyUtil;
  * 
  * @author nengcai.wang
  */
-@RunWith( SpringRunner.class )
-@SpringBootTest
-public class QqModuleTest
+@Component
+public class QqModuleSpy
 {
-    private static Logger logger = Logger.getLogger( QqModuleTest.class );
 
-    @Test
-    public void d() throws IOException, InterruptedException
+    public void spy() throws IOException, InterruptedException
     {
-        QqNewsUtil.log( "QqNewsSpy任务启动" );
+        QqNewsUtil.log( "QqModuleSpy任务启动" );
         QqSpiderClient.getInstance().counterReset();
         long startTime = System.currentTimeMillis();
 

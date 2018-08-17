@@ -15,11 +15,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wnc.basic.BasicFileUtil;
-import com.wnc.qqnews.demo.QqConsts;
-import com.wnc.qqnews.demo.QqModuleIdsManager;
-import com.wnc.qqnews.demo.QqNewsUtil;
-import com.wnc.qqnews.demo.QqSpiderClient;
-import com.wnc.qqnews.demo.QqUserTask;
+import com.wnc.qqnews.QqConsts;
+import com.wnc.qqnews.QqModuleIdsManager;
+import com.wnc.qqnews.QqNewsUtil;
+import com.wnc.qqnews.QqSpiderClient;
+import com.wnc.qqnews.QqUserTask;
 import com.wnc.qqnews.user.UserStat;
 import com.wnc.qqnews.user.UserStatFileUtil;
 import com.wnc.tools.FileOp;
@@ -41,24 +41,31 @@ public class QqUserAllTest
         new ProxyUtil().initProxyPool();
 
         List<Integer> userIds = getUserIds();
-        for ( int i = 320000; i < userIds.size() && i < 600000; i++ )
+        int max = 2000000;
+        int pages = 100;
+        int psize = max / pages;
+        // 当前2382156行
+        for ( int p = 0; p < pages; p++ )
         {
-            UserStat userStat = new UserStat( userIds.get( i ) ).setPos( i );
-            int lastSpyTime = UserStatFileUtil.read( i ).getLastSpyTime();
-            if ( lastSpyTime == 0 )
+            for ( int i = p * psize; i < userIds.size()
+                    && i < (p + 1) * psize; i++ )
             {
-                // System.out.println( lastSpyTime );
+                // UserStat userStat = new UserStat( userIds.get( i ) )
+                // .setPos( i );
+                UserStat userStat = UserStatFileUtil.read( i );
+                System.out.println( userStat.getLastSpyTime() );
                 QqSpiderClient.getInstance()
-                        .submitTask( new QqUserTask( userStat ) );
+                        .submitTask( new QqUserTask( userStat, false ) );
             }
-        }
 
-        while ( QqSpiderClient.getInstance().getNetPageThreadPool()
-                .getActiveCount() > 0 )
-        {
-            Thread.sleep( 10000 );
+            while ( QqSpiderClient.getInstance().getNetPageThreadPool()
+                    .getActiveCount() > 0 )
+            {
+                Thread.sleep( 10000 );
+            }
+            QqNewsUtil.log( "QqUserSpy任务成功完成第" + (p + 1) + "页. " + "任务耗时:"
+                    + (System.currentTimeMillis() - startTime) / 1000 + "秒." );
         }
-
         QqModuleIdsManager.output();
         QqNewsUtil.log( "QqUserSpy任务成功完成. 完成子任务数:" + QqSpiderClient.parseCount
                 + "任务耗时:" + (System.currentTimeMillis() - startTime) / 1000

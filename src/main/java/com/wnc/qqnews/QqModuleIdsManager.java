@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import java.io.File;
 import java.util.ArrayList;

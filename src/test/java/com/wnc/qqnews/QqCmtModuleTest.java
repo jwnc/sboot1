@@ -8,10 +8,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wnc.qqnews.demo.QqCmtTask;
-import com.wnc.qqnews.demo.QqConsts;
-import com.wnc.qqnews.demo.QqNewsUtil;
-import com.wnc.qqnews.demo.QqSpiderClient;
 import com.wnc.tools.FileOp;
 import com.wnc.wynews.model.NewsModule;
 import com.wnc.wynews.utils.ProxyUtil;

@@ -1,12 +1,12 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import com.wnc.basic.BasicFileUtil;
 
 public class QqConsts
 {
     // 设置项目路径
-    public static String APP_DIR = "G:\\data\\spider\\qq-news\\";
+    public static String APP_DIR = "C:\\data\\spider\\qq-news\\";
     public final static String NEWS_MENU_DIR = APP_DIR + "news-menu\\";
     public final static String NEWS_LIST_DIR = APP_DIR + "news-list\\";
     public final static String NEWS_DAY_DIR = APP_DIR + "news-day\\";

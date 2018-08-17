@@ -1,10 +1,12 @@
 
-package com.wnc.wynews.spy;
+package com.wnc.sboot1.spy.wy;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.stereotype.Component;
 
 import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.basic.BasicFileUtil;
@@ -13,9 +15,12 @@ import com.wnc.wynews.consts.ModuleIdsManager;
 import com.wnc.wynews.consts.WyConsts;
 import com.wnc.wynews.helper.WySpiderClient;
 import com.wnc.wynews.model.NewsModule;
+import com.wnc.wynews.spy.WyCmtTask;
+import com.wnc.wynews.spy.WyNewsModuleTask;
 import com.wnc.wynews.utils.ProxyUtil;
 import com.wnc.wynews.utils.WyNewsUtil;
 
+@Component
 public class WyNewsSpy
 {
     public static void main( String[] args )

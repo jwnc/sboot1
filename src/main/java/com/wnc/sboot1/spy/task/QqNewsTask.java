@@ -5,20 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.wnc.sboot1.spy.wy.WyNewsDaySpy;
-import com.wnc.sboot1.spy.wy.WyNewsSpy;
+import com.wnc.sboot1.spy.qq.QqCmtModuleDaySpy;
+import com.wnc.sboot1.spy.qq.QqModuleSpy;
 
 @Component
-public class WyNewsTask
+public class QqNewsTask
 {
     @Autowired
-    private WyNewsSpy wyNewsSpy;
+    private QqModuleSpy qqModuleSpy;
     @Autowired
-    private WyNewsDaySpy wyNewsDaySpy;
+    private QqCmtModuleDaySpy qqCmtModuleDaySpy;
     // 同时只能执行一次任务, 上次没执行完, 这次不能执行
     private static volatile boolean flag = false;
 
-    @Scheduled( cron = "${cronJob.fork_wy_news}" )
+    @Scheduled( cron = "${cronJob.fork_qq_news}" )
     public void a()
     {
         try
@@ -28,7 +28,7 @@ public class WyNewsTask
                 return;
             }
             flag = true;
-            wyNewsSpy.spy();
+            qqModuleSpy.spy();
         } catch ( Exception e )
         {
             e.printStackTrace();
@@ -38,13 +38,13 @@ public class WyNewsTask
         }
     }
 
-    @Scheduled( cron = "${cronJob.fork_wy_news_yesterday}" )
+    @Scheduled( cron = "${cronJob.fork_qq_news_yesterday}" )
     public void b()
     {
         try
         {
             flag = true;
-            wyNewsDaySpy.spy();
+            qqCmtModuleDaySpy.spy();
         } catch ( Exception e )
         {
             e.printStackTrace();

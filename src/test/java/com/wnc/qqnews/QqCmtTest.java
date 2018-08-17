@@ -6,8 +6,6 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import com.wnc.qqnews.demo.QqCmtTask;
-import com.wnc.qqnews.demo.QqNewsUtil;
 import com.wnc.wynews.model.NewsModule;
 import com.wnc.wynews.utils.ProxyUtil;
 

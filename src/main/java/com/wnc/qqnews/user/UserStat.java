@@ -8,13 +8,13 @@ public class UserStat
      */
     private int id;
     /**
+     * 最后活动时间, 单位:秒
+     */
+    private int lastActiveTime;
+    /**
      * 上次爬取时间, 以秒为单位
      */
     private int lastSpyTime;
-    /**
-     * 获得点赞数
-     */
-    private int upnum;
     /**
      * 评论数
      */
@@ -23,6 +23,10 @@ public class UserStat
      * 回复数
      */
     private int repeffcommentnum;
+    /**
+     * 获得点赞数
+     */
+    private int upnum;
     /**
      * 顺序位 0开始, 只读不写
      */
@@ -101,5 +105,15 @@ public class UserStat
     {
         this.pos = pos;
         return this;
+    }
+
+    public int getLastActiveTime()
+    {
+        return lastActiveTime;
+    }
+
+    public void setLastActiveTime( int lastActiveTime )
+    {
+        this.lastActiveTime = lastActiveTime;
     }
 }

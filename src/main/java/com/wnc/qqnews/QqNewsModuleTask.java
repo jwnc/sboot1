@@ -1,5 +1,5 @@
 
-package com.wnc.qqnews.demo;
+package com.wnc.qqnews;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,7 +85,7 @@ public class QqNewsModuleTask extends AbstractPageTask
     protected void handle( Page page ) throws Exception
     {
         QqNewsUtil.log( newsModule.getName() + "任务完成-" + pageIdx );
-        System.out.println( page.getHtml() );
+        // System.out.println( page.getHtml() );
         JSONArray jsonArray = QqNewsUtil.getNewsList( page.getHtml() );
         boolean mustPullMore = judgeIfGetMore( jsonArray );
         // 一个模块最多抓20页新闻
@@ -111,6 +111,20 @@ public class QqNewsModuleTask extends AbstractPageTask
         // 假的404. 和代理有关, 重试
         retryMonitor( page.getStatusCode() + " continue..." );
         ignoreComp = true;
+    }
+
+    @Override
+    protected void errLogExp( Exception e )
+    {
+        e.printStackTrace();
+    }
+
+    /**
+     * 重试时需要删除随机数
+     */
+    protected String removeRandom()
+    {
+        return url.replaceAll( "\\d{13}$", "" );
     }
 
     @Override
@@ -151,12 +165,6 @@ public class QqNewsModuleTask extends AbstractPageTask
         {
 
         }
-    }
-
-    @Override
-    protected void errLogExp( Exception ex )
-    {
-        ex.printStackTrace();
     }
 
     private String getUrl( NewsModule newsModule, int pageIdx )
