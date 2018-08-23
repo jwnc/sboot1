@@ -5,13 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Hello world!
  */
 @SpringBootApplication
-@EnableScheduling
+// @EnableScheduling
 // @EnableTransactionManagement
 public class App extends SpringBootServletInitializer
 {
