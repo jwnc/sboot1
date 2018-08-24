@@ -21,8 +21,12 @@ import com.wnc.string.PatternUtil;
 
 public class MovieDetailTask extends AbstractPageTask
 {
-    private String MOVIE_DETAIL_LOCATION;
-    private String cid;
+    protected int retryMode = 0; // 0:videoa 1: mono, 2:videoc 3:补全数字,
+                                 // mono页的解析方式不一样
+    protected boolean retry404ChangeMode = false;
+
+    protected String MOVIE_DETAIL_LOCATION;
+    protected String cid;
     boolean ignoreComplte = false;
     static
     {
@@ -34,15 +38,38 @@ public class MovieDetailTask extends AbstractPageTask
     {
         MAX_RETRY_TIMES = 20;
         this.cid = cid;
-        this.url = DmmUtils.getDetailUrl( cid );
+        this.url = getUrl( cid, retryMode );
         this.proxyFlag = true;
         MOVIE_DETAIL_LOCATION = DmmUtils.getMovieDetailLocation( cid );
     }
 
+    public MovieDetailTask( String cid,String url )
+    {
+        this( cid );
+        this.url = url;
+    }
+
+    private String getUrl( String cid, int retryMode )
+    {
+        return DmmUtils.getDetailRetryUrl( cid, retryMode );
+    }
+
     public void retry()
     {
-        DmmSpiderClient.getInstance()
-                .submitTask( new MovieDetailTask( this.cid ) );
+        if ( retry404ChangeMode )
+        {
+            // 404情况换一种url重试
+            retryMode++;
+        }
+        if ( retryMode == 1 )
+        {
+            DmmSpiderClient.getInstance().submitTask(
+                    new MovieDetailMonoTask( this.cid, retryMode ) );
+        } else
+        {
+            DmmSpiderClient.getInstance().submitTask(
+                    new MovieDetailTask( this.cid, getUrl( cid, retryMode ) ) );
+        }
     }
 
     @Override
@@ -98,7 +125,7 @@ public class MovieDetailTask extends AbstractPageTask
     //
     private String getPsImg( Document documentResult )
     {
-        return getAttr( documentResult, "#package-src-" + this.cid, "src" );
+        return getAttr( documentResult, "img[id*=package-src-]", "src" );
     }
 
     private String getPlImg( Document documentResult )
@@ -114,7 +141,7 @@ public class MovieDetailTask extends AbstractPageTask
         Element parse = documentResult.select(
                 "#mu > div > table > tbody > tr > td:nth-child(1) > table" )
                 .first();
-        String publishDate = getMonoTExt( parse, "商品発売日：", "[/\\d]+" );
+        String publishDate = getPublishDate( parse );
         String mvLength = getMonoTExt( parse, "収録時間：", "\\d+" );
         String mvCode = getMonoTExt( parse, "品番：", ".+" );
 
@@ -233,7 +260,12 @@ public class MovieDetailTask extends AbstractPageTask
                 false );
     }
 
-    private String getDesc( Document documentResult )
+    protected String getPublishDate( Element element )
+    {
+        return getMonoTExt( element, "商品発売日：", "[/\\d]+" );
+    }
+
+    protected String getDesc( Document documentResult )
     {
         Element first = documentResult.select(
                 "#mu > div > table > tbody > tr > td:nth-child(1) > div.mg-b20.lh4" )
@@ -270,17 +302,18 @@ public class MovieDetailTask extends AbstractPageTask
 
         super.complete( type, msg );
         DmmSpiderClient.getInstance().counterTaskComp();
-        System.out.println( "任务完成:" + MOVIE_DETAIL_LOCATION );
         if ( type == COMPLETE_STATUS_SUCCESS )
         {
+            System.out.println( "任务完成:" + MOVIE_DETAIL_LOCATION );
             BasicFileUtil.writeFileString(
                     DmmConsts.DETAIL_DIR + "suc-mdetail.txt",
-                    cid + " MovieDetail - Suc! \r\n", null, true );
+                    cid + " " + url + " MovieDetail - Suc! \r\n", null, true );
         } else
         {
             BasicFileUtil.writeFileString(
                     DmmConsts.DETAIL_DIR + "err-mdetail.txt",
-                    cid + " MovieDetail - err:" + msg + "\r\n", null, true );
+                    cid + " " + url + " MovieDetail - err:" + msg + "\r\n",
+                    null, true );
         }
     }
 
@@ -288,12 +321,19 @@ public class MovieDetailTask extends AbstractPageTask
     protected void errLogExp( Exception ex )
     {
         super.errLogExp( ex );
+        String pStr = currentProxy == null ? "null"
+                : currentProxy.getProxyStr();
+        System.err.println( this.url + " / proxy:" + pStr );
         ex.printStackTrace();
     }
 
     // 404还要继续
     protected void errLog404( Page page )
     {
+        if ( page.getHtml().contains( "404 Not Found" ) )
+        {
+            retry404ChangeMode = true;
+        }
         ignoreComplte = true;
         retryMonitor( "404 continue..." );
     }
@@ -327,7 +367,8 @@ public class MovieDetailTask extends AbstractPageTask
         return ids;
     }
 
-    private String getMonoTExt( Element element, String filter, String pattern )
+    protected String getMonoTExt( Element element, String filter,
+            String pattern )
     {
         Elements trs = element.select( "tr" );
         for ( Element tr : trs )

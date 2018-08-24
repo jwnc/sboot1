@@ -11,24 +11,33 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
+import org.junit.Test;
 
 import com.wnc.basic.BasicFileUtil;
+import com.wnc.dmm.task.MovieDetailTask;
 import com.wnc.dmm.task.MovieParamTask;
 import com.wnc.string.PatternUtil;
 
 public class DmmTest
 {
 
-    // @Test
-    public void testMovieParam1()
+    @Test
+    public void testMovieDetail() throws IOException, InterruptedException
     {
-        String cid = "24vdd00110";
+        String cid = "juy00416";
+        new JpProxyUtil().initProxyPool();
+
         String movieDetailLocation = DmmUtils.getMovieDetailLocation( cid );
         if ( BasicFileUtil.isExistFolder( movieDetailLocation )
                 && new File( movieDetailLocation ).listFiles().length == 3 )
         {
             System.out.println( "Ok" );
+        } else
+        {
+            DmmSpiderClient.getInstance()
+                    .submitTask( new MovieDetailTask( cid ) );
         }
+        Thread.sleep( 10000000L );
     }
 
     // @Test
@@ -51,13 +60,11 @@ public class DmmTest
     // @Test
     public void html()
     {
-        String html = "<div class=\"mg-b20 lh4\">"
-                + "人気急上昇中の98cmHカップ巨乳お姉さま・君島みおが痴女ヘブンに初登場。魅惑的な着衣のおっぱいが騎乗位で揺れまくり！ノーブラおっぱい、透け見え乳首が裸より刺激的！服の上からでもわかる大きさ、柔らかさ！騎乗位たっぷりの3本番で勝手にイカされてみませんか！"
-                + "<p class=\"mg-t6 tx10\">※ 配信方法によって収録内容が異なる場合があります。</p>"
-                + "<dl class=\"mg-t12 mg-b0 lh3\"></dl>" + "</div>";
+        String html = "<img src=\"https://pics.dmm.co.jp/mono/movie/adult/h_237nacr147/h_237nacr147ps.jpg\" alt=\"父と娘の近親セックス 酒癖が悪く、親離れも出来ない私はいつもお\r\n"
+                + "父さんに迷惑を掛けています。そんなだからあの日も…。神宮寺ナオ\" id=\"package-src-h\\u005f237nacr147\" class=\"tdmm\">";
 
         Document parse = Jsoup.parse( html );
-        Elements select = parse.select( ".mg-b20" );
+        Elements select = parse.select( "#package-src-h\\u005f237nacr147" );
         String ownText = select.first().ownText();
         System.out.println( ownText );
         for ( TextNode e : select.first().textNodes() )

@@ -18,6 +18,37 @@ public class DmmUtils
         return String.format( DmmConsts.DETAIL_PAGE_URL, cid );
     }
 
+    /**
+     * 非常规地址
+     * 
+     * @param cid
+     * @param retryMode
+     *            1: mono, 2:videoc 3: 补全juy001 --> juy00001
+     * @return
+     */
+    public static String getDetailRetryUrl( String cid, int retryMode )
+    {
+        if ( retryMode == 0 )
+        {
+            return String.format( DmmConsts.DETAIL_PAGE_URL, cid );
+        } else if ( retryMode == 1 )
+        {
+            return String.format( DmmConsts.DETAIL_PAGE_MONO_URL, cid );
+        } else if ( retryMode == 2 )
+        {
+            return String.format( DmmConsts.DETAIL_PAGE_C_URL, cid );
+        } else if ( retryMode == 3 )
+        {
+            String pre = PatternUtil.getFirstPattern( cid, ".+\\d" );
+            String num = PatternUtil.getFirstPattern( cid, "\\d+" );
+            String newCid = pre + BasicStringUtil.fillLeftString( num, 5, "0" );
+            return String.format( DmmConsts.DETAIL_PAGE_URL, newCid );
+        } else
+        {
+            return String.format( DmmConsts.DETAIL_PAGE_URL, cid );
+        }
+    }
+
     public static String getHotPageUrl( int page )
     {
         return String.format( DmmConsts.HOT_PAGE_URL, page );

@@ -29,7 +29,7 @@ public class JpProxyUtil
                     {
                         try
                         {
-                            if ( ProxyPool.proxyQueue.size() < 10 )
+                            if ( ProxyPool.proxyQueue.size() < 30 )
                             {
                                 int get66Proxy = get66Proxy();
                                 if ( get66Proxy < 20 )

@@ -32,6 +32,8 @@ public class DmmConsts
     public final static String MOVIE_PARAMS_URL = "http://www.dmm.co.jp/service/digitalapi/-/html5_player/=/cid=%s/mtype=AhRVShI_/service=litevideo/mode=/width=560/height=360/";
     public static final String HOT_PAGE_URL = "http://www.dmm.co.jp/litevideo/-/list/=/article=keyword/sort=all_ranking/page=%d/";
     public static final String DETAIL_PAGE_URL = "http://www.dmm.co.jp/digital/videoa/-/detail/=/cid=%s/";
+    public static final String DETAIL_PAGE_MONO_URL = "http://www.dmm.co.jp/mono/dvd/-/detail/=/cid=%s/";
+    public static final String DETAIL_PAGE_C_URL = "http://www.dmm.co.jp/digital/videoc/-/detail/=/cid=%s/";
 
     static
     {
