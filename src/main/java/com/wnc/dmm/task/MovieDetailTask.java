@@ -36,17 +36,23 @@ public class MovieDetailTask extends AbstractPageTask
 
     public MovieDetailTask( String cid )
     {
-        MAX_RETRY_TIMES = 20;
-        this.cid = cid;
-        this.url = getUrl( cid, retryMode );
-        this.proxyFlag = true;
-        MOVIE_DETAIL_LOCATION = DmmUtils.getMovieDetailLocation( cid );
+        this( cid, 0 );
     }
 
     public MovieDetailTask( String cid,String url )
     {
         this( cid );
         this.url = url;
+    }
+
+    public MovieDetailTask( String cid,int retryMode )
+    {
+        this.cid = cid;
+        this.retryMode = retryMode;
+        MAX_RETRY_TIMES = 20;
+        this.url = getUrl( cid, retryMode );
+        this.proxyFlag = true;
+        MOVIE_DETAIL_LOCATION = DmmUtils.getMovieDetailLocation( cid );
     }
 
     private String getUrl( String cid, int retryMode )
@@ -67,8 +73,8 @@ public class MovieDetailTask extends AbstractPageTask
                     new MovieDetailMonoTask( this.cid, retryMode ) );
         } else
         {
-            DmmSpiderClient.getInstance().submitTask(
-                    new MovieDetailTask( this.cid, getUrl( cid, retryMode ) ) );
+            DmmSpiderClient.getInstance()
+                    .submitTask( new MovieDetailTask( this.cid, retryMode ) );
         }
     }
 
@@ -87,7 +93,13 @@ public class MovieDetailTask extends AbstractPageTask
             grabCmt( documentResult );
         } else
         {
-            retryMonitor( cid + " detail页面无内容!" );
+            if ( documentResult.title().contains( "地域からご利用" )
+                    && currentProxy != null )
+            {
+                // remove invalid address proxy, 父类的finally就不会添加到代理池中
+                currentProxy = null;
+            }
+            retryMonitor( cid + " 代理错误, 地址不支持DMM!" );
             ignoreComplte = true;
         }
     }
@@ -302,18 +314,21 @@ public class MovieDetailTask extends AbstractPageTask
 
         super.complete( type, msg );
         DmmSpiderClient.getInstance().counterTaskComp();
+        String logHead = cid + " / " + retryMode + " / " + url
+                + " MovieDetail - ";
         if ( type == COMPLETE_STATUS_SUCCESS )
         {
             System.out.println( "任务完成:" + MOVIE_DETAIL_LOCATION );
             BasicFileUtil.writeFileString(
                     DmmConsts.DETAIL_DIR + "suc-mdetail.txt",
-                    cid + " " + url + " MovieDetail - Suc! \r\n", null, true );
+                    logHead + "Suc!\r\n", null, true );
         } else
         {
+            System.err
+                    .println( "任务失败,retryMode:" + retryMode + " " + this.url );
             BasicFileUtil.writeFileString(
                     DmmConsts.DETAIL_DIR + "err-mdetail.txt",
-                    cid + " " + url + " MovieDetail - err:" + msg + "\r\n",
-                    null, true );
+                    logHead + "Err:" + msg + "\r\n", null, true );
         }
     }
 
@@ -332,6 +347,11 @@ public class MovieDetailTask extends AbstractPageTask
     {
         if ( page.getHtml().contains( "404 Not Found" ) )
         {
+            // 这种模式下直接结束
+            if ( retryMode == 4 )
+            {
+                return;
+            }
             retry404ChangeMode = true;
         }
         ignoreComplte = true;

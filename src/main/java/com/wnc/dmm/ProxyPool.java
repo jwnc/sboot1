@@ -28,6 +28,7 @@ public class ProxyPool
         if ( proxySet.add( proxy.getProxyStr() ) )
         {
             proxyQueue.add( proxy );
+            System.out.println( proxy.getProxyStr() );
         }
     }
 
@@ -37,7 +38,6 @@ public class ProxyPool
                 "\\d+.\\d+.\\d+.\\d+" );
         int port = BasicNumberUtil
                 .getNumber( PatternUtil.getLastPattern( proxyStr, "\\d+" ) );
-        System.out.println( ip + " / " + port );
         Proxy e = new Proxy( ip, port, 1000 );
         addProxy( e );
     }

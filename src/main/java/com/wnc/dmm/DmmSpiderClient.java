@@ -15,6 +15,7 @@ import com.crawl.spider.MySpiderAction;
 
 public class DmmSpiderClient extends AbstractHttpClient implements IHttpClient
 {
+    private static final int _10 = 1;
     private static volatile DmmSpiderClient instance;
     public static AtomicInteger parseCount = new AtomicInteger( 0 );
     private ThreadPoolExecutor localDataSaveThreadPool;
@@ -48,8 +49,8 @@ public class DmmSpiderClient extends AbstractHttpClient implements IHttpClient
 
     private void intiThreadPool()
     {
-        this.localDataSaveThreadPool = new SimpleThreadPoolExecutor( 10, 10, 0L,
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
+        this.localDataSaveThreadPool = new SimpleThreadPoolExecutor( _10, _10,
+                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
                 "localDataSaveThreadPool" );
         this.netPageThreadPool = new SimpleThreadPoolExecutor(
                 Config.downloadThreadSize, Config.downloadThreadSize, 0L,

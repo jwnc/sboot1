@@ -23,12 +23,15 @@ import com.wnc.tools.FileOp;
 @SpringBootTest
 public class DmmDetailTest
 {
+    private static final String IN_FILE = DmmConsts.APP_DIR + "cid-all.txt";
+    private static final String IN_FILE_TEST = DmmConsts.TEST_DIR
+            + "detail-cid-test1.txt";
+
     @Test
     public void a() throws IOException, InterruptedException
     {
         new JpProxyUtil().initProxyPool();
-        List<String> readFrom = FileOp
-                .readFrom( DmmConsts.APP_DIR + "cid-all.txt" );
+        List<String> readFrom = FileOp.readFrom( IN_FILE );
         String cid;
         for ( String s : readFrom )
         {

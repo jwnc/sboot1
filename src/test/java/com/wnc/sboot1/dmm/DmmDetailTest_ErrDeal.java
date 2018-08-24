@@ -42,7 +42,7 @@ public class DmmDetailTest_ErrDeal
             {
                 System.out.println( cid + " begin..." );
                 DmmSpiderClient.getInstance()
-                        .submitTask( new MovieDetailMonoTask( cid ) );
+                        .submitTask( new MovieDetailMonoTask( cid, 1 ) );
             }
         }
 
