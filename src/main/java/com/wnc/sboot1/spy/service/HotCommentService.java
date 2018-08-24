@@ -3,6 +3,8 @@ package com.wnc.sboot1.spy.service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -17,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.wnc.sboot1.spy.zuqiu.HotComment;
+import com.wnc.sboot1.spy.zuqiu.Zb8News;
 import com.wnc.sboot1.spy.zuqiu.rep.HotCommentRepository;
 
 @Component
@@ -66,8 +69,13 @@ public class HotCommentService
             public Predicate toPredicate( Root<HotComment> root,
                     CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder )
             {
-                Path<String> _name = root.get( "createtime" );
-                Predicate _key = criteriaBuilder.like( _name, day + "%" );
+                // 左连接查询
+                Join<HotComment, Zb8News> join = root.join( "zb8News",
+                        JoinType.LEFT );
+
+                Predicate _key = criteriaBuilder.like(
+                        join.get( "createtime" ).as( String.class ),
+                        day + "%" );
                 return criteriaBuilder.and( _key );
             }
         };

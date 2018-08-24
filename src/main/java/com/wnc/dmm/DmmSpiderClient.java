@@ -56,7 +56,7 @@ public class DmmSpiderClient extends AbstractHttpClient implements IHttpClient
                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
                 "netPageThreadPool" );
         (new Thread( new ThreadPoolMonitor( this.netPageThreadPool,
-                "netPageThreadPool" ) )).start();
+                "DmmSpiderClient-netPageThreadPool" ) )).start();
         (new Thread( new Runnable()
         {
             public void run()
