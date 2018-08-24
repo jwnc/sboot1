@@ -22,9 +22,9 @@ public class MovieDetailMonoTask extends MovieDetailTask
                 new ConcurrentHashMap<String, Integer>() );
     }
 
-    public MovieDetailMonoTask( String cid,int retryMode )
+    public MovieDetailMonoTask( String cid )
     {
-        super( cid, retryMode );
+        super( cid, 1 );
     }
 
     @Override

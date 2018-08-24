@@ -15,7 +15,7 @@ import com.wnc.dmm.DmmConsts;
 import com.wnc.dmm.DmmSpiderClient;
 import com.wnc.dmm.DmmUtils;
 import com.wnc.dmm.JpProxyUtil;
-import com.wnc.dmm.task.MovieDetailTask;
+import com.wnc.dmm.task.MovieDetailMonoTask;
 import com.wnc.string.PatternUtil;
 import com.wnc.tools.FileOp;
 
@@ -45,7 +45,7 @@ public class DmmDetailTest
                 continue;
             }
             DmmSpiderClient.getInstance()
-                    .submitTask( new MovieDetailTask( cid ) );
+                    .submitTask( new MovieDetailMonoTask( cid ) );
         }
 
         try

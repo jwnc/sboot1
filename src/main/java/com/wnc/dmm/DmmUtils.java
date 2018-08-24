@@ -39,8 +39,9 @@ public class DmmUtils
             return String.format( DmmConsts.DETAIL_PAGE_C_URL, cid );
         } else if ( retryMode == 3 )
         {
-            String pre = PatternUtil.getFirstPattern( cid, ".+\\d" );
-            String num = PatternUtil.getFirstPattern( cid, "\\d+" );
+            String pre = PatternUtil.getFirstPatternGroup( cid,
+                    "(.+[^\\d])\\d+\\S*$" );
+            String num = PatternUtil.getLastPatternGroup( cid, "(\\d+)" );
             String newCid = pre + BasicStringUtil.fillLeftString( num, 5, "0" );
             return String.format( DmmConsts.DETAIL_PAGE_URL, newCid );
         } else
@@ -100,6 +101,9 @@ public class DmmUtils
 
     public static void main( String[] args )
     {
+        String cid = "h_455maguro056r";
+        String detailRetryUrl = getDetailRetryUrl( cid, 3 );
+        System.out.println( detailRetryUrl );
         String dealPicUrl = dealPicUrl(
                 "http://pics.dmm.co.jp/digital/video/cjod00113/cjod00113-1.jpg" );
         System.out.println( dealPicUrl );

@@ -49,7 +49,7 @@ public class MovieDetailTask extends AbstractPageTask
     {
         this.cid = cid;
         this.retryMode = retryMode;
-        MAX_RETRY_TIMES = 20;
+        MAX_RETRY_TIMES = 5;
         this.url = getUrl( cid, retryMode );
         this.proxyFlag = true;
         MOVIE_DETAIL_LOCATION = DmmUtils.getMovieDetailLocation( cid );
@@ -69,8 +69,8 @@ public class MovieDetailTask extends AbstractPageTask
         }
         if ( retryMode == 1 )
         {
-            DmmSpiderClient.getInstance().submitTask(
-                    new MovieDetailMonoTask( this.cid, retryMode ) );
+            DmmSpiderClient.getInstance()
+                    .submitTask( new MovieDetailMonoTask( this.cid ) );
         } else
         {
             DmmSpiderClient.getInstance()
@@ -347,7 +347,7 @@ public class MovieDetailTask extends AbstractPageTask
     {
         if ( page.getHtml().contains( "404 Not Found" ) )
         {
-            // 这种模式下直接结束
+            // 又回到了正常模式,这种模式下直接结束
             if ( retryMode == 4 )
             {
                 return;
