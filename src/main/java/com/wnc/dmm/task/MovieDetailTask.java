@@ -1,6 +1,7 @@
 
 package com.wnc.dmm.task;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,8 +22,9 @@ import com.wnc.string.PatternUtil;
 
 public class MovieDetailTask extends AbstractPageTask
 {
-    protected int retryMode = 0; // 0:videoa 1: mono, 2:videoc 3:补全数字,
-                                 // mono页的解析方式不一样
+    protected int retryMode = 0; // -1:外部动态链接, 确定的. 0:videoa 1: mono, 2:videoc
+                                 // 3:补全数字, 3+:videoa
+                                 // 只有mono页的解析方式不一样
     protected boolean retry404ChangeMode = false;
 
     protected String MOVIE_DETAIL_LOCATION;
@@ -41,7 +43,7 @@ public class MovieDetailTask extends AbstractPageTask
 
     public MovieDetailTask( String cid,String url )
     {
-        this( cid );
+        this( cid, -1 );
         this.url = url;
     }
 
@@ -62,6 +64,20 @@ public class MovieDetailTask extends AbstractPageTask
 
     public void retry()
     {
+
+        // -1表示动态的链接, 无法随机试探修改
+        if ( retryMode == -1 )
+        {
+            try
+            {
+                DmmSpiderClient.getInstance().submitTask( getClone() );
+            } catch ( Exception e )
+            {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         if ( retry404ChangeMode )
         {
             // 404情况换一种url重试
@@ -76,6 +92,14 @@ public class MovieDetailTask extends AbstractPageTask
             DmmSpiderClient.getInstance()
                     .submitTask( new MovieDetailTask( this.cid, retryMode ) );
         }
+    }
+
+    protected Runnable getClone() throws Exception
+    {
+        Class clazz = this.getClass();
+        Constructor c = clazz.getDeclaredConstructor( String.class,
+                String.class );// 获取有参构造
+        return (Runnable)c.newInstance( cid, url ); // 通过有参构造创建对象
     }
 
     @Override
@@ -147,7 +171,7 @@ public class MovieDetailTask extends AbstractPageTask
 
     private void grabBasicInfo( Document documentResult )
     {
-        String title = getText( documentResult, "#title" );
+        String title = getTitle( documentResult );
         checkEmpty( "title", title );
 
         Element parse = documentResult.select(
@@ -227,6 +251,11 @@ public class MovieDetailTask extends AbstractPageTask
         BasicFileUtil.writeFileString(
                 MOVIE_DETAIL_LOCATION + cid + "-basic-info.txt",
                 JSONObject.toJSONString( json, true ) + "\r\n", null, false );
+    }
+
+    protected String getTitle( Document documentResult )
+    {
+        return getText( documentResult, "#title" );
     }
 
     private void grabCmt( Document documentResult )

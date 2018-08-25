@@ -14,20 +14,15 @@ import org.jsoup.nodes.Element;
  * 
  * @author nengcai.wang
  */
-public class MovieDetailMonoTask extends MovieDetailTask
+public class MovieDetailRentalTask extends MovieDetailMonoTask
 {
     static
     {
-        retryMap.put( MovieDetailMonoTask.class,
+        retryMap.put( MovieDetailRentalTask.class,
                 new ConcurrentHashMap<String, Integer>() );
     }
 
-    public MovieDetailMonoTask( String cid )
-    {
-        super( cid, 1 );
-    }
-
-    public MovieDetailMonoTask( String cid,String url )
+    public MovieDetailRentalTask( String cid,String url )
     {
         super( cid, url );
     }
@@ -35,20 +30,13 @@ public class MovieDetailMonoTask extends MovieDetailTask
     @Override
     protected String getPublishDate( Element element )
     {
-        return getMonoTExt( element, "発売日：", "[/\\d]+" );
+        return getMonoTExt( element, "貸出開始日：", "[/\\d]+" );
     }
 
     @Override
-    protected String getDesc( Document documentResult )
+    protected String getTitle( Document documentResult )
     {
-        Element first = documentResult.select(
-                "#mu > div > table > tbody > tr > td:nth-child(1) > div.mg-b20.lh4 > p" )
-                .first();
-        if ( first != null )
-        {
-            return first.ownText();
-        }
-        return "";
+        return getText( documentResult,
+                "#mu > div > div.area-headline.group > div > h1" );
     }
-
 }

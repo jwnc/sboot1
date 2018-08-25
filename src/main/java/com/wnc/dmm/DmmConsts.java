@@ -35,6 +35,8 @@ public class DmmConsts
     public static final String DETAIL_PAGE_MONO_URL = "http://www.dmm.co.jp/mono/dvd/-/detail/=/cid=%s/";
     public static final String DETAIL_PAGE_C_URL = "http://www.dmm.co.jp/digital/videoc/-/detail/=/cid=%s/";
 
+    public static final String DMM_DOMAIN = "http://www.dmm.co.jp";
+
     static
     {
         BasicFileUtil.makeDirectory( APP_DIR );
