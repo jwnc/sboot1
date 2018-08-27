@@ -164,7 +164,7 @@ public class QqCmtTask extends AbstractPageTask
             System.out.println( userJO.getString( "nick" ) + " / "
                     + userJO.getString( "userid" ) );
             // 输出user到user目录
-            QqUserManager.addAndWriteUser( userJO );
+            // QqUserManager.addAndWriteUser( userJO );
         }
     }
 
