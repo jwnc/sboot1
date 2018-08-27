@@ -12,8 +12,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wnc.basic.BasicFileUtil;
 import com.wnc.dmm.DmmConsts;
+import com.wnc.dmm.DmmSpiderClient;
 import com.wnc.dmm.DmmUtils;
 import com.wnc.dmm.JpProxyUtil;
+import com.wnc.dmm.task.LiteVideoTask;
 import com.wnc.string.PatternUtil;
 import com.wnc.tools.FileOp;
 
@@ -24,6 +26,18 @@ public class DmmLiteVideoTest
     private static final String IN_FILE = DmmConsts.APP_DIR + "cid-all.txt";
     private static final String IN_FILE_TEST = DmmConsts.TEST_DIR
             + "detail-cid-test1.txt";
+
+    @Test
+    public void d()
+    {
+        String cid = "h_910vrtm00342";
+        String movieDetailLocation = DmmUtils.getMovieDetailLocation( cid );
+        if ( BasicFileUtil.isExistFolder( movieDetailLocation )
+                && new File( movieDetailLocation ).listFiles().length == 3 )
+        {
+            System.out.println( "ttt" );
+        }
+    }
 
     @Test
     public void a() throws IOException, InterruptedException
@@ -46,9 +60,12 @@ public class DmmLiteVideoTest
             } else
             {
                 System.out.println( "未爬过完整内容" + url );
+                DmmSpiderClient.getInstance()
+                        .submitTask( new LiteVideoTask( url ) );
+                BasicFileUtil.writeFileString(
+                        DmmConsts.DETAIL_DIR + "err-mdetail-undo.txt",
+                        url + "\r\n", null, true );
             }
-            // DmmSpiderClient.getInstance()
-            // .submitTask( new LiteVideoTask( url ) );
         }
 
         try

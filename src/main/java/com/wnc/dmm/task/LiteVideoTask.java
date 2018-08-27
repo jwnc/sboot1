@@ -13,6 +13,7 @@ import com.wnc.string.PatternUtil;
 
 public class LiteVideoTask extends AbstractPageTask
 {
+    boolean ignoreComplte = false;
     static
     {
         retryMap.put( LiteVideoTask.class,
@@ -61,6 +62,8 @@ public class LiteVideoTask extends AbstractPageTask
                         DmmConsts.DETAIL_DIR + "err-mdetail-unknown-page.txt",
                         this.url + " 获取:[" + href + "]为未知的解析类型\r\n", null,
                         true );
+                complete( -1, " 获取:[" + href + "]为未知的解析类型" );
+                ignoreComplte = true;
             }
         } else
         {
@@ -71,6 +74,7 @@ public class LiteVideoTask extends AbstractPageTask
                 currentProxy = null;
             }
             retryMonitor( url + " 代理错误, 地址不支持DMM!" );
+            ignoreComplte = true;
         }
     }
 
@@ -88,12 +92,33 @@ public class LiteVideoTask extends AbstractPageTask
     protected void errLog404( Page page )
     {
         retryMonitor( "404 continue..." );
+        ignoreComplte = true;
     }
 
     @Override
     protected void complete( int type, String msg )
     {
-        // Do Nothine
+        if ( this.ignoreComplte )
+        {
+            return;
+        }
+
+        super.complete( type, msg );
+        DmmSpiderClient.getInstance().counterTaskComp();
+        String logHead = url + " LiteVideoTask - ";
+        if ( type == COMPLETE_STATUS_SUCCESS )
+        {
+            System.out.println( "任务完成:" + this.url );
+            BasicFileUtil.writeFileString(
+                    DmmConsts.DETAIL_DIR + "suc-mdetail.txt",
+                    logHead + "Suc!\r\n", null, true );
+        } else
+        {
+            System.err.println( "任务失败,url:" + this.url );
+            BasicFileUtil.writeFileString(
+                    DmmConsts.DETAIL_DIR + "err-mdetail.txt",
+                    logHead + "Err:" + msg + "\r\n", null, true );
+        }
     }
 
 }
