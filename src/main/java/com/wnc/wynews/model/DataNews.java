@@ -27,7 +27,7 @@ public class DataNews {
             List<NewsKeyWord> list = new ArrayList<NewsKeyWord>();
             for (String kw : keyword.split(",")) {
                 NewsKeyWord nkw = new NewsKeyWord();
-                nkw.setName(kw.trim());
+                nkw.setKeyname(kw.trim());
                 list.add(nkw);
             }
             news.setKeywords(list);

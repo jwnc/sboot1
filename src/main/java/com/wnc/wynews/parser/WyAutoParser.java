@@ -74,8 +74,8 @@ public class WyAutoParser extends WyParser {
             list = new ArrayList<NewsKeyWord>();
             for (Element tag : tags) {
                 NewsKeyWord nkw = new NewsKeyWord();
-                nkw.setName(tag.text().trim());
-                nkw.setUrl("http://auto.163.com" + tag.attr("href"));
+                nkw.setKeyname(tag.text().trim());
+                nkw.setAkey_link("http://auto.163.com" + tag.attr("href"));
                 list.add(nkw);
             }
             return list;

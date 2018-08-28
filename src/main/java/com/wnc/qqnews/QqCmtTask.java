@@ -4,6 +4,9 @@ package com.wnc.qqnews;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wnc.sboot1.spy.zuqiu.TaskCompleteLog;
+import com.wnc.sboot1.spy.zuqiu.rep.TaskCompleteLogRepository;
+import com.wnc.sboot1.spy.zuqiu.rep.Zb8NewsRepository;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.log4j.Logger;
 
@@ -13,6 +16,7 @@ import com.crawl.spider.entity.Page;
 import com.crawl.spider.task.AbstractPageTask;
 import com.wnc.basic.BasicFileUtil;
 import com.wnc.wynews.model.NewsModule;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 找出两个月之间的

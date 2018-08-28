@@ -1,7 +1,14 @@
-package com.wnc.wynews.model;
+package com.wnc.wynews.repo;
 
-public class NewsKeyWord {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class WyNewsKeyWord {
     private String akey_link;
+    @Id
+    @Column( length = 95 ) // 主键最大长度767个字节
     private String keyname;
 
     public String getAkey_link() {
