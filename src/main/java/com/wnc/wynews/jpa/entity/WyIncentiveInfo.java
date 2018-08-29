@@ -1,13 +1,6 @@
 package com.wnc.wynews.jpa.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -17,7 +10,8 @@ public class WyIncentiveInfo  extends  BaseEntity{
     private String info;
     private String url;
 
-    @ManyToMany( fetch = FetchType.EAGER )
+    @Transient
+    @ManyToMany( fetch = FetchType.LAZY )
     @JoinTable( name = "WyUserIncentiveRelation", joinColumns = {
             @JoinColumn( name = "info" )}, inverseJoinColumns = {
             @JoinColumn( name = "uid" )},uniqueConstraints = {@UniqueConstraint(columnNames={"uid", "info"})} )

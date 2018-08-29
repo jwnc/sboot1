@@ -1,13 +1,6 @@
 package com.wnc.wynews.jpa.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -20,7 +13,8 @@ public class WyRedNameInfo  extends  BaseEntity{
     private String url;
     private String info;
 
-    @ManyToMany( fetch = FetchType.EAGER )
+    @Transient
+    @ManyToMany( fetch = FetchType.LAZY )
     @JoinTable( name = "WyUserRedNameRelation", joinColumns = {
             @JoinColumn( name = "titleId" )}, inverseJoinColumns = {
             @JoinColumn( name = "uid" )},uniqueConstraints = {@UniqueConstraint(columnNames={"uid", "titleId"})} )

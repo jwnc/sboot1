@@ -42,8 +42,10 @@ public class UserTest {
 
     @Test
     public void testUser() {
-        String userStr = "{\"avatar\":\"http://mobilepics.nosdn.127.net/netease_subject/1e05a0480ec35b8377065348db5f63c11532481577274387\",\"incentiveInfoList\":[\"{\\\"url\\\":\\\"http://cms-bucket.nosdn.127.net/2018/07/09/2c4b45c0a97342da9c2893773db8f3e3.png\\\",\\\"info\\\":\\\"网易红人\\\"}\"],\"location\":\"河北省石家庄市\",\"nickname\":\"燕赵慷慨悲歌\",\"redNameInfo\":[\"{\\\"image\\\":\\\"http://cms-bucket.nosdn.127.net/68e4f9b1662d4041a18496792d3b92ce20180326140742.png\\\",\\\"titleName\\\":\\\"易粉同城会会长\\\",\\\"titleId\\\":\\\"DDR3ASIN\\\",\\\"url\\\":\\\"http://tie.163.com/gt/18/0307/17/DCAHPLDA003097U2.html\\\",\\\"info\\\":\\\"展示会长身份\\\"}\"],\"userId\":94676230}\n";
-        System.out.println(getUser(userStr));
+        String userStr = "{\"avatar\":\"http://mobilepics.nosdn.127.net/netease_subject/1e05a0480ec35b8377065348db5f63c11532481577274387\",\"incentiveInfoList\":[\"{\\\"url\\\":\\\"http://cms-bucket.nosdn.127.net/2018/07/09/2c4b45c0a97342da9c2893773db8f3e3.png\\\",\\\"info\\\":\\\"网易红人\\\"}\"],\"location\":\"河北省石家庄市\",\"nickname\":\"燕赵慷慨悲歌\",\"redNameInfo\":[\"{\\\"image\\\":\\\"http://cms-bucket.nosdn.127.net/68e4f9b1662d4041a18496792d3b92ce20180326140742.png\\\",\\\"titleName\\\":\\\"易粉同城会会长\\\",\\\"titleId\\\":\\\"DDR3ASIN\\\",\\\"url\\\":\\\"http://tie.163.com/gt/18/0307/17/DCAHPLDA003097U2.html\\\",\\\"info\\\":\\\"展示会长身份\\\"}\"],\"userId\":94676231}\n";
+        WyDbService wyDbService = WyNewsUtil.getWyDbService();
+        User user = getUser(userStr);
+        wyDbService.singleUser(EntityConvertor.userToEntity(user));
     }
 
     public User getUser(String userStr) {
