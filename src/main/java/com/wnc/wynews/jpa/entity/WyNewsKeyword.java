@@ -2,14 +2,7 @@ package com.wnc.wynews.jpa.entity;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -19,6 +12,7 @@ public class WyNewsKeyword {
     private String name;
     private String link;
 
+    @Transient
     @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable( name = "WyNewsKeywordRelation", joinColumns = {
             @JoinColumn( name = "kwName" )}, inverseJoinColumns = {
