@@ -1,6 +1,6 @@
-package com.wnc.wynews.model;
+package com.wnc.wynews.repo;
 
-public class NewsKeyWord {
+public class WyNewsKeyWord {
     private String akey_link;
     private String keyname;
 
