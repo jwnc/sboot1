@@ -31,22 +31,21 @@ public class UserManager
                 int uid = JSONObject.parseObject( line )
                         .getIntValue( "userId" );
                 userSet.add( uid );
-                System.out.println( uid );
             }
         }
     }
 
     public static synchronized void addAndWriteUser( User user )
     {
-        if ( user.getIncentiveInfoList() == null
-                || user.getIncentiveInfoList().length == 0 )
+        if ( user.getWyIncentiveInfoList() == null
+                || user.getWyIncentiveInfoList().size() == 0 )
         {
-            user.setIncentiveInfoList( null );
+            user.setWyIncentiveInfoList( null );
         }
-        if ( user.getRedNameInfo() == null
-                || user.getRedNameInfo().length == 0 )
+        if ( user.getWyRedNameInfo() == null
+                || user.getWyRedNameInfo().size() == 0 )
         {
-            user.setRedNameInfo( null );
+            user.setWyRedNameInfo( null );
         }
         if ( userSet.add( user.getUserId() ) )
         {

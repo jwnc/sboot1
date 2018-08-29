@@ -1,13 +1,38 @@
 package com.wnc.wynews.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.wnc.wynews.jpa.entity.WyIncentiveInfo;
+import com.wnc.wynews.jpa.entity.WyRedNameInfo;
+
+import java.util.Set;
+
 public class User {
     private String nickname;
     private Integer userId;
     private String location;
 
     private String avatar;
-    private String[] incentiveInfoList;
-    private String[] redNameInfo;
+
+    @JSONField(name="incentiveInfoList")
+    private Set<WyIncentiveInfo> wyIncentiveInfoList;
+    @JSONField(name="redNameInfo")
+    private Set<WyRedNameInfo> wyRedNameInfo;
+
+    public Set<WyIncentiveInfo> getWyIncentiveInfoList() {
+        return wyIncentiveInfoList;
+    }
+
+    public void setWyIncentiveInfoList(Set<WyIncentiveInfo> wyIncentiveInfoList) {
+        this.wyIncentiveInfoList = wyIncentiveInfoList;
+    }
+
+    public Set<WyRedNameInfo> getWyRedNameInfo() {
+        return wyRedNameInfo;
+    }
+
+    public void setWyRedNameInfo(Set<WyRedNameInfo> wyRedNameInfo) {
+        this.wyRedNameInfo = wyRedNameInfo;
+    }
 
     public String getNickname() {
         return nickname;
@@ -33,14 +58,6 @@ public class User {
         this.avatar = avatar;
     }
 
-    public String[] getIncentiveInfoList() {
-        return incentiveInfoList;
-    }
-
-    public void setIncentiveInfoList(String[] incentiveInfoList) {
-        this.incentiveInfoList = incentiveInfoList;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -49,11 +66,4 @@ public class User {
         this.location = location;
     }
 
-    public String[] getRedNameInfo() {
-        return redNameInfo;
-    }
-
-    public void setRedNameInfo(String[] redNameInfo) {
-        this.redNameInfo = redNameInfo;
-    }
 }

@@ -39,14 +39,13 @@ public class LoadDataFromLocal {
                     cmt.setUserId(user.getUserId());
 
                     // 输出cmt到999目录
-
                     if (!cmt.isAnonymous()) {
                         System.out.println(user.getNickname() + " / " + user.getUserId());
-                        if (user.getIncentiveInfoList() == null || user.getIncentiveInfoList().length == 0) {
-                            user.setIncentiveInfoList(null);
+                        if (user.getWyIncentiveInfoList() == null || user.getWyIncentiveInfoList().size() == 0) {
+                            user.setWyIncentiveInfoList(null);
                         }
-                        if (user.getRedNameInfo() == null || user.getRedNameInfo().length == 0) {
-                            user.setRedNameInfo(null);
+                        if (user.getWyRedNameInfo() == null || user.getWyRedNameInfo().size() == 0) {
+                            user.setWyRedNameInfo(null);
                         }
                         // 输出user到user目录
                     }
@@ -90,11 +89,11 @@ public class LoadDataFromLocal {
 
                         if (!cmt.isAnonymous()) {
                             System.out.println(user.getNickname() + " / " + user.getUserId());
-                            if (user.getIncentiveInfoList() == null || user.getIncentiveInfoList().length == 0) {
-                                user.setIncentiveInfoList(null);
+                            if (user.getWyIncentiveInfoList() == null || user.getWyIncentiveInfoList().size() == 0) {
+                                user.setWyIncentiveInfoList(null);
                             }
-                            if (user.getRedNameInfo() == null || user.getRedNameInfo().length == 0) {
-                                user.setRedNameInfo(null);
+                            if (user.getWyRedNameInfo() == null || user.getWyRedNameInfo().size() == 0) {
+                                user.setWyRedNameInfo(null);
                             }
                             // 输出user到user目录
                             BasicFileUtil.writeFileString(WyConsts.USERS_TXT,

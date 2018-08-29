@@ -56,9 +56,9 @@ public class WySpiderClient extends AbstractHttpClient implements IHttpClient
         this.netPageThreadPool = new SimpleThreadPoolExecutor(
                 Config.downloadThreadSize, Config.downloadThreadSize, 0L,
                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
-                "netPageThreadPool" );
+                "WySpiderClient-netPageThreadPool" );
         (new Thread( new ThreadPoolMonitor( this.netPageThreadPool,
-                "netPageThreadPool" ) )).start();
+                "WySpiderClient-netPageThreadPool" ) )).start();
         (new Thread( new Runnable()
         {
             public void run()

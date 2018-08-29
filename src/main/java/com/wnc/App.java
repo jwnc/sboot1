@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -14,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaRepositories(basePackages={"com.wnc"})
+@EnableJpaAuditing
 // @EnableTransactionManagement
 public class App extends SpringBootServletInitializer {
     @Override
@@ -21,7 +23,6 @@ public class App extends SpringBootServletInitializer {
             SpringApplicationBuilder application) {
         return application.sources(App.class);
     }
-
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
