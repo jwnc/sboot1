@@ -32,7 +32,12 @@ public class WyNews  extends  BaseEntity{
     private String commenturl;
     private String label;
     private String title;
+
+    //可能有多个图片的地址
+    @Column( length = 3000 )
     private String imgurl;
+
+    @Column( length = 3000 )
     private String digest;
     private String time;
 

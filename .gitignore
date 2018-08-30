@@ -6,7 +6,7 @@ ehthumbs.db
 /software/
 /transaction-logs/
 .svn/
-.idea/
+/.idea/
 
 # Folder config file
 Desktop.ini

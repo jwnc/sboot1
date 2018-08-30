@@ -1,12 +1,11 @@
 
-package com.wnc.wynews.wyuser;
+package com.wnc.wynews.jpa;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wnc.tools.FileOp;
 import com.wnc.wynews.consts.WyConsts;
 import com.wnc.wynews.model.Comment;
 import com.wnc.wynews.model.User;
-import com.wnc.wynews.jpa.EntityConvertor;
 import com.wnc.wynews.service.WyDbService;
 import com.wnc.wynews.utils.WyNewsUtil;
 import org.junit.Test;

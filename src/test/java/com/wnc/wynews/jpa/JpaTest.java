@@ -1,5 +1,5 @@
 
-package com.wnc;
+package com.wnc.wynews.jpa;
 
 import com.wnc.sboot1.SpringContextUtils;
 import com.wnc.wynews.jpa.entity.WyNews;

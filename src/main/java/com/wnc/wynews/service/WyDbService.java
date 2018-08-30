@@ -37,7 +37,11 @@ public class WyDbService {
         try {
             Set<WyNewsKeyword> wyNewsKeywords = wyNews.getWyNewsKeywords();
             if (wyNewsKeywords != null && wyNewsKeywords.size() > 0) {
-                wyNewsKeyWordRepository.save(wyNewsKeywords);
+                for(WyNewsKeyword wyNewsKeyword : wyNewsKeywords) {
+                    if(wyNewsKeyWordRepository.findOne(wyNewsKeyword.getName()) == null) {
+                        wyNewsKeyWordRepository.save(wyNewsKeyword);
+                    }
+                }
             }
             wyNewsRepository.save(wyNews);
         } catch (Exception e) {
