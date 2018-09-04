@@ -9,6 +9,7 @@ import com.wnc.qqnews.jpa.repo.QQNewsImgRepository;
 import com.wnc.qqnews.jpa.repo.QQNewsRepository;
 import com.wnc.qqnews.jpa.repo.QQUserRepository;
 import com.wnc.qqnews.jpa.repo.QqNewsTagLabelRepository;
+import com.wnc.qqnews.jpa.repo.QqNewsKeywordRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,8 +28,10 @@ public class QqDbService {
     private QQNewsImgRepository qqNewsImgRepository;
     @Autowired
     private QqNewsTagLabelRepository qNewsTagLabelRepository;
+    @Autowired
+    private QqNewsKeywordRepository qqNewsKeyWordRepository;
 
-    public void singleUser(QqUser qqUser) {
+    public synchronized void singleUser(QqUser qqUser) {
         try {
             if (qqUser.getCertinfo() != null) {
                 qqCertInfoRepository.save(qqUser.getCertinfo());
@@ -39,7 +42,7 @@ public class QqDbService {
         }
     }
 
-    public void singleUser(JSONObject userJO) {
+    public synchronized void singleUser(JSONObject userJO) {
         try {
             QqUser qqUser = JSONObject.parseObject(userJO.toJSONString(), QqUser.class).splitRegion().computeCertId();
             singleUser(qqUser);
@@ -48,11 +51,14 @@ public class QqDbService {
         }
     }
 
-    public void singleNews(JSONObject news) {
+    public synchronized  void singleNews(JSONObject news) {
         try {
             QqNews qqNews = JSONObject.parseObject(news.toJSONString(), QqNews.class).cvtAll();
             if(qqNews.getTagLabelList() != null){
                 qNewsTagLabelRepository.save(qqNews.getTagLabelList());
+            }
+            if(qqNews.getKeywordList() != null){
+                qqNewsKeyWordRepository.save(qqNews.getKeywordList());
             }
 
             qqNewsRepository.save(qqNews);

@@ -4,6 +4,8 @@ package com.wnc.qqnews;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wnc.qqnews.service.QqDbService;
+import com.wnc.sboot1.SpringContextUtils;
 import org.apache.http.client.methods.HttpGet;
 
 import com.alibaba.fastjson.JSONArray;
@@ -22,6 +24,7 @@ public class QqNewsModuleTask extends AbstractPageTask
 {
     private NewsModule newsModule;
     private int pageIdx = 1;
+    private QqDbService qqDbService = (QqDbService) SpringContextUtils.getContext().getBean("qqDbService");
 
     // 以首个任务开始请求接口时的时间为准, 而不是初始化提交到线程池时为准
     // 在重试和下一个任务时, beginSpyDate会一直流转下去
@@ -188,6 +191,9 @@ public class QqNewsModuleTask extends AbstractPageTask
             for ( int i = 0; i < jsonArray.size(); i++ )
             {
                 JSONObject news = jsonArray.getJSONObject( i );
+
+                qqDbService.singleNews(news);
+
                 // 采用评论id做code
                 String code = news.getString( "comment_id" );
                 if ( QqModuleIdsManager.addModuleNews( newsModule.getName(),

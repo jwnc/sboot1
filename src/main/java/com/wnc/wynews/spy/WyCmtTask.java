@@ -6,7 +6,6 @@ import java.util.Set;
 import com.wnc.wynews.jpa.EntityConvertor;
 import com.wnc.wynews.service.WyDbService;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 import com.crawl.spider.entity.Page;
@@ -18,6 +17,7 @@ import com.wnc.wynews.model.Comment;
 import com.wnc.wynews.model.NewsModule;
 import com.wnc.wynews.model.User;
 import com.wnc.wynews.utils.WyNewsUtil;
+import org.slf4j.LoggerFactory;
 
 /**
  * 找出两个月之间的
@@ -25,7 +25,7 @@ import com.wnc.wynews.utils.WyNewsUtil;
 public class WyCmtTask extends AbstractPageTask {
     private static String CMT_URL_FORMAT = "http://comment.api.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/"
             + "threads/%s/comments/newList?ibc=newspc&limit=30&showLevelThreshold=72&headLimit=1&tailLimit=2&offset=%d";
-    private static Logger logger = Logger.getLogger(WyCmtTask.class);
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(WyCmtTask.class);
     private String code;
     private int offset;
     NewsModule newsModule;

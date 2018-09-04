@@ -36,8 +36,12 @@ public class QqNews extends BaseEntity{
 
     @Transient
     private String keywords;
-    @ElementCollection
-    private List<String> keywordList;//通过keywords转化
+
+    @ManyToMany( fetch = FetchType.LAZY )
+    @JoinTable( name = "QqNewsKeyWordRelation", joinColumns = {
+            @JoinColumn( name = "news_id" )}, inverseJoinColumns = {
+            @JoinColumn( name = "kw_name" )},uniqueConstraints = {@UniqueConstraint(columnNames={"news_id", "kw_name"})} )
+    private List<QqNewsKeyWord> keywordList;//通过keywords转化
 
     private int source_fans;
     private String source;
@@ -69,8 +73,13 @@ public class QqNews extends BaseEntity{
     @Transient
     private QqNewsExt ext;
 
-    @ElementCollection
+    @Transient
     private List<String> multi_imgs;
+
+    @Column(length = 4000)
+    private String multiImgStr;//通过multi_imgs转化
+
+    private Integer multiImgCount;
 
     @Transient
     private Map<String, String> imgs;
@@ -95,6 +104,7 @@ public class QqNews extends BaseEntity{
 
     @Transient
     private List<List<String>> tag_label;
+
     @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable( name = "QqNewsTagLabelRelation", joinColumns = {
             @JoinColumn( name = "news_id" )}, inverseJoinColumns = {
@@ -111,16 +121,31 @@ public class QqNews extends BaseEntity{
     private int img_type;
 
     public QqNews cvtAll() {
-        return cvtKeywords().cvtImgs().cvtIrsImgs().cvtTagLabels().cvtExt();
+        return cvtKeywords().cvtImgs().cvtIrsImgs().cvtTagLabels().cvtExt().cvtMultiImg();
+    }
+
+    private QqNews cvtMultiImg() {
+        List<String> list = new ArrayList<String>();
+        if(CollectionUtils.isNotEmpty(multi_imgs)){
+            for(String s : multi_imgs){
+                if(StringUtils.isNotBlank(s)){
+                    list.add(s);
+                }
+            }
+        }
+        multi_imgs = list;
+        multiImgStr = StringUtils.join(multi_imgs,",");
+        multiImgCount = list.size();
+        return this;
     }
 
     private QqNews cvtKeywords() {
         String[] split = keywords.split(";");
         if (StringUtils.isNotBlank(keywords) && split.length > 0) {
-            keywordList = new ArrayList<String>(3);
+            keywordList = new ArrayList<QqNewsKeyWord>(3);
             for (String k : split) {
                 if (StringUtils.isNotBlank(k)) {
-                    keywordList.add(k);
+                    keywordList.add(new QqNewsKeyWord(k));
                 }
             }
         }
@@ -229,11 +254,11 @@ public class QqNews extends BaseEntity{
         this.keywords = keywords;
     }
 
-    public List<String> getKeywordList() {
+    public List<QqNewsKeyWord> getKeywordList() {
         return keywordList;
     }
 
-    public void setKeywordList(List<String> keywordList) {
+    public void setKeywordList(List<QqNewsKeyWord> keywordList) {
         this.keywordList = keywordList;
     }
 
@@ -611,5 +636,21 @@ public class QqNews extends BaseEntity{
 
     public void setImg_type(int img_type) {
         this.img_type = img_type;
+    }
+
+    public String getMultiImgStr() {
+        return multiImgStr;
+    }
+
+    public void setMultiImgStr(String multiImgStr) {
+        this.multiImgStr = multiImgStr;
+    }
+
+    public Integer getMultiImgCount() {
+        return multiImgCount;
+    }
+
+    public void setMultiImgCount(Integer multiImgCount) {
+        this.multiImgCount = multiImgCount;
     }
 }

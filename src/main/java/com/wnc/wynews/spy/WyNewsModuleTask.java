@@ -8,7 +8,6 @@ import com.wnc.wynews.jpa.EntityConvertor;
 import com.wnc.wynews.jpa.entity.WyNews;
 import com.wnc.wynews.service.WyDbService;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 import com.crawl.spider.entity.Page;
@@ -23,12 +22,14 @@ import com.wnc.wynews.model.NewsModule;
 import com.wnc.wynews.parser.WyParser;
 import com.wnc.wynews.utils.NewsPageUrlGenerator;
 import com.wnc.wynews.utils.WyNewsUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 项目初始化, 拉取之前的新闻数据到本地 2018-07-26 12:00:00
  */
 public class WyNewsModuleTask extends AbstractPageTask {
-    private static Logger logger = Logger.getLogger(WyNewsModuleTask.class);
+    private static Logger logger = LoggerFactory.getLogger(WyNewsModuleTask.class);
     private NewsModule newsModule;
     private int pageIdx = 1;
 

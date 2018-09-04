@@ -33,7 +33,7 @@ public class WyDbService {
     private RedNameInfoRepository redNameInfoRepository;
 
     // @Transactional( propagation = Propagation.REQUIRES_NEW )
-    public void singleNews(WyNews wyNews) {
+    public synchronized void singleNews(WyNews wyNews) {
         try {
             Set<WyNewsKeyword> wyNewsKeywords = wyNews.getWyNewsKeywords();
             if (wyNewsKeywords != null && wyNewsKeywords.size() > 0) {
@@ -49,7 +49,7 @@ public class WyDbService {
         }
     }
 
-    public void singleUser(WyUser wyUser) {
+    public synchronized void singleUser(WyUser wyUser) {
         try {
             Set<WyIncentiveInfo> wyIncentiveInfos = wyUser.getWyIncentiveInfoList();
             if (wyIncentiveInfos != null && wyIncentiveInfos.size() > 0) {
