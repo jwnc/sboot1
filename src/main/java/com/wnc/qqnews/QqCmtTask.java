@@ -150,9 +150,6 @@ public class QqCmtTask extends AbstractPageTask
 
     private void outputCmtData( JSONObject dataObject )
     {
-        // BasicFileUtil.writeFileString( "C:\\data\\spider\\qq-news\\dddd.txt",
-        // JSONObject.toJSONString( dataObject ) + "\r\n", null, true );
-
         JSONArray commentArr = dataObject.getJSONArray( "oriCommList" );
         for ( int i = 0; i < commentArr.size(); i++ )
         {
@@ -172,9 +169,8 @@ public class QqCmtTask extends AbstractPageTask
             // 输出user到user目录
 //            System.out.println( userJO.getString( "nick" ) + " / "
 //                    + userJO.getString( "userid" ) );
-            // QqUserManager.addAndWriteUser( userJO );
-            qqUser = userJO.toJavaObject(QqUser.class).splitRegion().computeCertId();
-            qqDbService.singleUser(qqUser);
+//             QqUserManager.addAndWriteUser( userJO );
+            qqDbService.singleUser(userJO);
         }
     }
 
