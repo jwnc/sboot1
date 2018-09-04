@@ -36,7 +36,7 @@ public class QQUserTest {
     @Test
     public void testAlluser() {
         QqDbService qqDbService = (QqDbService) SpringContextUtils.getContext().getBean("qqDbService");
-        List<String> strings = FileOp.readFrom(QqConsts.USERS_TXT);
+        List<String> strings = FileOp.readFrom(QqConsts.USERS_DIR+"users2.txt");
         for (String user : strings) {
             try {
                 qqDbService.singleUser(getUser(user));

@@ -4,6 +4,9 @@ package com.wnc.qqnews;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wnc.qqnews.jpa.entity.QqUser;
+import com.wnc.qqnews.service.QqDbService;
+import com.wnc.sboot1.SpringContextUtils;
 import com.wnc.sboot1.spy.zuqiu.TaskCompleteLog;
 import com.wnc.sboot1.spy.zuqiu.rep.TaskCompleteLogRepository;
 import com.wnc.sboot1.spy.zuqiu.rep.Zb8NewsRepository;
@@ -30,9 +33,9 @@ public class QqCmtTask extends AbstractPageTask
     private static Logger logger = Logger.getLogger( QqCmtTask.class );
     private String code;
     private String cursor;
-    NewsModule newsModule;
+    private NewsModule newsModule;
     private int cmtListSize;
-
+    private QqDbService qqDbService = (QqDbService) SpringContextUtils.getContext().getBean("qqDbService");
     private boolean ignoreComp = false;
     static
     {
@@ -162,13 +165,16 @@ public class QqCmtTask extends AbstractPageTask
 
         JSONObject usersoJO = dataObject.getJSONObject( "userList" );
         Set<String> keys = usersoJO.keySet();
+        QqUser qqUser;
         for ( String key : keys )
         {
             JSONObject userJO = usersoJO.getJSONObject( key );
-            System.out.println( userJO.getString( "nick" ) + " / "
-                    + userJO.getString( "userid" ) );
             // 输出user到user目录
+//            System.out.println( userJO.getString( "nick" ) + " / "
+//                    + userJO.getString( "userid" ) );
             // QqUserManager.addAndWriteUser( userJO );
+            qqUser = userJO.toJavaObject(QqUser.class).splitRegion().computeCertId();
+            qqDbService.singleUser(qqUser);
         }
     }
 
