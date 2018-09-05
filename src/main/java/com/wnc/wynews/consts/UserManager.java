@@ -51,10 +51,11 @@ public class UserManager
         {
             BasicFileUtil.writeFileString( usersFile,
                     JSONObject.toJSONString( user ) + "\r\n", null, true );
-        } else
-        {
-            System.out.println( user.getUserId() + " 已经存在!" );
         }
+//        else
+//        {
+//            System.out.println( user.getUserId() + " 已经存在!" );
+//        }
     }
 
     public static void main( String[] args )

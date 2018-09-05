@@ -29,18 +29,17 @@ import org.slf4j.LoggerFactory;
  * 项目初始化, 拉取之前的新闻数据到本地 2018-07-26 12:00:00
  */
 public class WyNewsModuleTask extends AbstractPageTask {
-    private static Logger logger = LoggerFactory.getLogger(WyNewsModuleTask.class);
-    private NewsModule newsModule;
-    private int pageIdx = 1;
+    protected NewsModule newsModule;
+    protected int pageIdx = 1;
 
     // 以首个任务开始请求接口时的时间为准, 而不是初始化提交到线程池时为准
     // 在重试和下一个任务时, beginSpyDate会一直流转下去
     private Date beginSpyDate;
-    private boolean ignoreComp = false;
+    protected boolean ignoreComp = false;
     // 结束分为循环试探得到404而结束, 和比较最后时间两种
     private boolean completeWithCompareTime = false;
 
-    private WyDbService wyDbService = WyNewsUtil.getWyDbService();
+    protected WyDbService wyDbService = WyNewsUtil.getWyDbService();
 
     public WyNewsModuleTask(NewsModule newsModule, int pageIdx,
                             Date beginSpyDate) {

@@ -2,19 +2,20 @@
 package com.wnc.wynews.service;
 
 import com.wnc.wynews.jpa.entity.WyIncentiveInfo;
-import com.wnc.wynews.jpa.repo.IncentiveInfoRepository;
-import com.wnc.wynews.jpa.entity.WyRedNameInfo;
-import com.wnc.wynews.jpa.repo.RedNameInfoRepository;
 import com.wnc.wynews.jpa.entity.WyNews;
 import com.wnc.wynews.jpa.entity.WyNewsKeyword;
+import com.wnc.wynews.jpa.entity.WyRedNameInfo;
+import com.wnc.wynews.jpa.entity.WyUser;
+import com.wnc.wynews.jpa.repo.IncentiveInfoRepository;
+import com.wnc.wynews.jpa.repo.RedNameInfoRepository;
 import com.wnc.wynews.jpa.repo.WyNewsKeyWordRepository;
 import com.wnc.wynews.jpa.repo.WyNewsRepository;
-import com.wnc.wynews.jpa.entity.WyUser;
 import com.wnc.wynews.jpa.repo.WyUserRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 
 @Component
@@ -32,13 +33,13 @@ public class WyDbService {
     @Autowired
     private RedNameInfoRepository redNameInfoRepository;
 
-    // @Transactional( propagation = Propagation.REQUIRES_NEW )
+    @Transactional
     public synchronized void singleNews(WyNews wyNews) {
         try {
             Set<WyNewsKeyword> wyNewsKeywords = wyNews.getWyNewsKeywords();
             if (wyNewsKeywords != null && wyNewsKeywords.size() > 0) {
-                for(WyNewsKeyword wyNewsKeyword : wyNewsKeywords) {
-                    if(wyNewsKeyWordRepository.findOne(wyNewsKeyword.getName()) == null) {
+                for (WyNewsKeyword wyNewsKeyword : wyNewsKeywords) {
+                    if (wyNewsKeyWordRepository.findOne(wyNewsKeyword.getName()) == null) {
                         wyNewsKeyWordRepository.save(wyNewsKeyword);
                     }
                 }
@@ -48,7 +49,7 @@ public class WyDbService {
             logger.error(wyNews.getTitle() + " 插入失败!", e);
         }
     }
-
+    @Transactional
     public synchronized void singleUser(WyUser wyUser) {
         try {
             Set<WyIncentiveInfo> wyIncentiveInfos = wyUser.getWyIncentiveInfoList();
@@ -63,6 +64,15 @@ public class WyDbService {
             wyUserRepository.save(wyUser);
         } catch (Exception e) {
             logger.error(wyUser.getUserId() + wyUser.getNickname() + " 插入失败!", e);
+        }
+    }
+
+    @Transactional
+    public synchronized void updateNews(WyNews wyNews) {
+        try {
+            wyNewsRepository.updateCmtCount(wyNews.getCmtCount(), wyNews.getCode());
+        } catch (Exception e) {
+            logger.error(wyNews.getTitle() + " 更新失败!", e);
         }
     }
 }

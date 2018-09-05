@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
+
 @Component
 public class QqDbService {
     private static Logger logger = Logger.getLogger(QqDbService.class);
@@ -30,7 +32,7 @@ public class QqDbService {
     private QqNewsTagLabelRepository qNewsTagLabelRepository;
     @Autowired
     private QqNewsKeywordRepository qqNewsKeyWordRepository;
-
+    @Transactional
     public synchronized void singleUser(QqUser qqUser) {
         try {
             if (qqUser.getCertinfo() != null) {
@@ -41,7 +43,7 @@ public class QqDbService {
             logger.error(qqUser.getUserid() + qqUser.getNick() + " 插入失败!", e);
         }
     }
-
+    @Transactional
     public synchronized void singleUser(JSONObject userJO) {
         try {
             QqUser qqUser = JSONObject.parseObject(userJO.toJSONString(), QqUser.class).splitRegion().computeCertId();
@@ -51,6 +53,7 @@ public class QqDbService {
         }
     }
 
+    @Transactional
     public synchronized  void singleNews(JSONObject news) {
         try {
             QqNews qqNews = JSONObject.parseObject(news.toJSONString(), QqNews.class).cvtAll();
