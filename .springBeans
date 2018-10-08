@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[3.9.4.201804120850-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[3.9.3.201803200843-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -9,7 +9,6 @@
 	<configs>
 	</configs>
 	<autoconfigs>
-		<config>java:com.wnc.sboot1.App</config>
 	</autoconfigs>
 	<configSets>
 	</configSets>

@@ -76,6 +76,11 @@
 		$("input[name='day']").val($("#dayStr").val());
 		$("form").submit();
 	}
+	function changeType(){
+		$("input[name='page']").val(1);
+		$("input[name='type']").val($("#typeStr").val());
+		$("form").submit();
+	}
 	
 	function lastDay(){
 		var day = getDateStr($("#dayStr").val(), -1);
@@ -98,6 +103,11 @@
 	<div class="content">
 		<div style="font-size:30px">
 			<input id="dayStr" type="date" th:value="${day}" onchange="changeDate()" /> 
+			<select id="typeStr" th:value="${type}" onchange="changeType()" style="height:48px">
+				<option value="">全部</option>
+				<option th:value="nba" th:text="篮球" th:selected="(${type} == nba)"></option>
+				<option th:value="zuqiu" th:text="足球" th:selected="(${type} == zuqiu)"></option>
+			</select> 
 			<a th:href="@{/spyapi/zb8/comments}" style="margin-right:20px"> 重置</a>
 			<a target="_blank" th:href="@{/spyapi/zb8/favoritelist}"> 热评收藏</a>
 			<span style="margin-left: 40px;"></span>
@@ -109,6 +119,7 @@
 				<input type="hidden" name="page" th:value="${pageData.pageNum}" />
 				<input type="hidden" name="size" th:value="${pageData.pageSize}" />
 				<input type="hidden" name="day" th:value="${day}" />
+				<input type="hidden" name="type" th:value="${type}" />
 				<input type="hidden" name="orderNews" th:value="${orderNews}" />
 			</form>
 		</div>
