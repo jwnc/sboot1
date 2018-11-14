@@ -51,13 +51,13 @@ public class QqSpiderClient extends AbstractHttpClient implements IHttpClient
     {
         this.localDataSaveThreadPool = new SimpleThreadPoolExecutor( 10, 10, 0L,
                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
-                "localDataSaveThreadPool" );
+                "QqSpiderClient-localDataSaveThreadPool" );
         this.netPageThreadPool = new SimpleThreadPoolExecutor(
                 Config.downloadThreadSize, Config.downloadThreadSize, 0L,
                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
-                "netPageThreadPool" );
+                "QqSpiderClient-netPageThreadPool" );
         (new Thread( new ThreadPoolMonitor( this.netPageThreadPool,
-                "netPageThreadPool" ) )).start();
+                "QqSpiderClient-netPageThreadPool" ) )).start();
         (new Thread( new Runnable()
         {
             public void run()

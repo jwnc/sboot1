@@ -23,6 +23,7 @@ public class QqModuleSpy
 
     public void spy() throws IOException, InterruptedException
     {
+        long start = System.currentTimeMillis();
         QqNewsUtil.log( "QqModuleSpy任务启动" );
         QqSpiderClient.getInstance().counterReset();
         long startTime = System.currentTimeMillis();
@@ -39,6 +40,9 @@ public class QqModuleSpy
                 .getActiveCount() > 0 )
         {
             Thread.sleep( 10000 );
+            if( System.currentTimeMillis() - start > 3600 * 1000 * 1){
+                break;
+            }
         }
 
         QqModuleIdsManager.output();

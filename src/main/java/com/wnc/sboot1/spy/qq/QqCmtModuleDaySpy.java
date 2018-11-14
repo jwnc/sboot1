@@ -27,6 +27,7 @@ public class QqCmtModuleDaySpy
 {
     public void spy() throws IOException, InterruptedException
     {
+        long start = System.currentTimeMillis();
         QqNewsUtil.log( "QqCmtModuleDaySpy任务启动" );
         QqSpiderClient.getInstance().counterReset();
         long startTime = System.currentTimeMillis();
@@ -53,6 +54,9 @@ public class QqCmtModuleDaySpy
                 .getActiveCount() > 0 )
         {
             Thread.sleep( 10000 );
+            if( System.currentTimeMillis() - start > 3600 * 1000 * 1){
+                break;
+            }
         }
         QqNewsUtil.log( "QqCmtModuleDaySpy任务成功完成. 完成子任务数:"
                 + QqSpiderClient.parseCount + "任务耗时:"
