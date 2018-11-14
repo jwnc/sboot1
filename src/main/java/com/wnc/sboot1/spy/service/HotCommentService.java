@@ -9,6 +9,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +63,8 @@ public class HotCommentService
     }
 
     public Page<HotComment> paginationByDay( int page, int size,
-            final String day, int newsOrder ) throws Exception
+            final String day, final String type, int newsOrder )
+            throws Exception
     {
         Specification<HotComment> specification = new Specification<HotComment>()
         {
@@ -76,7 +78,19 @@ public class HotCommentService
                 Predicate _key = criteriaBuilder.like(
                         join.get( "createtime" ).as( String.class ),
                         day + "%" );
-                return criteriaBuilder.and( _key );
+
+                if ( StringUtils.isNoneBlank( type ) )
+                {
+                    Predicate _key2 = criteriaBuilder.equal(
+                            join.get( "type" ).as( String.class ), type );
+
+                    query.where( _key, _key2 );
+                } else
+                {
+                    query.where( _key );
+                }
+
+                return null;
             }
         };
         String sortField = "createtime";
