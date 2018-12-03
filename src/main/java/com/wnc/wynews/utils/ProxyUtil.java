@@ -45,7 +45,7 @@ public class ProxyUtil
     private void getProxy() throws IOException
     {
         HttpGet httpGet = new HttpGet(
-                "http://118.126.116.16:8080/sboot1/proxy/fatest200" );
+                "http://47.93.99.106:8080/sboot1/proxy/fatest200" );
         Page webPage = PageUtil.getWebPage( httpGet, "UTF-8" );
         String content = webPage.getHtml();
         List<String> get61Proxies = PatternUtil.getAllPatternGroup( content,

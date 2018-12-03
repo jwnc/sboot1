@@ -67,7 +67,7 @@ public class ProxyHashService
     {
         // 用在测试
         HttpGet httpGet = new HttpGet(
-                "http://118.126.116.16:8080/sboot1/proxy/get66Proxy" );
+                "http://47.93.99.106:8080/sboot1/proxy/get66Proxy" );
         Page webPage = PageUtil.getWebPage( httpGet, "UTF-8" );
         String content = webPage.getHtml();
         List<String> get61Proxies = PatternUtil.getAllPatternGroup( content,
