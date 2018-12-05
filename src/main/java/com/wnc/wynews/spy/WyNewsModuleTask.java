@@ -185,7 +185,7 @@ public class WyNewsModuleTask extends AbstractPageTask {
 
     // 404 可能还要继续
     protected void errLog404(Page page) {
-        if (page.getHtml() != null && page.getHtml().contains("一起帮孩子回家")) {
+        if (page.getHtml() != null && page.getHtml().contains("网页跑丢了")) {
             // 真的404. 由网易返回. 表示已没有当前页
             complete(AbstractPageTask.COMPLETE_STATUS_SUCCESS, "");
         } else {
