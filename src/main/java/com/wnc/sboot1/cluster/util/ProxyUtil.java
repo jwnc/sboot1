@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wnc.tools.FileOp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;
@@ -73,22 +74,20 @@ public class ProxyUtil
         return false;
     }
 
-    final static int MAX_SIZE = 4000;
+    final static int MAX_SIZE = 200;
 
     @Autowired
     private static ProxyProcess proxyProcess;
 
     /**
-     * 一次最多返回4000个, 不然校验过程太漫长
+     * 一次最多返回200个, 不然校验过程太漫长
      * 
      * @return
      * @throws IOException
      */
     public static List<String> get61Proxies() throws IOException
     {
-        HttpGet httpGet = new HttpGet( "http://www.66ip.cn/nmtq.php?getnum="
-                + MAX_SIZE
-                + "&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=2&api=66ip" );
+        HttpGet httpGet = new HttpGet( "http://www.89ip.cn/tqdl.html?num="+MAX_SIZE+"&address=&kill_address=&port=&kill_port=&isp=" );
         Page webPage = PageUtil.getWebPage( httpGet, "UTF-8" );
         String content = webPage.getHtml();
         List<String> list = PatternUtil.getAllPatternGroup( content,
@@ -99,6 +98,17 @@ public class ProxyUtil
             retList.add( string );
         }
         return retList;
+    }
+
+    /**
+     * 手动放入本地文件再解析
+     *
+     * @return
+     * @throws IOException
+     */
+    public static List<String> get61ProxiesMannual() throws IOException
+    {
+        return FileOp.readFrom("C:\\66ip.txt");
     }
 
 }

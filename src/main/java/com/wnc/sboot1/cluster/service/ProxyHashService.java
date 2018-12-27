@@ -65,15 +65,8 @@ public class ProxyHashService
      */
     public int importProxies() throws Exception
     {
-        // 用在测试
-        HttpGet httpGet = new HttpGet(
-                "http://47.93.99.106:8080/sboot1/proxy/get66Proxy" );
-        Page webPage = PageUtil.getWebPage( httpGet, "UTF-8" );
-        String content = webPage.getHtml();
-        List<String> get61Proxies = PatternUtil.getAllPatternGroup( content,
-                "\\d+.\\d+.\\d+.\\d+:\\d+" );
         // 用在正式
-        // List<String> get61Proxies = ProxyUtil.get61Proxies();
+         List<String> get61Proxies = ProxyUtil.get61Proxies();
         int sum = 0;
         for ( String proxyStr : get61Proxies )
         {

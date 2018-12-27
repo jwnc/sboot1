@@ -1,7 +1,10 @@
 package com.wnc.jijin;
 
+import com.crawl.core.util.HttpClientUtil;
 import com.wnc.basic.BasicDateUtil;
+import com.wnc.basic.BasicFileUtil;
 import com.wnc.basic.BasicNumberUtil;
+import com.wnc.string.PatternUtil;
 import com.wnc.tools.UrlPicDownloader;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,13 +17,19 @@ import java.util.List;
 public class JijinSpider {
     private String jjCode;
     private Document doc;
+    private static final String folder = "C:\\data\\spider\\jijin\\";
 
     public JijinSpider(String jjCode) throws Exception {
         this.jjCode = jjCode;
     }
 
+    public String getFolder(){
+        return folder+BasicDateUtil.getCurrentDateString()+"(周"+BasicDateUtil.getCurrentWeekDay()+")\\";
+    }
+
     public void downloadPic() throws Exception {
-        UrlPicDownloader.download("http://j4.dfcfw.com/charts/pic6/" + this.jjCode + ".png", jjCode + ".jpg");
+        BasicFileUtil.makeDirectory(getFolder());
+        UrlPicDownloader.download("http://j4.dfcfw.com/charts/pic6/" + this.jjCode + ".png",  getFolder()+jjCode + ".jpg");
     }
 
     /**
@@ -31,10 +40,10 @@ public class JijinSpider {
     */
     public CurrentValueData getCurrentValueData() throws Exception {
         //直接调接口
-        doc = JsoupHelper.getDocumentResult("http://fund.eastmoney.com/" + jjCode + ".html");
-        String val = doc.select("#gz_gszzl").text().replace("%", "");
-        String datetime = BasicDateUtil.getCurrentDateTimeString();
-        return new CurrentValueData(BasicNumberUtil.getDouble(val), datetime);
+        String webPage = HttpClientUtil.getWebPage("http://fundgz.1234567.com.cn/js/"+this.jjCode+".js?rt="+System.currentTimeMillis());
+        String gs = PatternUtil.getFirstPatternGroup(webPage, "\"gszzl\":\"([+\\-.0-9]+)\"");
+        String datetime = PatternUtil.getLastPatternGroup(webPage, "\\d{2}:\\d{2}");
+        return new CurrentValueData(BasicNumberUtil.getDouble(gs), datetime);
     }
 
     /**

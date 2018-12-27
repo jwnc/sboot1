@@ -7,13 +7,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Hello world!
  */
 @SpringBootApplication
- @EnableScheduling
+// @EnableScheduling
 @EnableJpaRepositories( basePackages = {"com.wnc"} )
 @EnableJpaAuditing
 // @EnableTransactionManagement
