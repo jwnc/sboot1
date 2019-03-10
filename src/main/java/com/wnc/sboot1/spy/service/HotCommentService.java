@@ -3,10 +3,13 @@ package com.wnc.sboot1.spy.service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.wnc.sboot1.spy.zuqiu.HotComment;
+import com.wnc.sboot1.spy.zuqiu.Zb8News;
 import com.wnc.sboot1.spy.zuqiu.rep.HotCommentRepository;
 
 @Component
@@ -59,16 +63,34 @@ public class HotCommentService
     }
 
     public Page<HotComment> paginationByDay( int page, int size,
-            final String day, int newsOrder ) throws Exception
+            final String day, final String type, int newsOrder )
+            throws Exception
     {
         Specification<HotComment> specification = new Specification<HotComment>()
         {
             public Predicate toPredicate( Root<HotComment> root,
                     CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder )
             {
-                Path<String> _name = root.get( "createtime" );
-                Predicate _key = criteriaBuilder.like( _name, day + "%" );
-                return criteriaBuilder.and( _key );
+                // 左连接查询
+                Join<HotComment, Zb8News> join = root.join( "zb8News",
+                        JoinType.LEFT );
+
+                Predicate _key = criteriaBuilder.like(
+                        join.get( "createtime" ).as( String.class ),
+                        day + "%" );
+
+                if ( StringUtils.isNoneBlank( type ) )
+                {
+                    Predicate _key2 = criteriaBuilder.equal(
+                            join.get( "type" ).as( String.class ), type );
+
+                    query.where( _key, _key2 );
+                } else
+                {
+                    query.where( _key );
+                }
+
+                return null;
             }
         };
         String sortField = "createtime";

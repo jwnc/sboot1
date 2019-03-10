@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggerAdvice
 {
-
     private Logger logger = Logger.getLogger( this.getClass() );
 
     @Before( "within(com.wnc..*) && @annotation(loggerManage)" )

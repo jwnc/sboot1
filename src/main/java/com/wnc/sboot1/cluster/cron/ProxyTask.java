@@ -19,7 +19,7 @@ public class ProxyTask
     private Logger logger = Logger.getLogger( ProxyTask.class );
 
     @Scheduled( cron = "${cronJob.import_proxy}" )
-    private void importAndCheckTask()
+    public void importAndCheckTask()
     {
         sleep();
         if ( ProxyUtil.taskFlag1 )

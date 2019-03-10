@@ -17,11 +17,18 @@ public class HotCmtTest
     @Autowired
     private FunnyCommetSpy funnyCommetSpy;
 
-    @Test
+    // @Test
     public void a() throws Exception
     {
         funnyCommetSpy.setSpyDay( SpiderUtils.getYesterDayStr() ).spy();
         funnyCommetSpy.setSpyDay( SpiderUtils.getDayWithLine() ).spy();
+    }
+
+    @Test
+    public void b() throws Exception
+    {
+        funnyCommetSpy.setSpyDay( "2018-06-23" ).spy();
+        funnyCommetSpy.setSpyDay( "2018-06-24" ).spy();
     }
 
 }

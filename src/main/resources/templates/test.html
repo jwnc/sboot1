@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"></link>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<style>
+body {
+	padding-left: 3%;
+	padding-right: 3%;
+}
+.m-brand-item img {
+	max-width: 150px;
+	max-height: 150px;
+}
+.m-brand .row .col-md-2 {
+	margin-top: 10px;
+}
+.m-brand .row{
+	border:1px solid #ccc;
+	border-radius:5px 8px;
+}
+.menu-item {
+    margin-left: 15px;
+	font-size: 18px;
+	color: #0044ff;
+}
+.recommend{
+	font-size: 16px;
+}
+.item {
+	margin-top: 20px;
+}
+
+.item-desc {
+	margin-top: 5px;
+	font-size: 0.813em;
+	color: blue;
+	overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
+}
+.item img {
+	max-width: 180px;
+	max-height: 180px;
+}
+
+p {
+	margin: 0 0 8px;
+}
+
+.ocen-today-price {
+	height: 26px;
+	line-height: 26px
+}
+
+.ocen-today-yen {
+	color: #ff4965;
+	font-size: 1em;
+	margin: 0 0px 0 6px
+}
+
+.ocen-today-int {
+	font-size: 0.813em;
+	color: #ff4965;
+	font-weight: 700;
+	font-family: verdana
+}
+
+.ocen-today-decimal {
+	font-size: 0.625em;
+	font-weight: 700;
+	color: #ff4965;
+	font-family: verdana
+}
+
+.ocen-today-origin {
+	font-size: 0.75em;
+	color: #999;
+	text-decoration: line-through;
+	margin-left: 4px;
+}
+.m-note {
+	margin-top: 20px;
+	font-size: 20px;
+	font-weight: bold;
+}
+.hr-ver {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+hr.style-one {
+    border: 0;
+    height: 1px;
+    background: #777;
+    background-image: linear-gradient(to right, #ccc, #777, #ccc);
+}
+</style>
+</head>
+<body>
+	<div class="body-content">
+		
+		<div class="nav">
+			<span style="color:#ff9900;font-size:30px;">康宝宝</span>
+			<span class="menu-item"><a href="">奶粉</a></span>
+			<span class="menu-item"><a href="">纸尿裤</a></span>
+			<span class="menu-item"><a href="">辅食</a></span>
+			<span class="menu-item"><a href="">其他</a></span>
+		</div>
+		<hr class="style-one"></hr>
+		<div class="m-note">奶粉品牌</div>	
+		<div class="m-filter m-brand">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--5566-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/21/37972689677892_339x339.jpg!230x230.jpg" />
+							<p class="m-brand-title">爱他美</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--5631-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/21/37865310167892_339x339.jpg!230x230.jpg" />
+							<p class="m-brand-title">Nutrilon</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--5671-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/21/37878418767892_339x339.jpg!230x230.jpg" />
+							<p class="m-brand-title">HeroBaby</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--5825-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/21/37732016117892_339x339.jpg!230x230.jpg" />
+							<p class="m-brand-title">喜宝</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--8338-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/21/37754928997892_339x339.jpg!230x230.jpg" />
+							<p class="m-brand-title">Cow Gate</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--8705-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/21/37907483237892_339x339.jpg!230x230.jpg" />
+							<p class="m-brand-title">佳贝艾特</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--5828-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1609/26/92429730707315_144x144.jpg!230x230.jpg" />
+							<p class="m-brand-title">A2</p>
+						</a>
+					</div>
+					<div class="col-xs-6 col-sm-4  col-md-2">
+						<a class="m-brand-item"
+							href="http://global.beibei.com/category/milk_powder--6142-hot-1.html">
+							<img class="m-brand-img"
+							src="http://b1.hucdn.com/upload/oversea/1508/18/70184925348789_114x114.jpg!230x230.jpg" />
+							<p class="m-brand-title">贝拉米</p>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="m-note">推荐</div>
+		<hr class="style-one hr-ver"></hr>
+		<div class="container-fluid recommend">
+			<div class="row">
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700034688-1921318.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/30/63899268715245_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">德国原装 爱他美/Aptamil 德国爱他美奶粉2段800g*3（6-9个月）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">296</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥896.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700034688-1921318.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/21/98173941045245_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">新西兰原装 爱他美/Aptamil 澳洲金装婴幼儿奶粉3段900g*3（1-2岁）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">430</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥650.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700039630-909032.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/21/80606959985245_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">英国原装 爱他美/Aptamil 英国爱他美奶粉3段900g*3（1-2岁）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">369</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥985.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700063102-3069786.html">
+							<img src="http://b1.hucdn.com/upload/item/1705/15/50564393605245_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">德国原装 爱他美/Aptamil 英国爱他美铂金版婴幼儿奶粉3段(1-2岁)*3</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">499</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥650.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700003554-986936.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/16/43660328745245_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">荷兰原装 Nutrilon 荷兰牛栏婴儿奶粉3段 800g*2（10-12个月）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">266</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥478.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700003620-961764.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/27/20356653005245_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">荷兰原装 Hero Baby 荷兰Hero Baby奶粉5段700g*2（2岁以上）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">179</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥450.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/200393380-1016319.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/30/62623652805295_800x800.jpg!320x320.jpg" />
+							<div class="item-desc">德国原装 HiPP/喜宝 德国喜宝益生菌1段600g *2（0-6个月）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">165</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥500.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4  col-md-3">
+					<div class="item">
+						<a href="http://global.beibei.com/detail/700015519-1295974.html">
+							<img src="http://b1.hucdn.com/upload/item/1703/27/16584697525245_800x800.png!320x320.jpg" />
+							<div class="item-desc">荷兰原装 KABRITA/佳贝艾特 荷兰佳贝艾特羊奶粉金装2段800g*3（6-12个月）</div>
+							<p class="ocen-today-price">
+								<span class="ocen-today-yen">¥</span> <span
+									class="ocen-today-int">925</span> <span
+									class="ocen-today-decimal">.00</span> <span
+									class="ocen-today-origin">¥1200.00</span>
+							</p>
+						</a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

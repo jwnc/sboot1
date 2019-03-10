@@ -38,7 +38,7 @@ public class Zb8Controller
      */
     @GetMapping( "comments" )
     public String comments( Model model, Integer page, String newsId,
-            String day, Integer orderNews )
+            String day, String type, Integer orderNews )
     {
         try
         {
@@ -50,12 +50,13 @@ public class Zb8Controller
             }
             model.addAttribute( "newsId", newsId );
             model.addAttribute( "day", day );
+            model.addAttribute( "type", type );
             model.addAttribute( "orderNews", orderNews );
             Page<HotComment> pagination = null;
             if ( StringUtils.isNotBlank( day ) )
             {
                 pagination = hotCommentService.paginationByDay( page, size, day,
-                        orderNews );
+                        type, orderNews );
             } else if ( StringUtils.isNotBlank( newsId ) )
             {
                 pagination = hotCommentService.paginationByNid( page, size,
