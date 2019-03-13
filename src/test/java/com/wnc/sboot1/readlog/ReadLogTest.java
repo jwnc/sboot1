@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.wnc.itbooktool.dao.DictionaryDao;
+import com.wnc.itbooktool.word.DicWord;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReadLogTest {
@@ -34,4 +37,18 @@ public class ReadLogTest {
         System.out.println(readLogRepository.save(readLog));
     }
 
+    @Autowired
+    private DictionaryDao dictionaryDao;
+    @Test
+    public void testDictDao() {
+    	long l = System.currentTimeMillis();
+        DicWord findWord = dictionaryDao.findWord("class");
+		System.out.println((System.currentTimeMillis()-l)+"/"+findWord);
+		 l = System.currentTimeMillis();
+			findWord = dictionaryDao.findWeightWord("protect");
+			System.out.println((System.currentTimeMillis()-l)+"/"+findWord);
+		 l = System.currentTimeMillis();
+		findWord = dictionaryDao.findWord("class");
+		System.out.println((System.currentTimeMillis()-l)+"/"+findWord);
+    }
 }

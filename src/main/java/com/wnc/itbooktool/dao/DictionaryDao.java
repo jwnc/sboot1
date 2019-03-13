@@ -3,12 +3,14 @@ package com.wnc.itbooktool.dao;
 
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Lazy;
@@ -34,27 +36,30 @@ public class DictionaryDao{
 			return;
 		}
 		try {
-			String sql = "select * from  dictionary dict  LEFT JOIN word_exchange ex on ex.dict_id=dict.id where ex.word_org is not null or dict.weight >= 10 order by dict.topic_word asc";
-			Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap(sql);
-			System.out.println(selectAllSqlMap);
-			for (int i = 1; i <= selectAllSqlMap.size(); i++) {
-				Map rowMap = (Map) selectAllSqlMap.get(i);
+			String sql = "select id,topic_word,topic_id,word_third,word_done,word_er,word_est,word_ing,word_pl,word_past,mean_cn from  dictionary dict  LEFT JOIN word_exchange ex on "
+					+ "ex.dict_id=dict.id where ex.word_org is not null or dict.weight >= 10 "
+					+ "order by dict.topic_word asc";
+//			Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap(sql);
+//			System.out.println(selectAllSqlMap);
+			Query createNativeQuery = entityManager.createNativeQuery( sql );
+	        List resultList = createNativeQuery.getResultList();
+			for (Object obj : resultList) {
+				Object[] arr = (Object[])obj;
 				// word_third word_done word_pl word_ing word_past word_er
 				// word_est
 				DicWord dicWord = new DicWord();
-				dicWord.setId(getMapInt(rowMap, "id"));
-				dicWord.setBase_word(getMapStr(rowMap, "topic_word"));
-				dicWord.setTopic_id(getMapInt(rowMap, "topic_id"));
-				dicWord.setWord_third(getMapStr(rowMap, "word_third"));
-				dicWord.setWord_done(getMapStr(rowMap, "word_done"));
-				dicWord.setWord_er(getMapStr(rowMap, "word_er"));
-				dicWord.setWord_est(getMapStr(rowMap, "word_est"));
-				dicWord.setWord_ing(getMapStr(rowMap, "word_ing"));
-				dicWord.setWord_pl(getMapStr(rowMap, "word_pl"));
-				dicWord.setWord_past(getMapStr(rowMap, "word_past"));
-				dicWord.setCn_mean(getMapStr(rowMap, "mean_cn"));
-				dicWord.setBook_name(getMapStr(rowMap, "name"));
-
+				dicWord.setId(getArrInt(arr, 0));
+				dicWord.setBase_word(getArrStr(arr, 1));
+				dicWord.setTopic_id(getArrInt(arr, 2));
+				dicWord.setWord_third(getArrStr(arr, 3));
+				dicWord.setWord_done(getArrStr(arr, 4));
+				dicWord.setWord_er(getArrStr(arr, 5));
+				dicWord.setWord_est(getArrStr(arr, 6));
+				dicWord.setWord_ing(getArrStr(arr, 7));
+				dicWord.setWord_pl(getArrStr(arr, 8));
+				dicWord.setWord_past(getArrStr(arr,9));
+				dicWord.setCn_mean(getArrStr(arr, 10));
+//				dicWord.setBook_name(getArrStr(arr, 11));
 				weightWords.add(dicWord);
 			}
 			// topics.remove("target");
@@ -66,35 +71,17 @@ public class DictionaryDao{
 		}
 	}
 
-	public synchronized DicWord findWordById(int dict_id) {
-		DicWord dicWord = null;
-		try {
-			String sql = "select e.word_done,e.word_er,e.word_est,e.word_ing,e.word_pl,e.word_past,e.word_third,d.topic_id,d.topic_word,d.mean_cn,d.weight FROM  dictionary D LEFT JOIN word_exchange E  ON E.dict_id=D.id where D.id="
-					+ dict_id;
-			Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap(sql);
-			if (selectAllSqlMap.size() > 0) {
-				Map rowMap = (Map) selectAllSqlMap.get(1);
-				dicWord = new DicWord();
-				dicWord.setBase_word(getMapStr(rowMap, "topic_word"));
-				dicWord.setId(getMapInt(rowMap, "id"));
-				dicWord.setWeight(getMapInt(rowMap, "weight"));
-				dicWord.setWord_third(getMapStr(rowMap, "word_third"));
-				dicWord.setWord_done(getMapStr(rowMap, "word_done"));
-				dicWord.setWord_er(getMapStr(rowMap, "word_er"));
-				dicWord.setWord_est(getMapStr(rowMap, "word_est"));
-				dicWord.setWord_ing(getMapStr(rowMap, "word_ing"));
-				dicWord.setWord_pl(getMapStr(rowMap, "word_pl"));
-				dicWord.setWord_past(getMapStr(rowMap, "word_past"));
-				dicWord.setCn_mean(getMapStr(rowMap, "mean_cn"));
-				return dicWord;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		return dicWord;
+	private Integer getArrInt(Object[] rowMap, int idx) {
+		Object obj = rowMap[idx];
+		return obj == null ? null : Integer.parseInt(obj.toString());
 	}
 
+	private String getArrStr(Object[] rowMap, int idx) {
+		Object obj = rowMap[idx];
+		return obj == null ? null : obj.toString();
+	}
+	
 	private Integer getMapInt(Map rowMap, String key) {
 		Object obj = rowMap.get(key.toUpperCase());
 		return obj == null ? null : Integer.parseInt(obj.toString());
@@ -113,22 +100,23 @@ public class DictionaryDao{
 					+ word + "' or  word_third='" + word + "' or  word_done='" + word + "' or  word_er='" + word
 					+ "' or  word_est='" + word + "' or  word_ing='" + word + "' or  word_pl='" + word
 					+ "' or  word_past='" + word + "'";
-			Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap(sql);
-			if (selectAllSqlMap.size() > 0) {
-				Map rowMap = (Map) selectAllSqlMap.get(1);
+			Query createNativeQuery = entityManager.createNativeQuery( sql );
+	        List resultList = createNativeQuery.getResultList();
+			for (Object obj : resultList) {
+				Object[] arr = (Object[])obj;
 				dicWord = new DicWord();
-				dicWord.setId(getMapInt(rowMap, "id"));
-				dicWord.setWeight(getMapInt(rowMap, "weight"));
-				dicWord.setBase_word(getMapStr(rowMap, "topic_word"));
-				dicWord.setTopic_id(getMapInt(rowMap, "topic_id"));
-				dicWord.setWord_third(getMapStr(rowMap, "word_third"));
-				dicWord.setWord_done(getMapStr(rowMap, "word_done"));
-				dicWord.setWord_er(getMapStr(rowMap, "word_er"));
-				dicWord.setWord_est(getMapStr(rowMap, "word_est"));
-				dicWord.setWord_ing(getMapStr(rowMap, "word_ing"));
-				dicWord.setWord_pl(getMapStr(rowMap, "word_pl"));
-				dicWord.setWord_past(getMapStr(rowMap, "word_past"));
-				dicWord.setCn_mean(getMapStr(rowMap, "mean_cn"));
+				dicWord.setId(getArrInt(arr, 7));
+				dicWord.setWeight(getArrInt(arr, 11));
+				dicWord.setBase_word(getArrStr(arr, 9));
+				dicWord.setTopic_id(getArrInt(arr, 8));
+				dicWord.setWord_third(getArrStr(arr, 6));
+				dicWord.setWord_done(getArrStr(arr, 0));
+				dicWord.setWord_er(getArrStr(arr, 1));
+				dicWord.setWord_est(getArrStr(arr, 2));
+				dicWord.setWord_ing(getArrStr(arr, 3));
+				dicWord.setWord_pl(getArrStr(arr, 4));
+				dicWord.setWord_past(getArrStr(arr, 5));
+				dicWord.setCn_mean(getArrStr(arr, 10));
 				return dicWord;
 			}
 		} catch (Exception e) {
