@@ -10,6 +10,8 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import com.wnc.basic.BasicFileUtil;
@@ -21,14 +23,13 @@ import db.DbFieldSqlUtil;
 import translate.bean.WordExchange;
 
 @Repository
-public class DictionaryDao {
+public class DictionaryDao{
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	Set<DicWord> weightWords = new HashSet<DicWord>();
 
-	@PostConstruct
-	public synchronized void initDictToMem() {
+	public void initDictToMem() {
 		if (weightWords.size() > 0) {
 			return;
 		}
@@ -172,5 +173,4 @@ public class DictionaryDao {
 		System.out.println(util.getInsertSql());
 		return DbExecMgr.execOnlyOneUpdate(util.getInsertSql());
 	}
-
 }
