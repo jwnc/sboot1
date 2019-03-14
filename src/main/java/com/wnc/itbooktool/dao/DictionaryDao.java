@@ -100,6 +100,7 @@ public class DictionaryDao{
 					+ word + "' or  word_third='" + word + "' or  word_done='" + word + "' or  word_er='" + word
 					+ "' or  word_est='" + word + "' or  word_ing='" + word + "' or  word_pl='" + word
 					+ "' or  word_past='" + word + "'";
+			System.out.println(sql);
 			Query createNativeQuery = entityManager.createNativeQuery( sql );
 	        List resultList = createNativeQuery.getResultList();
 			for (Object obj : resultList) {
