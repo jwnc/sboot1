@@ -33,7 +33,9 @@ public class ReadLog
     
     private Date logTime;
     
-    private Integer type;
+    @Column(columnDefinition="tinyint default 1")
+    private Integer type = 1;
 
-    private Integer deleted;
+    @Column(columnDefinition="tinyint default 0")
+    private Integer deleted = 0;
 }

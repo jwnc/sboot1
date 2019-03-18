@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 
 public class DicWord
 {
-    private Integer id;
+    private Long id;
     private Integer topic_id;
     private String base_word;
     private String word_third;
@@ -135,12 +135,12 @@ public class DicWord
         return JSON.toJSONString(this);
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId( Integer id )
+    public void setId( Long id )
     {
         this.id = id;
     }

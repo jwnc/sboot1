@@ -48,7 +48,7 @@ public class DictionaryDao{
 				// word_third word_done word_pl word_ing word_past word_er
 				// word_est
 				DicWord dicWord = new DicWord();
-				dicWord.setId(getArrInt(arr, 0));
+				dicWord.setId(getArrLong(arr, 0));
 				dicWord.setBase_word(getArrStr(arr, 1));
 				dicWord.setTopic_id(getArrInt(arr, 2));
 				dicWord.setWord_third(getArrStr(arr, 3));
@@ -72,25 +72,21 @@ public class DictionaryDao{
 	}
 
 
-	private Integer getArrInt(Object[] rowMap, int idx) {
+	public static Integer getArrInt(Object[] rowMap, int idx) {
 		Object obj = rowMap[idx];
 		return obj == null ? null : Integer.parseInt(obj.toString());
 	}
+	
+	public static Long getArrLong(Object[] rowMap, int idx) {
+		Object obj = rowMap[idx];
+		return obj == null ? null : Long.parseLong(obj.toString());
+	}
 
-	private String getArrStr(Object[] rowMap, int idx) {
+	public static String getArrStr(Object[] rowMap, int idx) {
 		Object obj = rowMap[idx];
 		return obj == null ? null : obj.toString();
 	}
 	
-	private Integer getMapInt(Map rowMap, String key) {
-		Object obj = rowMap.get(key.toUpperCase());
-		return obj == null ? null : Integer.parseInt(obj.toString());
-	}
-
-	private String getMapStr(Map rowMap, String key) {
-		Object obj = rowMap.get(key.toUpperCase());
-		return obj == null ? null : obj.toString();
-	}
 
 	public synchronized DicWord findWord(String word) {
 		DicWord dicWord = null;
@@ -106,7 +102,7 @@ public class DictionaryDao{
 			for (Object obj : resultList) {
 				Object[] arr = (Object[])obj;
 				dicWord = new DicWord();
-				dicWord.setId(getArrInt(arr, 7));
+				dicWord.setId(getArrLong(arr, 7));
 				dicWord.setWeight(getArrInt(arr, 11));
 				dicWord.setBase_word(getArrStr(arr, 9));
 				dicWord.setTopic_id(getArrInt(arr, 8));

@@ -1,30 +1,50 @@
 
 package com.wnc.sboot1.itbook.helper;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wnc.basic.BasicNumberUtil;
+import com.wnc.itbooktool.dao.DictionaryDao;
+import com.wnc.sboot1.SpringContextUtils;
 import com.wnc.sboot1.itbook.entity.BookLogCondition;
 import com.wnc.sboot1.itbook.entity.BookLogVO;
+import com.wnc.sboot1.readlog.ReadLogRepository;
 
 import db.DbExecMgr;
 
+@Service
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BookLogSearch
 {
+	@PersistenceContext
+	private EntityManager entityManager;
+	@Autowired
+	private ReadLogRepository readLogRepository;
+	
     final static Logger logger = Logger.getLogger( BookLogSearch.class );
-    BookLogCondition condition;
+    private BookLogCondition condition;
 
-    public BookLogSearch( BookLogCondition condition )
+    public BookLogSearch setCondition( BookLogCondition condition )
     {
         this.condition = condition;
+        return this;
     }
 
     public List<BookLogVO> search( int page, int size )
@@ -32,43 +52,26 @@ public class BookLogSearch
         String sql = getSql( page, size );
         logger.info( "itbook search:" + sql );
 
-        List<BookLogVO> list = new ArrayList<BookLogVO>();
-        Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap( sql );
-        Map fieldMap;
+        List<BookLogVO> list = new ArrayList<>();
         BookLogVO blog;
-        for ( int i = 1; i <= selectAllSqlMap.size(); i++ )
-        {
-            fieldMap = (Map)selectAllSqlMap.get( i );
+        Query createNativeQuery = entityManager.createNativeQuery( sql );
+        List resultList = createNativeQuery.getResultList();
+		for (Object obj : resultList) {
+			Object[] arr = (Object[])obj;
             blog = new BookLogVO();
-            blog.setId( cvtInt( fieldMap, "ID" ) );
-            blog.setContent( cvtStr( fieldMap, "CONTENT" ) );
-            blog.setDevice( cvtStr( fieldMap, "DEVICE" ) );
-            blog.setDeviceCnName( cvtStr( fieldMap, "DEVICECNNAME" ) );
-            blog.setTopic( cvtStr( fieldMap, "DICT_ID" ) );
-            blog.setTime( cvtStr( fieldMap, "LOG_TIME" ) );
-            blog.setType( cvtStr( fieldMap, "TYPE" ) );
-            blog.setMean( cvtStr( fieldMap, "MEAN_CN" ) );
-            blog.setWeight( cvtInt( fieldMap, "WEIGHT" ) );
+            blog.setId( DictionaryDao.getArrInt(arr, 0 ) );
+            blog.setContent( DictionaryDao.getArrStr(arr, 1 ) );
+            blog.setDevice( DictionaryDao.getArrStr(arr, 2 ) );
+            blog.setTopic( DictionaryDao.getArrStr(arr, 3 ) );
+            blog.setTime( DictionaryDao.getArrStr(arr, 4 ) );
+            blog.setType( DictionaryDao.getArrStr(arr, 5 ) );
+            blog.setMean( DictionaryDao.getArrStr(arr, 6 ) );
+            blog.setWeight( DictionaryDao.getArrInt(arr, 7 ) );
+            blog.setDeviceCnName( DictionaryDao.getArrStr(arr, 8 ) );
             list.add( blog );
         }
 
         return list;
-    }
-
-    private int cvtInt( Map fieldMap, String string )
-    {
-        String s = cvtStr( fieldMap, string );
-        if ( s != null && s.matches( "[\\d\\.]+" ) )
-        {
-            return Integer.parseInt( s );
-        }
-        return 0;
-    }
-
-    private String cvtStr( Map fieldMap, String key )
-    {
-        return fieldMap.get( key ) == null ? null
-                : fieldMap.get( key ).toString();
     }
 
     private String getSql( int page, int size )
@@ -79,7 +82,7 @@ public class BookLogSearch
 
     private String getSql()
     {
-        String sql = "SELECT b.*,d.mean_cn,d.weight,dv.cn_name DEVICECNNAME FROM ITBOOK_LOG b left join device dv on b.device=dv.name left join dictionary d on b.dict_id=d.id WHERE b.deleted = 0 ";
+        String sql = "SELECT b.ID,b.CONTENT,b.DEVICE,b.DICT_ID,b.LOG_TIME,b.TYPE,d.mean_cn,d.weight,dv.cn_name DEVICECNNAME FROM ITBOOK_LOG b left join device dv on b.device=dv.name left join dictionary d on b.dict_id=d.id WHERE b.deleted = 0 ";
         if ( StringUtils.isNotBlank( condition.getDevice() ) )
         {
             sql += " AND b.DEVICE='" + condition.getDevice() + "'";
@@ -144,18 +147,22 @@ public class BookLogSearch
         // condition.setDayEnd( "20171117" );
         condition.setDevice( "" );
         condition.setWord( "g" );
-        List<BookLogVO> search = new BookLogSearch( condition ).search( 3, 2 );
+        BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("BookLogSearch");
+        List<BookLogVO> search = bookLogSearch.setCondition( condition ).search( 3, 2 );
         System.out.println( JSONObject.toJSONString( search,
                 SerializerFeature.PrettyFormat ) );
         System.out.println( search );
 
     }
 
-    public int getTotalRows()
+    public long getTotalRows()
     {
-        return BasicNumberUtil.getNumber( String.valueOf( DbExecMgr
-                .getSelectSqlMap(
-                        "SELECT COUNT(1) CNT FROM (" + getSql() + ") t" )
-                .get( "CNT" ) ) );
+    	String sql = "SELECT COUNT(1) CNT FROM (" + getSql() + ") t";
+    	Query createNativeQuery = entityManager.createNativeQuery( sql );
+        List resultList = createNativeQuery.getResultList();
+        if(resultList != null && resultList.size() > 0){
+        	return ((BigInteger)resultList.get(0)).longValue();
+        }
+        return 0;
     }
 }
