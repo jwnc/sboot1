@@ -41,7 +41,7 @@ public class BookLogController
         BookLogCondition condition = new BookLogCondition();
         condition.setType( "1" );
 
-        BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("BookLogSearch");
+        BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("bookLogSearch");
         bookLogSearch.setCondition( condition );
         model.addAttribute( "pageData",
                 new PageDataBean<BookLogVO>( bookLogSearch.search( 1, 20 ), 1,
@@ -56,7 +56,7 @@ public class BookLogController
     public String sbl( Model model, BookLogCondition bookLogCondition, int page,
             int size )
     {
-    	BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("BookLogSearch");
+    	BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("bookLogSearch");
         bookLogSearch.setCondition( bookLogCondition );
         model.addAttribute( "pageData",
                 new PageDataBean<BookLogVO>( bookLogSearch.search( page, size ),

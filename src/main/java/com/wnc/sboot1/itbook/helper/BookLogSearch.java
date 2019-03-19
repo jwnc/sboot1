@@ -140,21 +140,6 @@ public class BookLogSearch
         return day;
     }
 
-    public static void main( String[] args )
-    {
-        BookLogCondition condition = new BookLogCondition();
-        condition.setDayStart( "20171110" );
-        // condition.setDayEnd( "20171117" );
-        condition.setDevice( "" );
-        condition.setWord( "g" );
-        BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("BookLogSearch");
-        List<BookLogVO> search = bookLogSearch.setCondition( condition ).search( 3, 2 );
-        System.out.println( JSONObject.toJSONString( search,
-                SerializerFeature.PrettyFormat ) );
-        System.out.println( search );
-
-    }
-
     public long getTotalRows()
     {
     	String sql = "SELECT COUNT(1) CNT FROM (" + getSql() + ") t";
