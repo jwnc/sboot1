@@ -65,7 +65,7 @@ public class ITBookLogService
 
     public static void deleteLog( int logId ) throws SQLException
     {
-        String sql = "UPDATE ITBOOK_LOG SET DELETED=1 WHERE ID=" + logId;
+        String sql = "UPDATE itbook_log SET DELETED=1 WHERE ID=" + logId;
         logger.info( sql );
         DbExecMgr.execOnlyOneUpdate( sql );
     }

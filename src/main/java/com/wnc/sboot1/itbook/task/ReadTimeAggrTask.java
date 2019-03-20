@@ -20,7 +20,7 @@ public class ReadTimeAggrTask
     {
         DBconnectionMgr.setJDBCName( "jdbc:sqlite:D:\\itbook\\itdict.db" );
         Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap(
-                "SELECT ID,DEVICE,LOG_TIME FROM ITBOOK_LOG WHERE LOG_TIME LIKE '2017-11-28%' ORDER BY LOG_TIME ASC" );
+                "SELECT ID,DEVICE,LOG_TIME FROM itbook_log WHERE LOG_TIME LIKE '2017-11-28%' ORDER BY LOG_TIME ASC" );
         Map fieldMap;
         int sum = 0;
         String time = null;

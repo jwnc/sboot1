@@ -82,7 +82,7 @@ public class BookLogSearch
 
     private String getSql()
     {
-        String sql = "SELECT b.ID,b.CONTENT,b.DEVICE,b.DICT_ID,b.LOG_TIME,b.TYPE,d.mean_cn,d.weight,dv.cn_name DEVICECNNAME FROM ITBOOK_LOG b left join device dv on b.device=dv.name left join dictionary d on b.dict_id=d.id WHERE b.deleted = 0 ";
+        String sql = "SELECT b.ID,b.CONTENT,b.DEVICE,b.DICT_ID,b.LOG_TIME,b.TYPE,d.mean_cn,d.weight,dv.cn_name DEVICECNNAME FROM itbook_log b left join device dv on b.device=dv.name left join dictionary d on b.dict_id=d.id WHERE b.deleted = 0 ";
         if ( StringUtils.isNotBlank( condition.getDevice() ) )
         {
             sql += " AND b.DEVICE='" + condition.getDevice() + "'";
