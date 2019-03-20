@@ -6,19 +6,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.wnc.basic.BasicDateUtil;
 import com.wnc.basic.BasicNumberUtil;
+import com.wnc.itbooktool.dao.DictionaryDao;
 import com.wnc.sboot1.itbook.helper.TimeUtils;
-
-import db.DbExecMgr;
 
 @Component
 public class BookKpiService
 {
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	
     public List column( String dayStart, String dayEnd )
     {
         dayStart = dealDayStart( dayStart );
@@ -26,12 +32,28 @@ public class BookKpiService
 
         List<Map> list = new ArrayList<Map>();
 
-        String sql = "SELECT d.cn_name device, ifnull(t.cnt,0) count FROM DEVICE d left join (select device,count(1) cnt from itbook_log where substr(log_time,0,11)>= '"
-                + dayStart + "' and substr(log_time,0,11)<= '" + dayEnd
+        String sql = "SELECT d.cn_name device, ifnull(t.cnt,0) count FROM DEVICE d left join (select device,count(1) cnt from itbook_log where date_format(log_time, '%Y-%m-%d')>= '"
+                + dayStart + "' and date_format(log_time, '%Y-%m-%d')<= '" + dayEnd
                 + "' group by device ) t on d.name=t.device";
         // day="2017-11-12", device1=100,***
         System.out.println( "Column:" + sql );
-        Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap( sql );
+        
+        Map selectAllSqlMap = new HashMap<>();
+        Query createNativeQuery = entityManager.createNativeQuery(sql);
+        List resultList = createNativeQuery.getResultList();
+        String[] fieldArr = {"DEVICE", "COUNT"};
+        int row = 1;
+		for (Object obj : resultList) {
+			Object[] arr = (Object[])obj;
+			Map<String, String> fieldMap = new HashMap<String, String>();
+			for (int i = 0; i < fieldArr.length; i++) {
+				fieldMap.put(fieldArr[i], DictionaryDao.getArrStr(arr, i) );
+			}
+			selectAllSqlMap.put( row, fieldMap );
+            row++;
+		}
+        
+        
         Map rowMap = null;
         for ( int i = 1; i <= selectAllSqlMap.size(); i++ )
         {
@@ -97,11 +119,24 @@ public class BookKpiService
     {
         String sql = "select x.cn_name name, x.day day,ifnull(t.cnt,0) cnt from (select * from device join (select day from daylist where day >= '"
                 + dayStart + "' and day <= '" + dayEnd
-                + "')) x left join (select device, substr(log_time,0,11) day,count(*) cnt from itbook_log  group by device,substr(log_time,0,11) )t on x.name=t.device and x.day = t.day order by x.day asc";
+                + "') d) x left join (select device, date_format(log_time, '%Y-%m-%d') day,count(*) cnt from itbook_log  group by device,date_format(log_time, '%Y-%m-%d') )t on x.name=t.device and x.day = t.day order by x.day asc";
         // day="2017-11-12", device1=100,***
         System.out.println( "getLineData:" + sql );
-        Map selectAllSqlMap = DbExecMgr.getSelectAllSqlMap( sql );
-        return selectAllSqlMap;
+        Map map = new HashMap<>();
+        Query createNativeQuery = entityManager.createNativeQuery(sql);
+        List resultList = createNativeQuery.getResultList();
+        String[] fieldArr = {"NAME", "DAY", "CNT"};
+        int row = 1;
+		for (Object obj : resultList) {
+			Object[] arr = (Object[])obj;
+			Map<String, String> fieldMap = new HashMap<String, String>();
+			for (int i = 0; i < fieldArr.length; i++) {
+				fieldMap.put(fieldArr[i], DictionaryDao.getArrStr(arr, i) );
+			}
+            map.put( row, fieldMap );
+            row++;
+		}
+        return map;
     }
 
     private String dealDayEnd( String dayEnd )
