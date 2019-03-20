@@ -1,12 +1,17 @@
 
 package com.wnc.itbooktool.word;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wnc.itbooktool.dao.DictionaryDao;
 import com.wnc.string.PatternUtil;
 
 public class WordUtils
 {
-    public static DicWord findFromCache( String clipBoardContent )
+	@Autowired
+	private DictionaryDao dictionaryDao;
+	
+    public  DicWord findFromCache( String clipBoardContent )
     {
         for ( DicWord d : OptedDictData.getSeekWordList() )
         {
@@ -18,7 +23,7 @@ public class WordUtils
         return null;
     }
 
-    private static boolean hasFindWord( String clipBoardContent, DicWord d )
+    private  boolean hasFindWord( String clipBoardContent, DicWord d )
     {
         return clipBoardContent.equalsIgnoreCase( d.getBase_word() )
                 || clipBoardContent.equalsIgnoreCase( d.getWord_done() )
@@ -30,16 +35,16 @@ public class WordUtils
                 || clipBoardContent.equalsIgnoreCase( d.getWord_third() );
     }
 
-    public static DicWord findDicWord( String clipBoardContent )
+    public  DicWord findDicWord( String clipBoardContent )
     {
         DicWord fw = findFromCache( clipBoardContent );
         if ( fw == null )
         {
-            fw = DictionaryDao.findWeightWord( clipBoardContent );
+            fw = dictionaryDao.findWeightWord( clipBoardContent );
         }
         if ( fw == null )
         {
-            fw = DictionaryDao.findWord( clipBoardContent );
+            fw = dictionaryDao.findWord( clipBoardContent );
         }
         return fw;
     }
@@ -50,7 +55,7 @@ public class WordUtils
      * @param clipboardString
      * @return
      */
-    public static boolean isContextRelative( String clipboardString )
+    public  boolean isContextRelative( String clipboardString )
     {
         clipboardString = clipboardString.trim();
         for ( String word : PatternUtil.getAllPatternGroup( clipboardString,

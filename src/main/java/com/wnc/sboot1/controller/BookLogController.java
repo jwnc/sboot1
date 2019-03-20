@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wnc.basic.BasicDateUtil;
+import com.wnc.sboot1.SpringContextUtils;
 import com.wnc.sboot1.common.aop.LoggerManage;
 import com.wnc.sboot1.itbook.entity.BookLogCondition;
 import com.wnc.sboot1.itbook.entity.BookLogVO;
@@ -40,7 +41,8 @@ public class BookLogController
         BookLogCondition condition = new BookLogCondition();
         condition.setType( "1" );
 
-        BookLogSearch bookLogSearch = new BookLogSearch( condition );
+        BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("bookLogSearch");
+        bookLogSearch.setCondition( condition );
         model.addAttribute( "pageData",
                 new PageDataBean<BookLogVO>( bookLogSearch.search( 1, 20 ), 1,
                         20, bookLogSearch.getTotalRows() ) );
@@ -54,7 +56,8 @@ public class BookLogController
     public String sbl( Model model, BookLogCondition bookLogCondition, int page,
             int size )
     {
-        BookLogSearch bookLogSearch = new BookLogSearch( bookLogCondition );
+    	BookLogSearch bookLogSearch = (BookLogSearch)SpringContextUtils.getContext().getBean("bookLogSearch");
+        bookLogSearch.setCondition( bookLogCondition );
         model.addAttribute( "pageData",
                 new PageDataBean<BookLogVO>( bookLogSearch.search( page, size ),
                         page, size, bookLogSearch.getTotalRows() ) );

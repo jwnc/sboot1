@@ -1,6 +1,8 @@
 
 package com.wnc.sboot1.itbook;
 
+import org.springframework.context.annotation.DependsOn;
+
 import com.wnc.basic.BasicFileUtil;
 import com.wnc.sboot1.SpringContextUtils;
 import com.wnc.sboot1.util.MyProperties;

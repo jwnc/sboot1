@@ -1,9 +1,11 @@
 
 package com.wnc.itbooktool.word;
 
+import com.alibaba.fastjson.JSON;
+
 public class DicWord
 {
-    private Integer id;
+    private Long id;
     private Integer topic_id;
     private String base_word;
     private String word_third;
@@ -130,20 +132,15 @@ public class DicWord
     @Override
     public String toString()
     {
-        return "DicWord [topic_id=" + topic_id + ", base_word=" + base_word
-                + ", word_third=" + word_third + ", word_done=" + word_done
-                + ", word_pl=" + word_pl + ", word_ing=" + word_ing
-                + ", word_past=" + word_past + ", word_er=" + word_er
-                + ", word_est=" + word_est + ", cn_mean=" + cn_mean
-                + ", book_name=" + book_name + "]";
+        return JSON.toJSONString(this);
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId( Integer id )
+    public void setId( Long id )
     {
         this.id = id;
     }
